@@ -78,6 +78,12 @@ jobs:
         run: |
           tox --verbose --verbose -e "${{ matrix.python-version }}-unit" -- -n auto
 
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          fail_ci_if_error: true # optional (default = false)
+          verbose: true # optional (default = false)
+
   Integration:
     needs:
       - Unit
@@ -137,6 +143,12 @@ jobs:
         run: |
           tox --verbose --verbose -e "${{ matrix.python-version }}-integration" -- -n auto
 
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          fail_ci_if_error: true # optional (default = false)
+          verbose: true # optional (default = false)
+
   Smoke:
     needs:
       - Integration
@@ -195,3 +207,9 @@ jobs:
         timeout-minutes: 240
         run: |
           tox --verbose --verbose -e "${{ matrix.python-version }}-smoke" -- -n auto
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          fail_ci_if_error: true # optional (default = false)
+          verbose: true # optional (default = false)
