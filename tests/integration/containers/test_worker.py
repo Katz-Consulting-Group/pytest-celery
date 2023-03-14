@@ -5,10 +5,7 @@ from pytest_celery import CeleryWorkerContainer
 from pytest_celery import defaults
 
 
-@pytest.mark.parametrize(
-    "container",
-    lazy_fixture(defaults.ALL_WORKERS_FIXTURES),
-)
-class test_worker_container:
+@pytest.mark.parametrize("container", lazy_fixture(defaults.ALL_WORKERS_FIXTURES))
+class test_celery_worker_container:
     def test_client(self, container: CeleryWorkerContainer):
         assert container.client()

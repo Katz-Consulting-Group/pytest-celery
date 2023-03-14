@@ -1,19 +1,13 @@
 import pytest
 
+from pytest_celery import defaults
 from pytest_celery.api.components.broker import CeleryBrokerCluster
 from pytest_celery.api.components.broker import CeleryTestBroker
-from pytest_celery.defaults import FUNCTION_BROKERS
-from pytest_celery.defaults import SESSION_BROKERS
 
 
-@pytest.fixture(params=FUNCTION_BROKERS)
+@pytest.fixture(params=defaults.ALL_CELERY_BROKERS)
 def celery_broker(request: pytest.FixtureRequest) -> CeleryTestBroker:
-    return CeleryTestBroker(request.getfixturevalue(request.param))
-
-
-@pytest.fixture(params=SESSION_BROKERS)
-def celery_session_broker(request: pytest.FixtureRequest) -> CeleryTestBroker:
-    return CeleryTestBroker(request.getfixturevalue(request.param))
+    return request.getfixturevalue(request.param)
 
 
 @pytest.fixture
@@ -22,5 +16,9 @@ def celery_broker_cluster(celery_broker: CeleryTestBroker) -> CeleryBrokerCluste
 
 
 @pytest.fixture
-def celery_session_broker_cluster(celery_session_broker: CeleryTestBroker) -> CeleryBrokerCluster:
-    return CeleryBrokerCluster(celery_session_broker)
+def celery_broker_config(request: pytest.FixtureRequest) -> dict:
+    try:
+        celery_broker: CeleryTestBroker = request.getfixturevalue(defaults.CELERY_BROKER)
+        return {"broker_url": celery_broker.container.celeryconfig()["url"]}
+    except BaseException:
+        return {}

@@ -7,4 +7,8 @@ from pytest_docker_tools import wrappers
 class CeleryTestContainer(wrappers.Container):
     @abstractmethod
     def client(self) -> Any:
-        pass
+        NotImplementedError("CeleryTestContainer.client")
+
+    @abstractmethod
+    def celeryconfig(self) -> dict:
+        NotImplementedError("CeleryTestContainer.celeryconfig")

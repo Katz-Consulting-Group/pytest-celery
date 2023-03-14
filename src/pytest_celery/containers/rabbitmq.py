@@ -9,9 +9,7 @@ from pytest_celery.api.container import CeleryTestContainer
 class RabbitMQContainer(CeleryTestContainer):
     def ready(self) -> bool:
         if super().ready():
-            c = self.client()
-            if c:
-                return True
+            return True if self.client() else False
         return False
 
     def client(self) -> Connection:
@@ -23,7 +21,12 @@ class RabbitMQContainer(CeleryTestContainer):
                 c = Connection("pyamqp://", port=port)
                 return c
             except IndexError:
-                sleep(0.1)
+                sleep(1)
                 continue
         else:
             raise RuntimeError("Could not connect to RabbitMQ")
+
+    def celeryconfig(self, vhost="/") -> dict:
+        hostname = self.attrs["Config"]["Hostname"]
+        url = f"amqp://{hostname}/{vhost}"
+        return {"url": url}

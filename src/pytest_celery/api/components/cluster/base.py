@@ -1,3 +1,5 @@
+# from __future__ import annotations
+
 from abc import abstractmethod
 from typing import Tuple
 from typing import Type
@@ -34,3 +36,14 @@ class CeleryTestCluster:
 
     def ready(self) -> bool:
         return all(node.ready() for node in self.nodes)
+
+    # def __add__(self, nodes: Tuple[Union[CeleryTestNode, CeleryTestContainer]]) -> CeleryTestCluster:
+    #     if not isinstance(nodes, tuple):
+    #         nodes = (nodes,)
+    #     return self.__class__(*(self.nodes + nodes))
+
+    # def __iadd__(self, nodes: Tuple[Union[CeleryTestNode, CeleryTestContainer]]) -> CeleryTestCluster:
+    #     if not isinstance(nodes, tuple):
+    #         nodes = (nodes,)
+    #     self.nodes = self.nodes + nodes
+    #     return self

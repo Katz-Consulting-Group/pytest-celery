@@ -23,7 +23,12 @@ class RedisContainer(CeleryTestContainer):
                 c = Redis(host="localhost", port=port, db=0, decode_responses=True)
                 return c
             except IndexError:
-                sleep(0.1)
+                sleep(1)
                 continue
         else:
             raise RuntimeError("Could not connect to redis")
+
+    def celeryconfig(self, vhost="0") -> dict:
+        hostname = self.attrs["Config"]["Hostname"]
+        url = f"redis://{hostname}/{vhost}"
+        return {"url": url}
