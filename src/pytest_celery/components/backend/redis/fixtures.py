@@ -4,12 +4,12 @@ from pytest_docker_tools import fxtr
 
 from pytest_celery import defaults
 from pytest_celery.components.backend.redis.api import RedisTestBackend
-from pytest_celery.components.containers.redis import RedisContainer
+from pytest_celery.containers.redis import RedisContainer
 
 
-@pytest.fixture(params=[defaults.CELERY_REDIS_BACKEND])
-def celery_redis_backend(request: pytest.FixtureRequest) -> RedisTestBackend:
-    return RedisTestBackend(request.getfixturevalue(request.param))
+@pytest.fixture
+def celery_redis_backend(redis_session_backend: RedisContainer) -> RedisTestBackend:
+    return RedisTestBackend(redis_session_backend)
 
 
 redis_function_backend = container(

@@ -4,12 +4,12 @@ from pytest_docker_tools import fxtr
 
 from pytest_celery import defaults
 from pytest_celery.components.broker.redis.api import RedisTestBroker
-from pytest_celery.components.containers.redis import RedisContainer
+from pytest_celery.containers.redis import RedisContainer
 
 
-@pytest.fixture(params=[defaults.CELERY_REDIS_BROKER])
-def celery_redis_broker(request: pytest.FixtureRequest) -> RedisTestBroker:
-    return RedisTestBroker(request.getfixturevalue(request.param))
+@pytest.fixture
+def celery_redis_broker(redis_session_broker: RedisContainer) -> RedisTestBroker:
+    return RedisTestBroker(redis_session_broker)
 
 
 redis_function_broker = container(

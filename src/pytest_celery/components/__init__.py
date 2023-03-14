@@ -30,5 +30,10 @@ from pytest_celery.components.broker import redis_session_broker
 from pytest_celery.components.broker import redis_session_broker_env
 from pytest_celery.components.broker import redis_session_broker_image
 from pytest_celery.components.broker import redis_session_broker_ports
-from pytest_celery.components.containers import RabbitMQContainer
-from pytest_celery.components.containers import RedisContainer
+from pytest_celery.components.worker import BaseTestWorker
+from pytest_celery.components.worker import celery_base_worker_image
+from pytest_celery.components.worker import celery_test_worker
+from pytest_celery.components.worker import function_worker
+from pytest_celery.components.worker import function_worker_env
+from pytest_celery.components.worker import session_worker
+from pytest_celery.components.worker import session_worker_env

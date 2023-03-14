@@ -2,7 +2,7 @@ import pytest
 from pytest_lazyfixture import lazy_fixture
 
 from pytest_celery import defaults
-from pytest_celery.components.containers.redis import RedisContainer
+from pytest_celery.containers.redis import RedisContainer
 
 
 @pytest.mark.parametrize(
