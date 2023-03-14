@@ -1,11 +1,11 @@
 import pytest
 from pytest_lazyfixture import lazy_fixture
 
+from pytest_celery import RabbitMQContainer
+from pytest_celery import RabbitMQTestBroker
+from pytest_celery import RedisContainer
+from pytest_celery import RedisTestBackend
 from pytest_celery import defaults
-from pytest_celery.components.backend.redis.api import RedisTestBackend
-from pytest_celery.components.broker.rabbitmq.api import RabbitMQTestBroker
-from pytest_celery.containers.rabbitmq import RabbitMQContainer
-from pytest_celery.containers.redis import RedisContainer
 
 
 class test_redis_container_settings:

@@ -4,12 +4,20 @@ from unit.docker.api import UnitTestContainer
 from unit.docker.fixtures import unit_tests_container  # noqa
 from unit.docker.fixtures import unit_tests_image  # noqa
 
+from pytest_celery import CeleryWorkerContainer
 from pytest_celery import RabbitMQContainer
 from pytest_celery import RedisContainer
 from pytest_celery import defaults
 
 local_test_container = container(image="{unit_tests_image.id}", wrapper_class=UnitTestContainer)
 
+
+worker_test_container = container(
+    image="{celery_base_worker_image.id}",
+    scope="session",
+    environment={},
+    wrapper_class=CeleryWorkerContainer,
+)
 
 redis_image = fetch(repository="redis:latest")
 redis_test_container = container(

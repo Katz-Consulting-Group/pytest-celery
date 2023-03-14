@@ -1,8 +1,8 @@
 import pytest
 from pytest_lazyfixture import lazy_fixture
 
+from pytest_celery import CeleryTestContainer
 from pytest_celery import defaults
-from pytest_celery.api.container import CeleryTestContainer
 
 
 @pytest.mark.parametrize(

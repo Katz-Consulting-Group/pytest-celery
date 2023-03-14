@@ -1,6 +1,6 @@
 import pytest
 
-from pytest_celery.api.setup import CeleryTestSetup
+from pytest_celery import CeleryTestSetup
 
 
 @pytest.fixture

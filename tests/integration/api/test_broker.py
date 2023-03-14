@@ -1,9 +1,9 @@
 import pytest
 from pytest_lazyfixture import lazy_fixture
 
+from pytest_celery import CeleryBrokerCluster
+from pytest_celery import CeleryTestBroker
 from pytest_celery import defaults
-from pytest_celery.api.components.broker.cluster import CeleryBrokerCluster
-from pytest_celery.api.components.broker.node import CeleryTestBroker
 
 
 @pytest.mark.parametrize(

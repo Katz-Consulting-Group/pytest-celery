@@ -1,9 +1,9 @@
 import pytest
 from pytest_lazyfixture import lazy_fixture
 
+from pytest_celery import RedisTestBackend
+from pytest_celery import RedisTestBroker
 from pytest_celery import defaults
-from pytest_celery.components.backend.redis.api import RedisTestBackend
-from pytest_celery.components.broker.redis.api import RedisTestBroker
 
 
 @pytest.mark.parametrize(

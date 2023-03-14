@@ -1,8 +1,8 @@
 import pytest
 from pytest_lazyfixture import lazy_fixture
 
+from pytest_celery import RabbitMQContainer
 from pytest_celery import defaults
-from pytest_celery.containers.rabbitmq import RabbitMQContainer
 
 
 @pytest.mark.parametrize(

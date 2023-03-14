@@ -1,9 +1,9 @@
 import pytest
 from pytest_lazyfixture import lazy_fixture
 
+from pytest_celery import CeleryBackendCluster
+from pytest_celery import CeleryTestBackend
 from pytest_celery import defaults
-from pytest_celery.api.components.backend.cluster import CeleryBackendCluster
-from pytest_celery.api.components.backend.node import CeleryTestBackend
 
 
 @pytest.mark.parametrize(

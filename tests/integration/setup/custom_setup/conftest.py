@@ -1,7 +1,7 @@
 import pytest
 from integration.setup.custom_setup.custom_setup import *  # noqa
 
-from pytest_celery.api.setup import CeleryTestSetup
+from pytest_celery import CeleryTestSetup
 
 
 @pytest.fixture

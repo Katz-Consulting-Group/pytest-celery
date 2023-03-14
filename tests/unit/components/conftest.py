@@ -1,10 +1,17 @@
 import pytest
 
+from pytest_celery import BaseTestWorker
+from pytest_celery import CeleryWorkerContainer
 from pytest_celery import RabbitMQContainer
 from pytest_celery import RabbitMQTestBroker
 from pytest_celery import RedisContainer
 from pytest_celery import RedisTestBackend
 from pytest_celery import RedisTestBroker
+
+
+@pytest.fixture
+def celery_test_worker(worker_test_container: CeleryWorkerContainer) -> BaseTestWorker:
+    return BaseTestWorker(worker_test_container)
 
 
 @pytest.fixture
