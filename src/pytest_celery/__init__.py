@@ -31,6 +31,9 @@ from pytest_celery.components import celery_test_worker
 from pytest_celery.components import function_worker
 from pytest_celery.components import function_worker_celery_version
 from pytest_celery.components import function_worker_env
+from pytest_celery.components import function_worker_initial_content
+from pytest_celery.components import function_worker_tasks
+from pytest_celery.components import function_worker_volume
 from pytest_celery.components import rabbitmq_function_broker
 from pytest_celery.components import rabbitmq_function_broker_celeryconfig
 from pytest_celery.components import rabbitmq_function_broker_env
@@ -56,6 +59,7 @@ from pytest_celery.fixtures import celery_broker
 from pytest_celery.fixtures import celery_broker_cluster
 from pytest_celery.fixtures import celery_broker_config
 from pytest_celery.fixtures import celery_setup
+from pytest_celery.fixtures import celery_setup_app
 from pytest_celery.fixtures import celery_worker
 from pytest_celery.fixtures import celery_worker_cluster
 from pytest_celery.fixtures import celery_worker_config

@@ -6,21 +6,23 @@ from pytest_celery.api.components.broker.cluster import CeleryBrokerCluster
 from pytest_celery.api.components.worker.cluster import CeleryWorkerCluster
 from pytest_celery.api.setup import CeleryTestSetup
 
-
-@pytest.fixture
-def celery_setup_app(celery_worker_config: dict) -> Celery:
-    celery_broker_config = celery_worker_config["celery_broker_config"]
-    celery_backend_config = celery_worker_config["celery_backend_config"]
-    app = Celery("celery_test_app")
-    app.config_from_object(
-        {
-            "broker_url": celery_broker_config["local_url"],
-            "result_backend": celery_backend_config["local_url"],
-        }
-    )
-    return app
+# @pytest.fixture
+# def celery_setup(celery_setup: CeleryTestSetup) -> CeleryTestSetup:
+#     celery_setup.ready(ping=True)
+# class IntegrationTestsSetup(CeleryTestSetup):
+#     def ready(self) -> bool:
+#         return super().ready(ping=True)
 
 
+# @pytest.fixture
+# def celery_setup(celery_setup: CeleryTestSetup) -> IntegrationTestsSetup:
+#     celery_setup = IntegrationTestsSetup(
+#         worker_cluster=celery_setup.worker_cluster,
+#         broker_cluster=celery_setup.broker_cluster,
+#         backend_cluster=celery_setup.backend_cluster,
+#         app=celery_setup.app,
+#     )
+#     celery_setup.ready()
 @pytest.fixture
 def celery_setup(
     celery_worker_cluster: CeleryWorkerCluster,
@@ -34,5 +36,5 @@ def celery_setup(
         backend_cluster=celery_backend_cluster,
         app=celery_setup_app,
     )
-    setup.ready()
+    setup.ready(ping=True)
     return setup

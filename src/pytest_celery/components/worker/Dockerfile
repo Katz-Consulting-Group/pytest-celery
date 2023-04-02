@@ -6,7 +6,7 @@ RUN adduser --disabled-password --gecos "" test_user
 # Install system dependencies
 RUN apt-get update && apt-get install -y build-essential
 
-# Define an argument for the Celery package version
+# Celery package version
 ARG CELERY_VERSION
 
 # Install Python dependencies
@@ -15,10 +15,12 @@ RUN pip install --no-cache-dir --upgrade pip \
 
 # Copy the rest of the app
 WORKDIR /app
-COPY . .
 
 # Switch to the test_user
 USER test_user
 
 # Start the celery worker
-CMD celery -A app worker --loglevel=info -n celery4_test_worker@%h
+# CMD ["celery", "-A", "myapp.worker", "worker", "--loglevel=INFO"]
+# CMD celery -A app worker --loglevel=info -n celery_test_worker@%h --broker=$CELERY_BROKER_URL
+CMD celery -A app worker --loglevel=info
+# CMD celery -A app worker -n celery_test_worker@%h

@@ -27,3 +27,6 @@ from pytest_celery.components.worker import celery_test_worker
 from pytest_celery.components.worker import function_worker
 from pytest_celery.components.worker import function_worker_celery_version
 from pytest_celery.components.worker import function_worker_env
+from pytest_celery.components.worker import function_worker_initial_content
+from pytest_celery.components.worker import function_worker_tasks
+from pytest_celery.components.worker import function_worker_volume

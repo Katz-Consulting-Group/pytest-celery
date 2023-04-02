@@ -12,7 +12,8 @@ from pytest_docker_tools import network
 ##########
 
 DEFAULT_NETWORK = network()
-
+DEFAULT_READY_TIMEOUT = 60
+DEFAULT_READY_MAX_RETRIES = 3
 
 ##########
 # Fixtures
@@ -102,6 +103,7 @@ WORKER_ENV = {
 # Function Worker #
 ###################
 FUNCTION_WORKER_ENV = WORKER_ENV
+FUNCTION_WORKER_CONTAINER_TIMEOUT = 30
 
 ##########################
 # Redis Container Settings
@@ -112,6 +114,7 @@ FUNCTION_WORKER_ENV = WORKER_ENV
 REDIS_IMAGE = "redis:latest"
 REDIS_PORTS = {"6379/tcp": None}
 REDIS_ENV = {}
+REDIS_CONTAINER_TIMEOUT = DEFAULT_READY_TIMEOUT
 
 # Docker containers settings
 #################################################
@@ -139,7 +142,7 @@ REDIS_FUNCTION_BROKER_PORTS = REDIS_PORTS
 RABBITMQ_IMAGE = "rabbitmq:latest"
 RABBITMQ_PORTS = {"5672/tcp": None}
 RABBITMQ_ENV = {}
-RABBITMQ_CONTAINER_TIMEOUT = 60
+RABBITMQ_CONTAINER_TIMEOUT = DEFAULT_READY_TIMEOUT
 
 # Docker containers settings
 #################################################

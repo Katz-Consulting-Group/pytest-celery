@@ -1,4 +1,3 @@
-from itertools import count
 from time import sleep
 
 from kombu import Connection
@@ -13,20 +12,25 @@ class RabbitMQContainer(CeleryTestContainer):
         return False
 
     def client(self) -> Connection:
-        for tries in count(1):
-            if tries > 3:
-                break
-            try:
-                _, port = self.get_addr("5672/tcp")
-                c = Connection("pyamqp://", port=port)
-                return c
-            except IndexError:
-                sleep(1)
-                continue
-        else:
-            raise RuntimeError("Could not connect to RabbitMQ")
+        celeryconfig = self.celeryconfig()
+        client = Connection(
+            f"amqp://localhost/{celeryconfig['vhost']}",
+            port=celeryconfig["port"],
+        )
+        return client
 
     def celeryconfig(self, vhost="/") -> dict:
+        while not self.ports["5672/tcp"]:
+            sleep(0.1)
+        _, port = self.get_addr("5672/tcp")
+
         hostname = self.attrs["Config"]["Hostname"]
         url = f"amqp://{hostname}/{vhost}"
-        return {"url": url}
+        local_url = f"amqp://localhost:{port}/{vhost}"
+        return {
+            "url": url,
+            "local_url": local_url,
+            "hostname": hostname,
+            "port": port,
+            "vhost": vhost,
+        }

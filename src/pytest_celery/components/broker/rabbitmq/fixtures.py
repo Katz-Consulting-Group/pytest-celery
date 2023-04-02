@@ -5,7 +5,6 @@ from pytest_docker_tools import fxtr
 from pytest_celery import defaults
 from pytest_celery.components.broker.rabbitmq.api import RabbitMQTestBroker
 from pytest_celery.containers.rabbitmq import RabbitMQContainer
-from pytest_celery.defaults import DEFAULT_NETWORK  # noqa
 
 
 @pytest.fixture

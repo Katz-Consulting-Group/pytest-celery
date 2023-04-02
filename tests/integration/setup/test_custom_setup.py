@@ -1,10 +1,11 @@
 import pytest
-from integration.shared.celery4.api import Celery4TestWorker
-from integration.shared.celery4.fixtures import *  # noqa
 
 from pytest_celery.api.components.worker.cluster import CeleryWorkerCluster
 from pytest_celery.api.components.worker.node import CeleryTestWorker
 from pytest_celery.api.setup import CeleryTestSetup
+from tests.shared.celery4.api import Celery4TestWorker
+from tests.shared.celery4.fixtures import *  # noqa
+from tests.shared.tasks import identity
 
 
 @pytest.fixture(scope="session")
@@ -13,13 +14,27 @@ def function_worker_celery_version() -> str:
 
 
 @pytest.fixture
+def function_worker_tasks() -> set:
+    from tests.shared import tasks
+
+    return {tasks}
+
+
+@pytest.fixture
 def celery_worker_cluster(
     celery_worker: CeleryTestWorker,
     celery4_test_worker: Celery4TestWorker,
 ) -> CeleryWorkerCluster:
-    return CeleryWorkerCluster(celery_worker, celery4_test_worker)
+    return CeleryWorkerCluster(
+        celery_worker,
+        celery4_test_worker,
+    )
 
 
 class test_custom_setup:
     def test_celery_setup_override(self, celery_setup: CeleryTestSetup):
-        assert celery_setup.ready()
+        r1 = identity.s("test_ready").delay()
+        r2 = identity.s("test_ready").delay()
+        assert r1.get() == "test_ready"
+        assert r2.get() == "test_ready"
+        assert celery_setup.app

@@ -16,11 +16,8 @@ def celery_worker_cluster(celery_worker: CeleryTestWorker) -> CeleryWorkerCluste
 
 
 @pytest.fixture
-def celery_worker_config(celery_broker_config, celery_backend_config) -> dict:
-    celery_broker_config = celery_broker_config or {"broker_url": defaults.WORKER_ENV["CELERY_BROKER_URL"]}
-    celery_backend_config = celery_backend_config or {"result_backend": defaults.WORKER_ENV["CELERY_RESULT_BACKEND"]}
-
+def celery_worker_config(celery_broker_config: dict, celery_backend_config: dict) -> dict:
     return {
-        "CELERY_BROKER_URL": celery_broker_config["broker_url"],
-        "CELERY_RESULT_BACKEND": celery_backend_config["result_backend"],
+        "celery_broker_config": celery_broker_config,
+        "celery_backend_config": celery_backend_config,
     }

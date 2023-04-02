@@ -1,38 +1,59 @@
-# import signal
+import inspect
 
+from pytest_celery import defaults
 from pytest_celery.api.container import CeleryTestContainer
 
 
 class CeleryWorkerContainer(CeleryTestContainer):
     def ready(self) -> bool:
-        return super().ready()
-        if "tomer" not in self.attrs["Config"]["Env"][0]:
-            super().ready()
-            # self.attrs["Config"]["Env"][0] = "CELERY_BROKER_URL=memory://tomer"
-            env_vars = self.env
-            env_vars["CELERY_BROKER_URL"] = "memory://tomer"
-            self.exec_run(f"export CELERY_BROKER_URL='{env_vars['CELERY_BROKER_URL']}'")
-            self.restart()
-
-        # if "ready." not in self.logs():
-        #     return False
-        # if "pong" not in self.logs():
-        #     return False
-        return True
+        return super().ready() and "ready." in self.logs()
 
     def client(self):
-        print(self.logs())
-        # env_vars = self.env
-        # env_vars["CELERY_BROKER_URL"] = "memory://tomer"
-        # self.exec_run(f"export CELERY_BROKER_URL='{env_vars['CELERY_BROKER_URL']}'")
-        # self.restart()
-        # self.attrs["Config"]["Env"][0] = "CELERY_BROKER_URL=memory://tomer"
-        # self.reload()
-        # print(self.logs())
-        # current_app.conf.broker_url = "memory://tomer"
-        # print(self.logs())
-        # self.reload()
-        # self.kill()
-        # self.restart()
-        # print(self.logs())
         return self
+
+    @classmethod
+    def version(cls) -> str:
+        return defaults.WORKER_CELERY_VERSION
+
+    @classmethod
+    def env(cls, celery_worker_config: dict) -> dict:
+        celery_broker_config = celery_worker_config["celery_broker_config"]
+        celery_backend_config = celery_worker_config["celery_backend_config"]
+        celery_worker_config = {
+            "CELERY_BROKER_URL": celery_broker_config["url"],
+            "CELERY_RESULT_BACKEND": celery_backend_config["url"],
+        }
+        return {**defaults.FUNCTION_WORKER_ENV, **celery_worker_config}
+
+    @classmethod
+    def initial_content(cls, function_worker_tasks: set) -> dict:
+        from pytest_celery.components.worker import app as app_module
+        from pytest_celery.components.worker import shared
+
+        function_worker_tasks.add(shared)
+
+        app_module_src = inspect.getsource(app_module)
+        import_string = ""
+
+        for module in function_worker_tasks:
+            import_string += f"from {module.__name__} import *\n"
+
+        app_module_src = app_module_src.format(import_string)
+
+        initial_content = {
+            "__init__.py": b"",
+            "app.py": app_module_src.encode(),
+        }
+        if function_worker_tasks:
+            function_worker_tasks = {
+                f"{module.__name__.replace('.', '/')}.py": inspect.getsource(module).encode()
+                for module in function_worker_tasks
+            }
+            initial_content.update(function_worker_tasks)
+        else:
+            print("No tasks found")
+        return initial_content
+
+    @classmethod
+    def tasks_modules(cls) -> set:
+        return set()
