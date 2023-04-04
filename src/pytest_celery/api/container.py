@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from abc import abstractmethod
 from typing import Any
 
@@ -36,3 +38,7 @@ class CeleryTestContainer(wrappers.Container):
             self,
             f"Can't get test container to be ready (attempted {max_tries} times): {self.name}",
         )
+
+    @classmethod
+    def env(cls: CeleryTestContainer) -> dict:
+        NotImplementedError("CeleryTestContainer.env")

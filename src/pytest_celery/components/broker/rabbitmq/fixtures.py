@@ -1,3 +1,5 @@
+from typing import Type
+
 import pytest
 from pytest_docker_tools import container
 from pytest_docker_tools import fxtr
@@ -12,6 +14,11 @@ def celery_rabbitmq_broker(rabbitmq_function_broker: RabbitMQContainer) -> Rabbi
     return RabbitMQTestBroker(rabbitmq_function_broker)
 
 
+@pytest.fixture
+def rabbitmq_function_broker_cls() -> Type[RabbitMQContainer]:
+    return RabbitMQContainer
+
+
 rabbitmq_function_broker = container(
     image="{rabbitmq_function_broker_image}",
     ports=fxtr("rabbitmq_function_broker_ports"),
@@ -23,18 +30,18 @@ rabbitmq_function_broker = container(
 
 
 @pytest.fixture
-def rabbitmq_function_broker_env() -> dict:
-    return defaults.RABBITMQ_FUNCTION_BROKER_ENV
+def rabbitmq_function_broker_env(rabbitmq_function_broker_cls: Type[RabbitMQContainer]) -> dict:
+    return rabbitmq_function_broker_cls.env()
 
 
 @pytest.fixture
-def rabbitmq_function_broker_image() -> str:
-    return defaults.RABBITMQ_FUNCTION_BROKER_IMAGE
+def rabbitmq_function_broker_image(rabbitmq_function_broker_cls: Type[RabbitMQContainer]) -> str:
+    return rabbitmq_function_broker_cls.image()
 
 
 @pytest.fixture
-def rabbitmq_function_broker_ports() -> dict:
-    return defaults.RABBITMQ_FUNCTION_BROKER_PORTS
+def rabbitmq_function_broker_ports(rabbitmq_function_broker_cls: Type[RabbitMQContainer]) -> dict:
+    return rabbitmq_function_broker_cls.ports()
 
 
 @pytest.fixture

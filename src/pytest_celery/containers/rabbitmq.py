@@ -2,6 +2,7 @@ from time import sleep
 
 from kombu import Connection
 
+from pytest_celery import defaults
 from pytest_celery.api.container import CeleryTestContainer
 
 
@@ -34,3 +35,19 @@ class RabbitMQContainer(CeleryTestContainer):
             "port": port,
             "vhost": vhost,
         }
+
+    @classmethod
+    def version(cls) -> str:
+        return cls.image().split(":")[-1]
+
+    @classmethod
+    def env(cls) -> dict:
+        return defaults.RABBITMQ_FUNCTION_BROKER_ENV
+
+    @classmethod
+    def image(cls) -> str:
+        return defaults.RABBITMQ_FUNCTION_BROKER_IMAGE
+
+    @classmethod
+    def ports(cls) -> dict:
+        return defaults.RABBITMQ_FUNCTION_BROKER_PORTS

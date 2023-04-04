@@ -1,3 +1,5 @@
+from typing import Type
+
 import pytest
 from pytest_docker_tools import container
 from pytest_docker_tools import fxtr
@@ -12,6 +14,11 @@ def celery_redis_broker(redis_function_broker: RedisContainer) -> RedisTestBroke
     return RedisTestBroker(redis_function_broker)
 
 
+@pytest.fixture
+def redis_function_broker_cls() -> Type[RedisContainer]:
+    return RedisContainer
+
+
 redis_function_broker = container(
     image="{redis_function_broker_image}",
     ports=fxtr("redis_function_broker_ports"),
@@ -23,18 +30,18 @@ redis_function_broker = container(
 
 
 @pytest.fixture
-def redis_function_broker_env() -> dict:
-    return defaults.REDIS_FUNCTION_BROKER_ENV
+def redis_function_broker_env(redis_function_broker_cls: Type[RedisContainer]) -> dict:
+    return redis_function_broker_cls.env()
 
 
 @pytest.fixture
-def redis_function_broker_image() -> str:
-    return defaults.REDIS_FUNCTION_BROKER_IMAGE
+def redis_function_broker_image(redis_function_broker_cls: Type[RedisContainer]) -> str:
+    return redis_function_broker_cls.image()
 
 
 @pytest.fixture
-def redis_function_broker_ports() -> dict:
-    return defaults.REDIS_FUNCTION_BROKER_PORTS
+def redis_function_broker_ports(redis_function_broker_cls: Type[RedisContainer]) -> dict:
+    return redis_function_broker_cls.ports()
 
 
 @pytest.fixture

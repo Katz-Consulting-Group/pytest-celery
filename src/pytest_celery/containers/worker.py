@@ -13,7 +13,7 @@ class CeleryWorkerContainer(CeleryTestContainer):
 
     @classmethod
     def version(cls) -> str:
-        return defaults.WORKER_CELERY_VERSION
+        return defaults.FUNCTION_WORKER_VERSION
 
     @classmethod
     def env(cls, celery_worker_config: dict) -> dict:

@@ -8,10 +8,10 @@ from pytest_docker_tools import network
 from pytest_docker_tools import volume
 
 from pytest_celery import defaults
+from pytest_celery.api.components.worker.node import CeleryTestWorker
 from pytest_celery.components.backend.redis.api import RedisTestBackend
 from pytest_celery.components.broker.rabbitmq.api import RabbitMQTestBroker
 from pytest_celery.components.broker.redis.api import RedisTestBroker
-from pytest_celery.components.worker.api import BaseTestWorker
 from pytest_celery.containers.rabbitmq import RabbitMQContainer
 from pytest_celery.containers.redis import RedisContainer
 from pytest_celery.containers.worker import CeleryWorkerContainer
@@ -73,8 +73,8 @@ worker_test_container = container(
 
 
 @pytest.fixture
-def celery_test_worker(worker_test_container: CeleryWorkerContainer, celery_setup_app: Celery) -> BaseTestWorker:
-    return BaseTestWorker(
+def celery_test_worker(worker_test_container: CeleryWorkerContainer, celery_setup_app: Celery) -> CeleryTestWorker:
+    return CeleryTestWorker(
         container=worker_test_container,
         app=celery_setup_app,
     )

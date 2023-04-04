@@ -4,6 +4,7 @@ from pytest_celery.components.broker.rabbitmq import RabbitMQTestBroker
 from pytest_celery.components.broker.rabbitmq import celery_rabbitmq_broker
 from pytest_celery.components.broker.rabbitmq import rabbitmq_function_broker
 from pytest_celery.components.broker.rabbitmq import rabbitmq_function_broker_celeryconfig
+from pytest_celery.components.broker.rabbitmq import rabbitmq_function_broker_cls
 from pytest_celery.components.broker.rabbitmq import rabbitmq_function_broker_env
 from pytest_celery.components.broker.rabbitmq import rabbitmq_function_broker_image
 from pytest_celery.components.broker.rabbitmq import rabbitmq_function_broker_ports
@@ -11,6 +12,7 @@ from pytest_celery.components.broker.redis import RedisTestBroker
 from pytest_celery.components.broker.redis import celery_redis_broker
 from pytest_celery.components.broker.redis import redis_function_broker
 from pytest_celery.components.broker.redis import redis_function_broker_celeryconfig
+from pytest_celery.components.broker.redis import redis_function_broker_cls
 from pytest_celery.components.broker.redis import redis_function_broker_env
 from pytest_celery.components.broker.redis import redis_function_broker_image
 from pytest_celery.components.broker.redis import redis_function_broker_ports

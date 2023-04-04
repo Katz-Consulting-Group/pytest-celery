@@ -89,6 +89,7 @@ ALL_CELERY_BROKERS = (
 ##########################
 
 # Default container settings for all worker container fixtures
+WORKER_CELERY_APP_NAME = "celery_test_app"
 WORKER_CELERY_VERSION = "5.3.0b2"
 WORKER_ENV = {
     "CELERY_BROKER_URL": "memory://",
@@ -102,6 +103,8 @@ WORKER_ENV = {
 
 # Function Worker #
 ###################
+FUNCTION_WORKER_APP_NAME = WORKER_CELERY_APP_NAME
+FUNCTION_WORKER_VERSION = WORKER_CELERY_VERSION
 FUNCTION_WORKER_ENV = WORKER_ENV
 FUNCTION_WORKER_CONTAINER_TIMEOUT = 30
 

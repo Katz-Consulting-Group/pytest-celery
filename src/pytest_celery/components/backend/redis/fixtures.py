@@ -1,3 +1,5 @@
+from typing import Type
+
 import pytest
 from pytest_docker_tools import container
 from pytest_docker_tools import fxtr
@@ -12,6 +14,11 @@ def celery_redis_backend(redis_function_backend: RedisContainer) -> RedisTestBac
     return RedisTestBackend(redis_function_backend)
 
 
+@pytest.fixture
+def redis_function_backend_cls() -> Type[RedisContainer]:
+    return RedisContainer
+
+
 redis_function_backend = container(
     image="{redis_function_backend_image}",
     ports=fxtr("redis_function_backend_ports"),
@@ -23,18 +30,18 @@ redis_function_backend = container(
 
 
 @pytest.fixture
-def redis_function_backend_env() -> dict:
-    return defaults.REDIS_FUNCTION_BACKEND_ENV
+def redis_function_backend_env(redis_function_backend_cls: Type[RedisContainer]) -> dict:
+    return redis_function_backend_cls.env()
 
 
 @pytest.fixture
-def redis_function_backend_image() -> str:
-    return defaults.REDIS_FUNCTION_BACKEND_IMAGE
+def redis_function_backend_image(redis_function_backend_cls: Type[RedisContainer]) -> str:
+    return redis_function_backend_cls.image()
 
 
 @pytest.fixture
-def redis_function_backend_ports() -> dict:
-    return defaults.REDIS_FUNCTION_BACKEND_PORTS
+def redis_function_backend_ports(redis_function_backend_cls: Type[RedisContainer]) -> dict:
+    return redis_function_backend_cls.ports()
 
 
 @pytest.fixture

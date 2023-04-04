@@ -2,6 +2,7 @@ from time import sleep
 
 from redis import Redis
 
+from pytest_celery import defaults
 from pytest_celery.api.container import CeleryTestContainer
 
 
@@ -32,3 +33,19 @@ class RedisContainer(CeleryTestContainer):
             "port": port,
             "vhost": vhost,
         }
+
+    @classmethod
+    def version(cls) -> str:
+        return cls.image().split(":")[-1]
+
+    @classmethod
+    def env(cls) -> dict:
+        return defaults.REDIS_FUNCTION_BACKEND_ENV
+
+    @classmethod
+    def image(cls) -> str:
+        return defaults.REDIS_FUNCTION_BACKEND_IMAGE
+
+    @classmethod
+    def ports(cls) -> dict:
+        return defaults.REDIS_FUNCTION_BACKEND_PORTS
