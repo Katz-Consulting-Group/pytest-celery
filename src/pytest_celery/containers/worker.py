@@ -6,10 +6,7 @@ from pytest_celery.api.container import CeleryTestContainer
 
 class CeleryWorkerContainer(CeleryTestContainer):
     def ready(self) -> bool:
-        return super().ready() and "ready." in self.logs()
-
-    def client(self):
-        return self
+        return self._full_ready("ready.")
 
     @classmethod
     def version(cls) -> str:

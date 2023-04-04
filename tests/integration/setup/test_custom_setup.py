@@ -38,3 +38,17 @@ class test_custom_setup:
         assert r1.get() == "test_ready"
         assert r2.get() == "test_ready"
         assert celery_setup.app
+
+    def test_worker_is_connected_to_backend(self, celery_setup: CeleryTestSetup):
+        backend_urls = [backend.container.celeryconfig()["local_url"] for backend in celery_setup.backend_cluster.nodes]
+        worker: CeleryTestWorker
+        for worker in celery_setup.worker_cluster.nodes:
+            app = worker.app
+            assert app.backend.as_uri() in backend_urls
+
+    def test_worker_is_connected_to_broker(self, celery_setup: CeleryTestSetup):
+        broker_urls = [broker.container.celeryconfig()["local_url"] for broker in celery_setup.broker_cluster.nodes]
+        worker: CeleryTestWorker
+        for worker in celery_setup.worker_cluster.nodes:
+            app = worker.app
+            assert app.connection().as_uri().replace("guest:**@", "") in broker_urls

@@ -59,4 +59,4 @@ class CeleryTestSetup:
             return ready
 
         res = self.ping.s().delay()
-        return ready and res.get() == "pong"
+        return ready and res.get(timeout=30) == "pong"

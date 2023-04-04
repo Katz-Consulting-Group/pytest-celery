@@ -13,8 +13,8 @@ from pytest_celery import defaults
 
 class CeleryTestContainer(wrappers.Container):
     @abstractmethod
-    def client(self) -> Any:
-        NotImplementedError("CeleryTestContainer.client")
+    def client(self, max_tries: int = defaults.DEFAULT_READY_MAX_RETRIES) -> Any:
+        return self
 
     @abstractmethod
     def celeryconfig(self) -> dict:
@@ -22,11 +22,11 @@ class CeleryTestContainer(wrappers.Container):
 
     def ready(self):
         max_tries = defaults.DEFAULT_READY_MAX_RETRIES
-        tries = 0
-        while tries < max_tries:
+        tries = 1
+        while tries <= max_tries:
             try:
                 wait_for_callable(
-                    f"Waiting for test container to be ready: {self.name}",
+                    f" Container '{self.name}' is warming up",
                     super().ready,
                     timeout=defaults.DEFAULT_READY_TIMEOUT,
                 )
@@ -36,8 +36,20 @@ class CeleryTestContainer(wrappers.Container):
 
         raise ContainerNotReady(
             self,
-            f"Can't get test container to be ready (attempted {max_tries} times): {self.name}",
+            f"Can't get test container to be ready (attempted {tries} times): {self.name}",
         )
+
+    def _full_ready(self, match_log: str = "", check_client: bool = True) -> bool:
+        ready = super().ready()
+        if ready and match_log:
+            ready = ready and match_log in self.logs()
+        if ready and check_client:
+            wait_for_callable(
+                "Waiting for client to be ready",
+                self.client,
+            )
+            ready = ready and self.client() is not None
+        return ready
 
     @classmethod
     def env(cls: CeleryTestContainer) -> dict:
