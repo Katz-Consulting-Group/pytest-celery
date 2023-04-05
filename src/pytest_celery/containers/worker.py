@@ -42,11 +42,11 @@ class CeleryWorkerContainer(CeleryTestContainer):
             "app.py": app_module_src.encode(),
         }
         if function_worker_tasks:
-            function_worker_tasks = {
+            function_worker_tasks_src = {
                 f"{module.__name__.replace('.', '/')}.py": inspect.getsource(module).encode()
                 for module in function_worker_tasks
             }
-            initial_content.update(function_worker_tasks)
+            initial_content.update(function_worker_tasks_src)
         else:
             print("No tasks found")
         return initial_content

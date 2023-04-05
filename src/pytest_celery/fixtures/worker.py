@@ -12,7 +12,7 @@ def celery_worker(request: pytest.FixtureRequest) -> CeleryTestWorker:
 
 @pytest.fixture
 def celery_worker_cluster(celery_worker: CeleryTestWorker) -> CeleryWorkerCluster:
-    return CeleryWorkerCluster(celery_worker)
+    return CeleryWorkerCluster(celery_worker)  # type: ignore
 
 
 @pytest.fixture

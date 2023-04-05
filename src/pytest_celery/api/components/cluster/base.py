@@ -18,7 +18,7 @@ class CeleryTestCluster:
         if not all(isinstance(node, (CeleryTestNode, CeleryTestContainer)) for node in nodes):
             raise TypeError("All nodes must be CeleryTestNode or CeleryTestContainer")
 
-        self.nodes = nodes
+        self.nodes = nodes  # type: ignore
 
     @property
     def nodes(self) -> Tuple[CeleryTestNode]:
@@ -26,24 +26,23 @@ class CeleryTestCluster:
 
     @nodes.setter
     def nodes(self, nodes: Tuple[Union[CeleryTestNode, CeleryTestContainer]]) -> None:
-        self._nodes = self._set_nodes(*nodes)
+        self._nodes = self._set_nodes(*nodes)  # type: ignore
 
     @abstractmethod
     def _set_nodes(
-        self, *nodes: Tuple[Union[CeleryTestNode, CeleryTestContainer]], node_cls: Type[CeleryTestNode] = CeleryTestNode
+        self,
+        *nodes: Tuple[Union[CeleryTestNode, CeleryTestContainer]],
+        node_cls: Type[CeleryTestNode] = CeleryTestNode,
     ) -> Tuple[CeleryTestNode]:
-        return tuple(node_cls(node) if isinstance(node, CeleryTestContainer) else node for node in nodes)
+        return tuple(
+            node_cls(node)
+            if isinstance(
+                node,
+                CeleryTestContainer,
+            )
+            else node
+            for node in nodes
+        )  # type: ignore
 
     def ready(self) -> bool:
         return all(node.ready() for node in self.nodes)
-
-    # def __add__(self, nodes: Tuple[Union[CeleryTestNode, CeleryTestContainer]]) -> CeleryTestCluster:
-    #     if not isinstance(nodes, tuple):
-    #         nodes = (nodes,)
-    #     return self.__class__(*(self.nodes + nodes))
-
-    # def __iadd__(self, nodes: Tuple[Union[CeleryTestNode, CeleryTestContainer]]) -> CeleryTestCluster:
-    #     if not isinstance(nodes, tuple):
-    #         nodes = (nodes,)
-    #     self.nodes = self.nodes + nodes
-    #     return self

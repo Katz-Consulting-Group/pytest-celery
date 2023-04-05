@@ -11,7 +11,7 @@ app = Celery("celery_test_app")
 
 
 @after_setup_logger.connect
-def setup_loggers(logger, *args, **kwargs):
+def setup_loggers(logger: logging.Logger, *args: tuple, **kwargs: dict) -> None:
     # https://distributedpython.com/posts/celery-docker-and-the-missing-startup-banner/
     logger.addHandler(logging.StreamHandler(sys.stdout))
 

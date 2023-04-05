@@ -1,3 +1,5 @@
+from typing import Union
+
 from pytest_docker_tools.wrappers.container import wait_for_callable
 from redis import Redis
 
@@ -9,7 +11,7 @@ class RedisContainer(CeleryTestContainer):
     def ready(self) -> bool:
         return self._full_ready("Ready to accept connections")
 
-    def client(self, max_tries: int = defaults.DEFAULT_READY_MAX_RETRIES) -> Redis:
+    def client(self, max_tries: int = defaults.DEFAULT_READY_MAX_RETRIES) -> Union[Redis, None]:
         tries = 1
         while tries <= max_tries:
             try:
@@ -23,8 +25,9 @@ class RedisContainer(CeleryTestContainer):
                 if tries == max_tries:
                     raise e
                 tries += 1
+        return None
 
-    def celeryconfig(self, vhost="0") -> dict:
+    def celeryconfig(self, vhost: str = "0") -> dict:
         wait_for_callable(
             "Waiting for port to be ready",
             lambda: self.get_addr("6379/tcp"),

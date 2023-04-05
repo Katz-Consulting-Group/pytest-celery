@@ -12,7 +12,7 @@ def celery_broker(request: pytest.FixtureRequest) -> CeleryTestBroker:
 
 @pytest.fixture
 def celery_broker_cluster(celery_broker: CeleryTestBroker) -> CeleryBrokerCluster:
-    return CeleryBrokerCluster(celery_broker)
+    return CeleryBrokerCluster(celery_broker)  # type: ignore
 
 
 @pytest.fixture

@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from abc import abstractmethod
 from typing import Any
 
@@ -18,9 +16,9 @@ class CeleryTestContainer(wrappers.Container):
 
     @abstractmethod
     def celeryconfig(self) -> dict:
-        NotImplementedError("CeleryTestContainer.celeryconfig")
+        raise NotImplementedError("CeleryTestContainer.celeryconfig")
 
-    def ready(self):
+    def ready(self) -> bool:
         max_tries = defaults.DEFAULT_READY_MAX_RETRIES
         tries = 1
         while tries <= max_tries:
@@ -50,7 +48,3 @@ class CeleryTestContainer(wrappers.Container):
             )
             ready = ready and self.client() is not None
         return ready
-
-    @classmethod
-    def env(cls: CeleryTestContainer) -> dict:
-        NotImplementedError("CeleryTestContainer.env")

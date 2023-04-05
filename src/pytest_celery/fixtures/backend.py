@@ -12,7 +12,7 @@ def celery_backend(request: pytest.FixtureRequest) -> CeleryTestBackend:
 
 @pytest.fixture
 def celery_backend_cluster(celery_backend: CeleryTestBackend) -> CeleryBackendCluster:
-    return CeleryBackendCluster(celery_backend)
+    return CeleryBackendCluster(celery_backend)  # type: ignore
 
 
 @pytest.fixture

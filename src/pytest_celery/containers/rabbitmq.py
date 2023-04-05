@@ -24,7 +24,7 @@ class RabbitMQContainer(CeleryTestContainer):
                     raise e
                 tries += 1
 
-    def celeryconfig(self, vhost="/") -> dict:
+    def celeryconfig(self, vhost: str = "/") -> dict:
         wait_for_callable(
             "Waiting for port to be ready",
             lambda: self.get_addr("5672/tcp"),
