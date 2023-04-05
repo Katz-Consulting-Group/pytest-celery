@@ -3,9 +3,9 @@ import pytest
 from pytest_celery.api.components.worker.cluster import CeleryWorkerCluster
 from pytest_celery.api.components.worker.node import CeleryTestWorker
 from pytest_celery.api.setup import CeleryTestSetup
-from tests.shared.celery4.api import Celery4TestWorker
-from tests.shared.celery4.fixtures import *  # noqa
-from tests.shared.tasks import identity
+from tests.common.celery4.api import Celery4TestWorker
+from tests.common.celery4.fixtures import *  # noqa
+from tests.common.tasks import identity
 
 
 @pytest.fixture(scope="session")
@@ -15,7 +15,7 @@ def function_worker_celery_version() -> str:
 
 @pytest.fixture
 def function_worker_tasks() -> set:
-    from tests.shared import tasks
+    from tests.common import tasks
 
     return {tasks}
 

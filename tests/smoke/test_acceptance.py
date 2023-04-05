@@ -1,5 +1,5 @@
 from pytest_celery import CeleryTestSetup
-from tests.shared.tasks import identity
+from tests.common.tasks import identity
 from tests.smoke.tasks import add
 
 

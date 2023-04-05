@@ -6,10 +6,10 @@ from pytest_docker_tools import fxtr
 
 from pytest_celery import defaults
 from pytest_celery.containers.worker import CeleryWorkerContainer
-from tests.shared.celery4.api import Celery4TestWorker
+from tests.common.celery4.api import Celery4TestWorker
 
 celery4_worker_image = build(
-    path="tests/shared/celery4",
+    path="tests/common/celery4",
     tag="pytest-celery/components/worker:celery4",
 )
 

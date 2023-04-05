@@ -25,9 +25,9 @@ class CeleryWorkerContainer(CeleryTestContainer):
     @classmethod
     def initial_content(cls, function_worker_tasks: set) -> dict:
         from pytest_celery.components.worker import app as app_module
-        from pytest_celery.components.worker import shared
+        from pytest_celery.components.worker import common
 
-        function_worker_tasks.add(shared)
+        function_worker_tasks.add(common)
 
         app_module_src = inspect.getsource(app_module)
         import_string = ""

@@ -18,7 +18,7 @@ class CeleryTestSetup:
         self._backend_cluster = backend_cluster
         self._app = app
 
-        from pytest_celery.components.worker.shared import ping
+        from pytest_celery.components.worker.common import ping
 
         self.ping = ping
 

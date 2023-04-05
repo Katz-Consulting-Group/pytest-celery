@@ -1,7 +1,7 @@
 from celery.signals import after_task_publish
 
 from pytest_celery import CeleryTestSetup
-from tests.shared.tasks import identity
+from tests.common.tasks import identity
 
 
 class test_signals:
