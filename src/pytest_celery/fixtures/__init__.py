@@ -13,6 +13,7 @@ from pytest_celery.fixtures.setup import celery_setup_app
 from pytest_celery.fixtures.setup import celery_setup_app_name
 from pytest_celery.fixtures.setup import celery_setup_cls
 from pytest_celery.fixtures.setup import celery_setup_config
+from pytest_celery.fixtures.setup import celery_worker_app
 from pytest_celery.fixtures.worker import celery_worker
 from pytest_celery.fixtures.worker import celery_worker_cluster
 from pytest_celery.fixtures.worker import celery_worker_cluster_config

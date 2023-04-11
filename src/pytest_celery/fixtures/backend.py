@@ -19,25 +19,17 @@ def celery_backend_cluster(celery_backend: CeleryTestBackend) -> CeleryBackendCl
 def celery_backend_config(request: pytest.FixtureRequest) -> dict:
     try:
         celery_backend: CeleryTestBackend = request.getfixturevalue(defaults.CELERY_BACKEND)
-        return celery_backend.container.celeryconfig()
+        return celery_backend.config()
     except BaseException:
-        return {
-            "url": defaults.WORKER_ENV["CELERY_RESULT_BACKEND"],
-            "local_url": defaults.WORKER_ENV["CELERY_RESULT_BACKEND"],
-        }
+        # TODO: Add logging
+        return CeleryTestBackend.default_config()
 
 
 @pytest.fixture
 def celery_backend_cluster_config(request: pytest.FixtureRequest) -> dict:
     try:
         celery_backend_cluster: CeleryBackendCluster = request.getfixturevalue(defaults.CELERY_BACKEND_CLUSTER)
-        config = [celery_backend.container.celeryconfig() for celery_backend in celery_backend_cluster.nodes]
-        return {
-            "urls": [c["url"] for c in config],
-            "local_urls": [c["local_url"] for c in config],
-        }
+        return celery_backend_cluster.config()
     except BaseException:
-        return {
-            "urls": [defaults.WORKER_ENV["CELERY_RESULT_BACKEND"]],
-            "local_urls": [defaults.WORKER_ENV["CELERY_RESULT_BACKEND"]],
-        }
+        # TODO: Add logging
+        return CeleryBackendCluster.default_config()

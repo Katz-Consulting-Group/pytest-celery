@@ -46,3 +46,14 @@ class CeleryTestCluster:
 
     def ready(self) -> bool:
         return all(node.ready() for node in self.nodes)
+
+    def config(self, *args: tuple, **kwargs: dict) -> dict:
+        config = [node.container.celeryconfig() for node in self.nodes]
+        return {
+            "urls": [c["url"] for c in config],
+            "local_urls": [c["local_url"] for c in config],
+        }
+
+    @classmethod
+    def default_config(cls) -> dict:
+        return {}
