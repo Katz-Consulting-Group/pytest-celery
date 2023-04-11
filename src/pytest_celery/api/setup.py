@@ -23,6 +23,9 @@ class CeleryTestSetup:
 
         self.ping = ping
 
+    def __len__(self) -> int:
+        return len(self._worker_cluster) + len(self._broker_cluster) + len(self._backend_cluster)
+
     @property
     def app(self) -> Celery:
         return self._app

@@ -34,7 +34,8 @@ def celery_broker_cluster(
 
 class test_failover:
     def test_broker_failover(self, celery_setup: CeleryTestSetup):
-        celery_setup.broker_cluster.nodes[0].container.kill()
+        assert len(celery_setup.broker_cluster) == 2
+        celery_setup.broker_cluster[0].container.kill()
         res = identity.s("test_signals").delay()
         res = res.get()
         assert res == "test_signals"
