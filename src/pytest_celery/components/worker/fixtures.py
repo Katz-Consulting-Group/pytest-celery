@@ -58,8 +58,8 @@ def function_worker_celery_version(function_worker_session_cls: Type[CeleryWorke
 
 
 @pytest.fixture
-def function_worker_env(function_worker_cls: Type[CeleryWorkerContainer], celery_worker_config: dict) -> dict:
-    return function_worker_cls.env(celery_worker_config)
+def function_worker_env(function_worker_cls: Type[CeleryWorkerContainer], celery_worker_cluster_config: dict) -> dict:
+    return function_worker_cls.env(celery_worker_cluster_config)
 
 
 @pytest.fixture

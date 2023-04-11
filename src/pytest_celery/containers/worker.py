@@ -13,14 +13,15 @@ class CeleryWorkerContainer(CeleryTestContainer):
         return defaults.FUNCTION_WORKER_VERSION
 
     @classmethod
-    def env(cls, celery_worker_config: dict) -> dict:
-        celery_broker_config = celery_worker_config["celery_broker_config"]
-        celery_backend_config = celery_worker_config["celery_backend_config"]
-        celery_worker_config = {
-            "CELERY_BROKER_URL": celery_broker_config["url"],
-            "CELERY_RESULT_BACKEND": celery_backend_config["url"],
-        }
-        return {**defaults.FUNCTION_WORKER_ENV, **celery_worker_config}
+    def env(cls, celery_worker_cluster_config: dict) -> dict:
+        celery_broker_cluster_config = celery_worker_cluster_config.get("celery_broker_cluster_config")
+        celery_backend_cluster_config = celery_worker_cluster_config.get("celery_backend_cluster_config")
+        env = {}
+        if celery_broker_cluster_config:
+            env["CELERY_BROKER_URL"] = ";".join(celery_broker_cluster_config["urls"])
+        if celery_backend_cluster_config:
+            env["CELERY_RESULT_BACKEND"] = ";".join(celery_backend_cluster_config["urls"])
+        return {**defaults.FUNCTION_WORKER_ENV, **env}
 
     @classmethod
     def initial_content(cls, function_worker_tasks: set) -> dict:

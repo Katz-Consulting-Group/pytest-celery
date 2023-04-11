@@ -16,16 +16,19 @@ def celery_setup_app_name() -> str:
 
 
 @pytest.fixture
-def celery_setup_app(celery_worker_config: dict, celery_setup_app_name: str) -> Celery:
-    celery_broker_config = celery_worker_config["celery_broker_config"]
-    celery_backend_config = celery_worker_config["celery_backend_config"]
+def celery_setup_config(celery_worker_cluster_config: dict) -> dict:
+    celery_broker_cluster_config = celery_worker_cluster_config["celery_broker_cluster_config"]
+    celery_backend_cluster_config = celery_worker_cluster_config["celery_backend_cluster_config"]
+    return {
+        "broker_url": ";".join(celery_broker_cluster_config["local_urls"]),
+        "result_backend": ";".join(celery_backend_cluster_config["local_urls"]),
+    }
+
+
+@pytest.fixture
+def celery_setup_app(celery_setup_config: dict, celery_setup_app_name: str) -> Celery:
     app = Celery(celery_setup_app_name)
-    app.config_from_object(
-        {
-            "broker_url": celery_broker_config["local_url"],
-            "result_backend": celery_backend_config["local_url"],
-        }
-    )
+    app.config_from_object(celery_setup_config)
     return app
 
 
@@ -50,3 +53,17 @@ def celery_setup(
     )
     setup.ready()
     return setup
+
+
+# @pytest.fixture
+# def celery_setup_app(celery_worker_config: dict, celery_setup_app_name: str) -> Celery:
+#     celery_broker_config = celery_worker_config["celery_broker_config"]
+#     celery_backend_config = celery_worker_config["celery_backend_config"]
+#     app = Celery(celery_setup_app_name)
+#     app.config_from_object(
+#         {
+#             "broker_url": celery_broker_config["local_url"],
+#             "result_backend": celery_backend_config["local_url"],
+#         }
+#     )
+#     return app
