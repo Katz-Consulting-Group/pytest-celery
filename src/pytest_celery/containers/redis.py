@@ -9,7 +9,14 @@ from pytest_celery.api.container import CeleryTestContainer
 
 class RedisContainer(CeleryTestContainer):
     def ready(self) -> bool:
-        return self._full_ready("Ready to accept connections")
+        ready = False
+        if self._full_ready("Ready to accept connections", check_client=True):
+            c: Redis = self.client()
+            if c.ping():
+                c.set("ready", 1)
+                ready = bool(c.get("ready"))
+                c.delete("ready")
+        return ready
 
     def client(self, max_tries: int = defaults.DEFAULT_READY_MAX_RETRIES) -> Union[Redis, None]:
         tries = 1
