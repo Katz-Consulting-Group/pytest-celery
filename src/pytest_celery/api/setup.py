@@ -67,7 +67,7 @@ class CeleryTestSetup:
 
     @classmethod
     def name(cls) -> str:
-        return defaults.FUNCTION_WORKER_APP_NAME
+        return defaults.DEFAULT_WORKER_APP_NAME
 
     @classmethod
     def config(cls, celery_worker_cluster_config: dict) -> dict:

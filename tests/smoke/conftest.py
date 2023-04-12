@@ -17,7 +17,7 @@ def celery_worker_cluster(request: pytest.FixtureRequest) -> CeleryWorkerCluster
 
 
 @pytest.fixture
-def function_worker_tasks() -> set:
+def default_worker_tasks() -> set:
     from tests.common import tasks as common_tasks
     from tests.smoke import tasks as smoke_tasks
 

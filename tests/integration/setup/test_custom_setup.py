@@ -10,12 +10,12 @@ from tests.common.test_setup import shared_celery_test_setup_suite
 
 
 @pytest.fixture(scope="session")
-def function_worker_celery_version() -> str:
+def default_worker_celery_version() -> str:
     return "5.2.7"
 
 
 @pytest.fixture
-def function_worker_tasks() -> set:
+def default_worker_tasks() -> set:
     from tests.common import tasks
 
     return {tasks}

@@ -10,9 +10,9 @@ from pytest_celery.containers.rabbitmq import RabbitMQContainer
 from tests.common.tasks import identity
 
 failover_broker = container(
-    image="{rabbitmq_function_broker_image}",
-    ports=fxtr("rabbitmq_function_broker_ports"),
-    environment=fxtr("rabbitmq_function_broker_env"),
+    image="{default_rabbitmq_broker_image}",
+    ports=fxtr("default_rabbitmq_broker_ports"),
+    environment=fxtr("default_rabbitmq_broker_env"),
     network="{DEFAULT_NETWORK.name}",
     wrapper_class=RabbitMQContainer,
     timeout=defaults.RABBITMQ_CONTAINER_TIMEOUT,
