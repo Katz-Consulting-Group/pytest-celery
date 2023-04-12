@@ -9,9 +9,11 @@ from pytest_docker_tools import volume
 
 from pytest_celery import defaults
 from pytest_celery.api.components.worker.node import CeleryTestWorker
+from pytest_celery.components.backend.memcached.api import MemcachedTestBackend
 from pytest_celery.components.backend.redis.api import RedisTestBackend
 from pytest_celery.components.broker.rabbitmq.api import RabbitMQTestBroker
 from pytest_celery.components.broker.redis.api import RedisTestBroker
+from pytest_celery.containers.memcached import MemcachedContainer
 from pytest_celery.containers.rabbitmq import RabbitMQContainer
 from pytest_celery.containers.redis import RedisContainer
 from pytest_celery.containers.worker import CeleryWorkerContainer
@@ -78,6 +80,23 @@ def celery_test_worker(worker_test_container: CeleryWorkerContainer, celery_setu
         container=worker_test_container,
         app=celery_setup_app,
     )
+
+
+memcached_image = fetch(repository=defaults.MEMCACHED_IMAGE)
+memcached_test_container = container(
+    image="{memcached_image.id}",
+    scope="session",
+    ports=defaults.MEMCACHED_PORTS,
+    environment=defaults.MEMCACHED_ENV,
+    network="{unit_tests_network.name}",
+    wrapper_class=MemcachedContainer,
+    timeout=defaults.MEMCACHED_CONTAINER_TIMEOUT,
+)
+
+
+@pytest.fixture
+def celery_memcached_backend(memcached_test_container: MemcachedContainer) -> MemcachedTestBackend:
+    return MemcachedTestBackend(memcached_test_container)
 
 
 redis_image = fetch(repository=defaults.REDIS_IMAGE)

@@ -36,10 +36,12 @@ CELERY_BROKER_CLUSTER = "celery_broker_cluster"
 
 # Components fixtures
 CELERY_TEST_WORKER = "celery_test_worker"
+CELERY_MEMCACHED_BACKEND = "celery_memcached_backend"
 CELERY_REDIS_BACKEND = "celery_redis_backend"
 CELERY_REDIS_BROKER = "celery_redis_broker"
 CELERY_RABBITMQ_BROKER = "celery_rabbitmq_broker"
 DEFAULT_WORKER = "default_worker"
+DEFAULT_MEMCACHED_BACKEND = "default_memcached_backend"
 DEFAULT_REDIS_BACKEND = "default_redis_backend"
 DEFAULT_RABBITMQ_BROKER = "default_rabbitmq_broker"
 DEFAULT_REDIS_BROKER = "default_redis_broker"
@@ -48,12 +50,15 @@ DEFAULT_REDIS_BROKER = "default_redis_broker"
 ######################
 
 DEFAULT_WORKERS = (DEFAULT_WORKER,)
-DEFAULT_BACKENDS = (DEFAULT_REDIS_BACKEND,)
+DEFAULT_BACKENDS = (
+    DEFAULT_REDIS_BACKEND,
+    DEFAULT_MEMCACHED_BACKEND,
+)
 DEFAULT_BROKERS = (
     DEFAULT_RABBITMQ_BROKER,
     DEFAULT_REDIS_BROKER,
 )
-
+ALL_MEMCACHED_FIXTURES = (DEFAULT_MEMCACHED_BACKEND,)
 ALL_REDIS_FIXTURES = (
     DEFAULT_REDIS_BACKEND,
     DEFAULT_REDIS_BROKER,
@@ -78,7 +83,10 @@ ALL_CLUSTERS_FIXTURES = (
     CELERY_BROKER_CLUSTER,
 )
 ALL_CELERY_WORKERS = (CELERY_TEST_WORKER,)
-ALL_CELERY_BACKENDS = (CELERY_REDIS_BACKEND,)
+ALL_CELERY_BACKENDS = (
+    CELERY_REDIS_BACKEND,
+    CELERY_MEMCACHED_BACKEND,
+)
 ALL_CELERY_BROKERS = (
     CELERY_REDIS_BROKER,
     CELERY_RABBITMQ_BROKER,
@@ -107,6 +115,26 @@ DEFAULT_WORKER_APP_NAME = WORKER_CELERY_APP_NAME
 DEFAULT_WORKER_VERSION = WORKER_CELERY_VERSION
 DEFAULT_WORKER_ENV = WORKER_ENV
 DEFAULT_WORKER_CONTAINER_TIMEOUT = 30
+
+##########################
+# Memcached Container Settings
+##########################
+
+# Default container settings for all memcached container fixtures
+
+MEMCACHED_IMAGE = "memcached:latest"
+MEMCACHED_PORTS = {"11211/tcp": None}
+MEMCACHED_ENV: dict = {}
+MEMCACHED_CONTAINER_TIMEOUT = DEFAULT_READY_TIMEOUT
+
+# Docker containers settings
+#################################################
+
+# Default Backend #
+####################
+DEFAULT_MEMCACHED_BACKEND_ENV = MEMCACHED_ENV
+DEFAULT_MEMCACHED_BACKEND_IMAGE = MEMCACHED_IMAGE
+DEFAULT_MEMCACHED_BACKEND_PORTS = MEMCACHED_PORTS
 
 ##########################
 # Redis Container Settings

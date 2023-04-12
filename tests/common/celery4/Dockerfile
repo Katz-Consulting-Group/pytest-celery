@@ -4,11 +4,11 @@ FROM python:3.9-slim-buster
 RUN adduser --disabled-password --gecos "" test_user
 
 # Install system dependencies
-RUN apt-get update && apt-get install -y build-essential
+RUN apt-get update && apt-get install -y build-essential zlib1g-dev libmemcached-dev memcached
 
 # Install Python dependencies
 RUN pip install --no-cache-dir --upgrade pip \
-    && pip install --no-cache-dir celery[redis]==4.4.7
+    && pip install --no-cache-dir celery[redis]==4.4.7  python-memcached
 
 # The workdir must be /app
 WORKDIR /app

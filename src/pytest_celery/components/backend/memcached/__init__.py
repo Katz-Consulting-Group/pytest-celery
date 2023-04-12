@@ -1,0 +1,10 @@
+# flake8: noqa
+
+from pytest_celery.components.backend.memcached.api import MemcachedTestBackend
+from pytest_celery.components.backend.memcached.fixtures import celery_memcached_backend
+from pytest_celery.components.backend.memcached.fixtures import default_memcached_backend
+from pytest_celery.components.backend.memcached.fixtures import default_memcached_backend_celeryconfig
+from pytest_celery.components.backend.memcached.fixtures import default_memcached_backend_cls
+from pytest_celery.components.backend.memcached.fixtures import default_memcached_backend_env
+from pytest_celery.components.backend.memcached.fixtures import default_memcached_backend_image
+from pytest_celery.components.backend.memcached.fixtures import default_memcached_backend_ports
