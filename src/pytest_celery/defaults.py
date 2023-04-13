@@ -16,7 +16,17 @@ try:
 except Exception:
     # This is a workaround for a bug in pytest-docker-tools
     # that causes the network fixture to fail when running tests in parallel.
-    DEFAULT_NETWORK = network()
+    from time import sleep
+
+    tries = 1
+    while tries <= 5:
+        try:
+            DEFAULT_NETWORK = network()
+        except Exception as e:
+            if tries == 3:
+                raise e
+            tries += 1
+            sleep(30)
 
 DEFAULT_READY_TIMEOUT = 30
 DEFAULT_READY_MAX_RETRIES = 3
