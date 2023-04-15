@@ -18,6 +18,7 @@ from pytest_celery.containers.rabbitmq import RabbitMQContainer
 from pytest_celery.containers.redis import RedisContainer
 from pytest_celery.containers.worker import CeleryWorkerContainer
 from tests.unit.docker.api import UnitTestContainer
+from tests.unit.docker.api import UnitWorkerContainer
 
 try:
     unit_tests_network = network(scope="session")
@@ -68,27 +69,22 @@ worker_test_container_volume = volume(
 )
 
 
-class UnitWorkerContainer(CeleryWorkerContainer):
-    def _full_ready(self, match_log: str = "", check_client: bool = True) -> bool:
-        return super()._full_ready(match_log=match_log, check_client=False)
-
-
 @pytest.fixture(scope="session")
-def default_worker_cls() -> Type[CeleryWorkerContainer]:
+def default_worker_container_cls() -> Type[CeleryWorkerContainer]:
     return UnitWorkerContainer
 
 
 @pytest.fixture(scope="session")
 def worker_test_container_initial_content(
-    default_worker_cls: Type[CeleryWorkerContainer],
+    default_worker_container_cls: Type[CeleryWorkerContainer],
     worker_test_container_tasks: set,
 ) -> dict:
-    return default_worker_cls.initial_content(worker_test_container_tasks)
+    return default_worker_container_cls.initial_content(worker_test_container_tasks)
 
 
 @pytest.fixture(scope="session")
-def worker_test_container_tasks(default_worker_cls: Type[CeleryWorkerContainer]) -> set:
-    return default_worker_cls.tasks_modules()
+def worker_test_container_tasks(default_worker_container_cls: Type[CeleryWorkerContainer]) -> set:
+    return default_worker_container_cls.tasks_modules()
 
 
 worker_test_container = container(

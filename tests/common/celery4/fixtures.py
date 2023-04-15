@@ -7,6 +7,7 @@ from pytest_docker_tools import fxtr
 from pytest_celery import defaults
 from pytest_celery.containers.worker import CeleryWorkerContainer
 from tests.common.celery4.api import Celery4TestWorker
+from tests.common.celery4.api import Worker4Container
 
 celery4_worker_image = build(
     path="tests/common/celery4",
@@ -15,7 +16,10 @@ celery4_worker_image = build(
 
 
 @pytest.fixture
-def celery4_worker(celery4_worker_container: CeleryWorkerContainer, celery_setup_app: Celery) -> Celery4TestWorker:
+def celery4_worker(
+    celery4_worker_container: CeleryWorkerContainer,
+    celery_setup_app: Celery,
+) -> Celery4TestWorker:
     return Celery4TestWorker(
         celery4_worker_container,
         app=celery_setup_app,
@@ -27,6 +31,6 @@ celery4_worker_container = container(
     environment=fxtr("default_worker_env"),
     network="{DEFAULT_NETWORK.name}",
     volumes={"{default_worker_volume.name}": defaults.DEFAULT_WORKER_VOLUME},
-    wrapper_class=CeleryWorkerContainer,
+    wrapper_class=Worker4Container,
     timeout=defaults.DEFAULT_WORKER_CONTAINER_TIMEOUT,
 )
