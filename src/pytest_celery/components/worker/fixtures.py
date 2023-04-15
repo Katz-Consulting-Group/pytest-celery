@@ -13,7 +13,10 @@ from pytest_celery.containers.worker import CeleryWorkerContainer
 
 
 @pytest.fixture
-def celery_setup_worker(default_worker: CeleryWorkerContainer, celery_setup_app: Celery) -> CeleryTestWorker:
+def celery_setup_worker(
+    default_worker: CeleryWorkerContainer,
+    celery_setup_app: Celery,
+) -> CeleryTestWorker:
     return CeleryTestWorker(
         container=default_worker,
         app=celery_setup_app,
@@ -58,7 +61,10 @@ def default_worker_celery_version(default_worker_session_cls: Type[CeleryWorkerC
 
 
 @pytest.fixture
-def default_worker_env(default_worker_cls: Type[CeleryWorkerContainer], celery_worker_cluster_config: dict) -> dict:
+def default_worker_env(
+    default_worker_cls: Type[CeleryWorkerContainer],
+    celery_worker_cluster_config: dict,
+) -> dict:
     return default_worker_cls.env(celery_worker_cluster_config)
 
 

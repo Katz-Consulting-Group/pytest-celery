@@ -1,3 +1,5 @@
+from typing import Type
+
 import pytest
 from celery import Celery
 from pytest_docker_tools import build
@@ -66,14 +68,27 @@ worker_test_container_volume = volume(
 )
 
 
-@pytest.fixture(scope="session")
-def worker_test_container_initial_content(worker_test_container_tasks: set) -> dict:
-    return CeleryWorkerContainer.initial_content(worker_test_container_tasks)
+class UnitWorkerContainer(CeleryWorkerContainer):
+    def _full_ready(self, match_log: str = "", check_client: bool = True) -> bool:
+        return super()._full_ready(match_log=match_log, check_client=False)
 
 
 @pytest.fixture(scope="session")
-def worker_test_container_tasks() -> set:
-    return CeleryWorkerContainer.tasks_modules()
+def default_worker_cls() -> Type[CeleryWorkerContainer]:
+    return UnitWorkerContainer
+
+
+@pytest.fixture(scope="session")
+def worker_test_container_initial_content(
+    default_worker_cls: Type[CeleryWorkerContainer],
+    worker_test_container_tasks: set,
+) -> dict:
+    return default_worker_cls.initial_content(worker_test_container_tasks)
+
+
+@pytest.fixture(scope="session")
+def worker_test_container_tasks(default_worker_cls: Type[CeleryWorkerContainer]) -> set:
+    return default_worker_cls.tasks_modules()
 
 
 worker_test_container = container(
@@ -82,13 +97,16 @@ worker_test_container = container(
     environment=defaults.DEFAULT_WORKER_ENV,
     network="{unit_tests_network.name}",
     volumes={"{worker_test_container_volume.name}": {"bind": "/app", "mode": "rw"}},
-    wrapper_class=CeleryWorkerContainer,
+    wrapper_class=UnitWorkerContainer,
     timeout=defaults.DEFAULT_WORKER_CONTAINER_TIMEOUT,
 )
 
 
 @pytest.fixture
-def celery_setup_worker(worker_test_container: CeleryWorkerContainer, celery_setup_app: Celery) -> CeleryTestWorker:
+def celery_setup_worker(
+    worker_test_container: UnitWorkerContainer,
+    celery_setup_app: Celery,
+) -> CeleryTestWorker:
     return CeleryTestWorker(
         container=worker_test_container,
         app=celery_setup_app,

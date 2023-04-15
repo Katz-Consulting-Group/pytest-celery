@@ -12,7 +12,7 @@ from pytest_celery import defaults
 class CeleryTestContainer(wrappers.Container):
     @abstractmethod
     def client(self, max_tries: int = defaults.DEFAULT_READY_MAX_RETRIES) -> Any:
-        return self
+        raise NotImplementedError("CeleryTestContainer.client")
 
     @abstractmethod
     def celeryconfig(self) -> dict:
