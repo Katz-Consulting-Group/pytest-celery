@@ -16,3 +16,9 @@ class test_celery_test_setup(shared_celery_test_setup_suite):
     def test_ready(self, celery_setup: CeleryTestSetup):
         r = identity.s("test_ready").delay()
         assert r.get() == "test_ready"
+
+    def test_celery_test_setup_ready_ping(self, celery_setup: CeleryTestSetup):
+        assert celery_setup.ready(ping=True)
+
+    def test_celery_test_setup_ready_ping_false(self, celery_setup: CeleryTestSetup):
+        assert celery_setup.ready(ping=False)
