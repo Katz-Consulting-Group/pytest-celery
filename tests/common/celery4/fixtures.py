@@ -26,7 +26,7 @@ celery4_worker_container = container(
     image="{celery4_worker_image.id}",
     environment=fxtr("default_worker_env"),
     network="{DEFAULT_NETWORK.name}",
-    volumes={"{default_worker_volume.name}": {"bind": "/app", "mode": "rw"}},
+    volumes={"{default_worker_volume.name}": defaults.DEFAULT_WORKER_VOLUME},
     wrapper_class=CeleryWorkerContainer,
     timeout=defaults.DEFAULT_WORKER_CONTAINER_TIMEOUT,
 )

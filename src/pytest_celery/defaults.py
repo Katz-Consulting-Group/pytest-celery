@@ -113,6 +113,10 @@ WORKER_ENV = {
     "LOG_LEVEL": "INFO",
     "PYTHONUNBUFFERED": "1",
 }
+WORKER_VOLUME = {
+    "bind": "/app",
+    "mode": "rw",
+}
 
 # Docker containers settings
 #################################################
@@ -123,6 +127,7 @@ DEFAULT_WORKER_APP_NAME = WORKER_CELERY_APP_NAME
 DEFAULT_WORKER_VERSION = WORKER_CELERY_VERSION
 DEFAULT_WORKER_ENV = WORKER_ENV
 DEFAULT_WORKER_CONTAINER_TIMEOUT = DEFAULT_READY_TIMEOUT
+DEFAULT_WORKER_VOLUME = WORKER_VOLUME
 
 ##########################
 # Redis Container Settings

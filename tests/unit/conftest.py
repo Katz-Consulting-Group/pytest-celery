@@ -96,7 +96,7 @@ worker_test_container = container(
     scope="session",
     environment=defaults.DEFAULT_WORKER_ENV,
     network="{unit_tests_network.name}",
-    volumes={"{worker_test_container_volume.name}": {"bind": "/app", "mode": "rw"}},
+    volumes={"{worker_test_container_volume.name}": defaults.DEFAULT_WORKER_VOLUME},
     wrapper_class=UnitWorkerContainer,
     timeout=defaults.DEFAULT_WORKER_CONTAINER_TIMEOUT,
 )
