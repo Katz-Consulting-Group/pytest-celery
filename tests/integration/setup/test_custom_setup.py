@@ -24,11 +24,11 @@ def default_worker_tasks() -> set:
 @pytest.fixture
 def celery_worker_cluster(
     celery_worker: CeleryTestWorker,
-    celery4_test_worker: Celery4TestWorker,
+    celery4_worker: Celery4TestWorker,
 ) -> CeleryWorkerCluster:
     return CeleryWorkerCluster(
         celery_worker,
-        celery4_test_worker,
+        celery4_worker,
     )
 
 

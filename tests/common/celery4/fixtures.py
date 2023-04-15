@@ -15,14 +15,14 @@ celery4_worker_image = build(
 
 
 @pytest.fixture
-def celery4_test_worker(celery4_worker: CeleryWorkerContainer, celery_setup_app: Celery) -> Celery4TestWorker:
+def celery4_worker(celery4_worker_container: CeleryWorkerContainer, celery_setup_app: Celery) -> Celery4TestWorker:
     return Celery4TestWorker(
-        celery4_worker,
+        celery4_worker_container,
         app=celery_setup_app,
     )
 
 
-celery4_worker = container(
+celery4_worker_container = container(
     image="{celery4_worker_image.id}",
     environment=fxtr("default_worker_env"),
     network="{DEFAULT_NETWORK.name}",

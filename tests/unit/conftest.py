@@ -88,7 +88,7 @@ worker_test_container = container(
 
 
 @pytest.fixture
-def celery_test_worker(worker_test_container: CeleryWorkerContainer, celery_setup_app: Celery) -> CeleryTestWorker:
+def celery_setup_worker(worker_test_container: CeleryWorkerContainer, celery_setup_app: Celery) -> CeleryTestWorker:
     return CeleryTestWorker(
         container=worker_test_container,
         app=celery_setup_app,

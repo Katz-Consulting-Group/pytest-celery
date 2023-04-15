@@ -33,7 +33,7 @@ class RedisContainer(CeleryTestContainer):
                 if tries == max_tries:
                     raise e
                 tries += 1
-                sleep(2)
+                sleep(5)
         return None
 
     def celeryconfig(self, vhost: str = "0") -> dict:

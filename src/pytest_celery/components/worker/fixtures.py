@@ -13,7 +13,7 @@ from pytest_celery.containers.worker import CeleryWorkerContainer
 
 
 @pytest.fixture
-def celery_test_worker(default_worker: CeleryWorkerContainer, celery_setup_app: Celery) -> CeleryTestWorker:
+def celery_setup_worker(default_worker: CeleryWorkerContainer, celery_setup_app: Celery) -> CeleryTestWorker:
     return CeleryTestWorker(
         container=default_worker,
         app=celery_setup_app,
