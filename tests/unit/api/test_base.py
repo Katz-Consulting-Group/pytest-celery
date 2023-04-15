@@ -8,10 +8,28 @@ class test_celery_test_node:
         node = CeleryTestNode(unit_tests_container)
         assert node.ready()
 
+    def test_default_config_format(self, unit_tests_container: CeleryTestContainer):
+        node = CeleryTestNode(unit_tests_container)
+        assert node.default_config() == dict()
+
 
 class test_celery_test_cluster:
-    def test_ready(self, unit_tests_container: CeleryTestContainer, local_test_container: CeleryTestContainer):
+    def test_ready(
+        self,
+        unit_tests_container: CeleryTestContainer,
+        local_test_container: CeleryTestContainer,
+    ):
         node1 = CeleryTestNode(unit_tests_container)
         node2 = CeleryTestNode(local_test_container)
         cluster = CeleryTestCluster(node1, node2)
         assert cluster.ready()
+
+    def test_default_config_format(
+        self,
+        unit_tests_container: CeleryTestContainer,
+        local_test_container: CeleryTestContainer,
+    ):
+        node1 = CeleryTestNode(unit_tests_container)
+        node2 = CeleryTestNode(local_test_container)
+        cluster = CeleryTestCluster(node1, node2)
+        assert cluster.default_config() == dict()
