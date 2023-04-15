@@ -9,9 +9,11 @@ from pytest_celery.api.container import CeleryTestContainer
 
 
 class RedisContainer(CeleryTestContainer):
+    __ready_prompt__ = "Ready to accept connections"
+
     def ready(self) -> bool:
         ready = False
-        if self._full_ready("Ready to accept connections", check_client=True):
+        if self._full_ready(self.__ready_prompt__, check_client=True):
             c: Redis = self.client()  # type: ignore
             if c.ping():
                 c.set("ready", "1")

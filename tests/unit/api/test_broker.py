@@ -10,8 +10,8 @@ class test_celery_test_broker:
 
     def test_default_config_format(self, unit_tests_container: CeleryTestContainer):
         node = CeleryTestBroker(unit_tests_container)
-        expected_format = ["url", "local_url"]
-        assert list(node.default_config().keys()) == expected_format
+        expected_format = {"url", "local_url"}
+        assert set(node.default_config().keys()) == expected_format
 
 
 class test_celery_broker_cluster:
@@ -33,5 +33,5 @@ class test_celery_broker_cluster:
         node1 = CeleryTestBroker(unit_tests_container)
         node2 = CeleryTestBroker(local_test_container)
         cluster = CeleryBrokerCluster(node1, node2)
-        expected_format = ["urls", "local_urls"]
-        assert list(cluster.default_config().keys()) == expected_format
+        expected_format = {"urls", "local_urls"}
+        assert set(cluster.default_config().keys()) == expected_format

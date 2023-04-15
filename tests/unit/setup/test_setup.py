@@ -27,8 +27,8 @@ class test_celery_test_setup(shared_celery_test_setup_suite):
         assert celery_setup.name()
 
     def test_setup_config_format(self, celery_setup: CeleryTestSetup, celery_worker_cluster_config: dict):
-        expected_format = ["broker_url", "result_backend"]
-        assert list(celery_setup.config(celery_worker_cluster_config).keys()) == expected_format
+        expected_format = {"broker_url", "result_backend"}
+        assert set(celery_setup.config(celery_worker_cluster_config).keys()) == expected_format
 
     def test_setup_app(self, celery_setup: CeleryTestSetup):
         assert isinstance(celery_setup.app, Celery)
