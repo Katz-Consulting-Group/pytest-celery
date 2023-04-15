@@ -31,8 +31,8 @@ except Exception:
         except Exception as e:
             if tries == 3:
                 raise e
+            sleep(30 * tries)
             tries += 1
-            sleep(30)
 
 unit_tests_image = build(
     path="tests/unit/docker",
