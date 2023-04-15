@@ -10,5 +10,5 @@ class Celery4TestWorker(CeleryTestWorker):
 
 
 class Worker4Container(CeleryWorkerContainer):
-    def client(self, max_tries: int = defaults.DEFAULT_READY_MAX_RETRIES) -> Any:
+    def client(self, max_tries: int = defaults.DEFAULT_MAX_RETRIES) -> Any:
         return self

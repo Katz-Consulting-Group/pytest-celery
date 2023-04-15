@@ -11,6 +11,8 @@ from pytest_docker_tools import network
 # Docker
 ##########
 
+DEFAULT_READY_TIMEOUT = 30
+DEFAULT_MAX_RETRIES = 5
 try:
     DEFAULT_NETWORK = network()
 except Exception:
@@ -19,7 +21,7 @@ except Exception:
     from time import sleep
 
     tries = 1
-    while tries <= 5:
+    while tries <= DEFAULT_MAX_RETRIES:
         try:
             DEFAULT_NETWORK = network()
         except Exception as e:
@@ -28,8 +30,6 @@ except Exception:
             sleep(5 * tries)
             tries += 1
 
-DEFAULT_READY_TIMEOUT = 30
-DEFAULT_READY_MAX_RETRIES = 3
 
 ##########
 # Fixtures

@@ -12,9 +12,19 @@ class RedisContainer(CeleryTestContainer):
     __ready_prompt__ = "Ready to accept connections"
 
     def ready(self) -> bool:
-        return self._full_ready(self.__ready_prompt__)
+        return self._full_ready(self.__ready_prompt__, check_client=False)
 
-    def client(self, max_tries: int = defaults.DEFAULT_READY_MAX_RETRIES) -> Union[Redis, None]:
+    def _full_ready(self, match_log: str = "", check_client: bool = True) -> bool:
+        ready = super()._full_ready(match_log, check_client)
+        if ready and check_client:
+            c: Redis = self.client()  # type: ignore
+            if c.ping():
+                c.set("ready", "1")
+                ready = c.get("ready") == "1"
+                c.delete("ready")
+        return ready
+
+    def client(self, max_tries: int = defaults.DEFAULT_MAX_RETRIES) -> Union[Redis, None]:
         tries = 1
         while tries <= max_tries:
             try:
@@ -32,10 +42,14 @@ class RedisContainer(CeleryTestContainer):
         return None
 
     def celeryconfig(self, vhost: str = "0") -> dict:
-        wait_for_callable(
-            "Waiting for port to be ready",
-            lambda: self.get_addr("6379/tcp"),
-        )
+        try:
+            wait_for_callable(
+                "Waiting for port to be ready",
+                lambda: self.get_addr("6379/tcp"),
+            )
+        except IndexError:
+            sleep(1)
+
         _, port = self.get_addr("6379/tcp")
 
         hostname = self.attrs["Config"]["Hostname"]

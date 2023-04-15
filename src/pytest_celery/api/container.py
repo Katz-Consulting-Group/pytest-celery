@@ -11,7 +11,7 @@ from pytest_celery import defaults
 
 class CeleryTestContainer(wrappers.Container):
     @abstractmethod
-    def client(self, max_tries: int = defaults.DEFAULT_READY_MAX_RETRIES) -> Any:
+    def client(self, max_tries: int = defaults.DEFAULT_MAX_RETRIES) -> Any:
         raise NotImplementedError("CeleryTestContainer.client")
 
     @abstractmethod
@@ -19,7 +19,7 @@ class CeleryTestContainer(wrappers.Container):
         raise NotImplementedError("CeleryTestContainer.celeryconfig")
 
     def ready(self) -> bool:
-        max_tries = defaults.DEFAULT_READY_MAX_RETRIES
+        max_tries = defaults.DEFAULT_MAX_RETRIES
         tries = 1
         while tries <= max_tries:
             try:

@@ -11,8 +11,7 @@ class test_celery_worker_container:
         assert worker_test_container._full_ready(CeleryWorkerContainer.__ready_prompt__)
 
     def test_client(self, worker_test_container: CeleryWorkerContainer):
-        with pytest.raises(NotImplementedError):
-            worker_test_container.client()
+        worker_test_container.client()
 
     def test_celeryconfig(self, worker_test_container: CeleryWorkerContainer):
         with pytest.raises(NotImplementedError):

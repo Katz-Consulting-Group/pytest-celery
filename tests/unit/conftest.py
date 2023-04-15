@@ -28,7 +28,7 @@ except Exception:
     from time import sleep
 
     tries = 1
-    while tries <= 5:
+    while tries <= defaults.DEFAULT_MAX_RETRIES:
         try:
             unit_tests_network = network(scope="session")
         except Exception as e:

@@ -14,7 +14,7 @@ class CeleryTestNode:
     def container(self) -> CeleryTestContainer:
         return self._container
 
-    def ready(self, max_tries: int = defaults.DEFAULT_READY_MAX_RETRIES) -> bool:
+    def ready(self, max_tries: int = defaults.DEFAULT_MAX_RETRIES) -> bool:
         tries = 1
         while tries <= max_tries:
             try:

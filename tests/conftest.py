@@ -14,7 +14,7 @@ from pytest_celery.containers.worker import CeleryWorkerContainer
 
 
 class WorkerContainer(CeleryWorkerContainer):
-    def client(self, max_tries: int = defaults.DEFAULT_READY_MAX_RETRIES) -> Any:
+    def client(self, max_tries: int = defaults.DEFAULT_MAX_RETRIES) -> Any:
         return self
 
 

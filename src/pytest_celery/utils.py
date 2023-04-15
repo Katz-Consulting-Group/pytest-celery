@@ -6,8 +6,13 @@ from typing import Union
 import pytest
 from pytest_lazyfixture import lazy_fixture
 
+from pytest_celery import defaults
 
-def resilient_getfixturevalue(request: pytest.FixtureRequest, max_tries: int = 5) -> Any:
+
+def resilient_getfixturevalue(
+    request: pytest.FixtureRequest,
+    max_tries: int = defaults.DEFAULT_MAX_RETRIES,
+) -> Any:
     e = RuntimeError(f"Failed to get fixture value: '{request.param}'")
     tries = 1
     while tries <= max_tries:
@@ -20,7 +25,10 @@ def resilient_getfixturevalue(request: pytest.FixtureRequest, max_tries: int = 5
             tries += 1
 
 
-def resilient_lazy_fixture(names: Union[str, List[str]], max_tries: int = 5) -> Any:
+def resilient_lazy_fixture(
+    names: Union[str, List[str]],
+    max_tries: int = defaults.DEFAULT_MAX_RETRIES,
+) -> Any:
     e = RuntimeError(f"Failed to get fixture value: '{names}'")
     tries = 1
     while tries <= max_tries:

@@ -1,3 +1,5 @@
+from time import sleep
+
 from kombu import Connection
 from pytest_docker_tools.wrappers.container import wait_for_callable
 
@@ -9,9 +11,19 @@ class RabbitMQContainer(CeleryTestContainer):
     __ready_prompt__ = "Server startup complete"
 
     def ready(self) -> bool:
-        return self._full_ready(self.__ready_prompt__)
+        return self._full_ready(self.__ready_prompt__, check_client=False)
 
-    def client(self, max_tries: int = defaults.DEFAULT_READY_MAX_RETRIES) -> Connection:
+    def _full_ready(self, match_log: str = "", check_client: bool = True) -> bool:
+        ready = super()._full_ready(match_log, check_client)
+        if ready and check_client:
+            c: Connection = self.client()  # type: ignore
+            try:
+                ready = bool(c.connect())
+            finally:
+                c.release()
+        return ready
+
+    def client(self, max_tries: int = defaults.DEFAULT_MAX_RETRIES) -> Connection:
         tries = 1
         while tries <= max_tries:
             try:
@@ -27,10 +39,14 @@ class RabbitMQContainer(CeleryTestContainer):
                 tries += 1
 
     def celeryconfig(self, vhost: str = "/") -> dict:
-        wait_for_callable(
-            "Waiting for port to be ready",
-            lambda: self.get_addr("5672/tcp"),
-        )
+        try:
+            wait_for_callable(
+                "Waiting for port to be ready",
+                lambda: self.get_addr("5672/tcp"),
+            )
+        except IndexError:
+            sleep(1)
+
         _, port = self.get_addr("5672/tcp")
 
         hostname = self.attrs["Config"]["Hostname"]

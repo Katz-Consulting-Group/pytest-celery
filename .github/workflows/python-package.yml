@@ -117,7 +117,7 @@ jobs:
           poetry install --with dev,test,ci
 
       - name: Run tox for "${{ matrix.python-version }}-integration"
-        timeout-minutes: 15
+        timeout-minutes: 10
         run: |
           tox --verbose --verbose -e "${{ matrix.python-version }}-integration" -- -n auto
 
@@ -172,7 +172,7 @@ jobs:
           poetry install --with dev,test,ci
 
       - name: Run tox for "${{ matrix.python-version }}-smoke"
-        timeout-minutes: 15
+        timeout-minutes: 10
         run: |
           tox --verbose --verbose -e "${{ matrix.python-version }}-smoke" -- -n auto
 
