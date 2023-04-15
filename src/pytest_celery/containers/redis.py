@@ -6,6 +6,7 @@ from redis import Redis
 
 from pytest_celery import defaults
 from pytest_celery.api.container import CeleryTestContainer
+from pytest_celery.utils import cached_property
 
 
 class RedisContainer(CeleryTestContainer):
@@ -17,15 +18,17 @@ class RedisContainer(CeleryTestContainer):
     def _full_ready(self, match_log: str = "", check_client: bool = True) -> bool:
         ready = super()._full_ready(match_log, check_client)
         if ready and check_client:
-            c: Redis = self.client()  # type: ignore
+            c: Redis = self.client  # type: ignore
             if c.ping():
                 c.set("ready", "1")
                 ready = c.get("ready") == "1"
                 c.delete("ready")
         return ready
 
-    def client(self, max_tries: int = defaults.DEFAULT_MAX_RETRIES) -> Union[Redis, None]:
+    @cached_property
+    def client(self) -> Union[Redis, None]:
         tries = 1
+        max_tries = defaults.DEFAULT_MAX_RETRIES
         while tries <= max_tries:
             try:
                 celeryconfig = self.celeryconfig()

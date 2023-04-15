@@ -5,6 +5,7 @@ from pytest_docker_tools.wrappers.container import wait_for_callable
 
 from pytest_celery import defaults
 from pytest_celery.api.container import CeleryTestContainer
+from pytest_celery.utils import cached_property
 
 
 class RabbitMQContainer(CeleryTestContainer):
@@ -16,15 +17,17 @@ class RabbitMQContainer(CeleryTestContainer):
     def _full_ready(self, match_log: str = "", check_client: bool = True) -> bool:
         ready = super()._full_ready(match_log, check_client)
         if ready and check_client:
-            c: Connection = self.client()  # type: ignore
+            c: Connection = self.client  # type: ignore
             try:
                 ready = bool(c.connect())
             finally:
                 c.release()
         return ready
 
-    def client(self, max_tries: int = defaults.DEFAULT_MAX_RETRIES) -> Connection:
+    @cached_property
+    def client(self) -> Connection:
         tries = 1
+        max_tries = defaults.DEFAULT_MAX_RETRIES
         while tries <= max_tries:
             try:
                 celeryconfig = self.celeryconfig()

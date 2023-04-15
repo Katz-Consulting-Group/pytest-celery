@@ -7,7 +7,7 @@ class test_rabbitmq_container:
         assert rabbitmq_test_container._full_ready(RabbitMQContainer.__ready_prompt__)
 
     def test_client(self, rabbitmq_test_container: RabbitMQContainer):
-        assert rabbitmq_test_container.client()
+        assert rabbitmq_test_container.client
 
     def test_celeryconfig(self, rabbitmq_test_container: RabbitMQContainer):
         expected_keys = {"url", "local_url", "hostname", "port", "vhost"}

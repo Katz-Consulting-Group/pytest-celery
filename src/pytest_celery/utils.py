@@ -1,9 +1,12 @@
+from functools import cached_property  # noqa
 from time import sleep
 from typing import Any
 from typing import List
 from typing import Union
 
 import pytest
+
+# from kombu.utils.objects import cached_property  # noqa
 from pytest_lazyfixture import lazy_fixture
 
 from pytest_celery import defaults

@@ -7,6 +7,7 @@ from pytest_docker_tools import fxtr
 
 from pytest_celery import defaults
 from pytest_celery.containers.worker import CeleryWorkerContainer
+from pytest_celery.utils import cached_property
 
 # Overriding the worker container until we have a proper client class
 # to return. This will be applied only to the integration & smoke tests.
@@ -14,7 +15,8 @@ from pytest_celery.containers.worker import CeleryWorkerContainer
 
 
 class WorkerContainer(CeleryWorkerContainer):
-    def client(self, max_tries: int = defaults.DEFAULT_MAX_RETRIES) -> Any:
+    @cached_property
+    def client(self) -> Any:
         return self
 
 

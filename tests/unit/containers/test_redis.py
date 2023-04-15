@@ -7,7 +7,7 @@ class test_redis_container:
         assert redis_test_container._full_ready(RedisContainer.__ready_prompt__)
 
     def test_client(self, redis_test_container: RedisContainer):
-        assert redis_test_container.client()
+        assert redis_test_container.client
 
     def test_celeryconfig(self, redis_test_container: RedisContainer):
         expected_keys = {"url", "local_url", "hostname", "port", "vhost"}

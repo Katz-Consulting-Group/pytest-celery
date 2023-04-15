@@ -1,15 +1,17 @@
 from typing import Any
 
 from pytest_celery import CeleryTestContainer
-from pytest_celery import defaults
 from pytest_celery.containers.worker import CeleryWorkerContainer
+from pytest_celery.utils import cached_property
 
 
 class UnitTestContainer(CeleryTestContainer):
-    def client(self, max_tries: int = defaults.DEFAULT_MAX_RETRIES) -> Any:
+    @cached_property
+    def client(self) -> Any:
         return self
 
 
 class UnitWorkerContainer(CeleryWorkerContainer):
-    def client(self, max_tries: int = defaults.DEFAULT_MAX_RETRIES) -> Any:
+    @cached_property
+    def client(self) -> Any:
         return self

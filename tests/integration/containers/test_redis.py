@@ -8,9 +8,8 @@ from pytest_celery.utils import resilient_lazy_fixture as lazy_fixture
 @pytest.mark.parametrize("container", lazy_fixture(defaults.ALL_REDIS_FIXTURES))
 class test_redis_container:
     def test_client(self, container: RedisContainer):
-        c = container.client()
-        assert c
-        assert c.ping()
-        assert c.set("ready", "1")
-        assert c.get("ready") == "1"
-        assert c.delete("ready")
+        assert container.client
+        assert container.client.ping()
+        assert container.client.set("ready", "1")
+        assert container.client.get("ready") == "1"
+        assert container.client.delete("ready")
