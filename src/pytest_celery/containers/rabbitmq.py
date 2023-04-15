@@ -9,7 +9,14 @@ class RabbitMQContainer(CeleryTestContainer):
     __ready_prompt__ = "Server startup complete"
 
     def ready(self) -> bool:
-        return self._full_ready(self.__ready_prompt__)
+        ready = False
+        if self._full_ready(self.__ready_prompt__, check_client=True):
+            c: Connection = self.client()
+            try:
+                c.connect()
+            finally:
+                c.release()
+        return ready
 
     def client(self, max_tries: int = defaults.DEFAULT_READY_MAX_RETRIES) -> Connection:
         tries = 1

@@ -34,6 +34,7 @@ def celery_worker_cluster(
 
 class test_custom_setup(shared_celery_test_setup_suite):
     def test_celery_setup_override(self, celery_setup: CeleryTestSetup):
+        # TODO: Set each task to use a different queue/worker respectively
         r1 = identity.s("test_ready").delay()
         r2 = identity.s("test_ready").delay()
         assert r1.get() == "test_ready"
