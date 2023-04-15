@@ -12,14 +12,7 @@ class RedisContainer(CeleryTestContainer):
     __ready_prompt__ = "Ready to accept connections"
 
     def ready(self) -> bool:
-        ready = False
-        if self._full_ready(self.__ready_prompt__, check_client=True):
-            c: Redis = self.client()  # type: ignore
-            if c.ping():
-                c.set("ready", "1")
-                ready = c.get("ready") == "1"
-                c.delete("ready")
-        return ready
+        return self._full_ready(self.__ready_prompt__)
 
     def client(self, max_tries: int = defaults.DEFAULT_READY_MAX_RETRIES) -> Union[Redis, None]:
         tries = 1

@@ -11,3 +11,6 @@ class test_redis_container:
         c = container.client()
         assert c
         assert c.ping()
+        assert c.set("ready", "1")
+        assert c.get("ready") == "1"
+        assert c.delete("ready")
