@@ -15,7 +15,7 @@ class test_celery_worker_container:
 
     def test_celeryconfig(self, worker_test_container: CeleryWorkerContainer):
         with pytest.raises(NotImplementedError):
-            worker_test_container.celeryconfig()
+            worker_test_container.celeryconfig
 
     def test_version(self, worker_test_container: CeleryWorkerContainer):
         assert worker_test_container.version() == defaults.WORKER_CELERY_VERSION

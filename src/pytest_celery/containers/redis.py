@@ -31,7 +31,7 @@ class RedisContainer(CeleryTestContainer):
         max_tries = defaults.DEFAULT_MAX_RETRIES
         while tries <= max_tries:
             try:
-                celeryconfig = self.celeryconfig()
+                celeryconfig = self.celeryconfig
                 client = Redis.from_url(
                     celeryconfig["local_url"],
                     decode_responses=True,
@@ -44,7 +44,30 @@ class RedisContainer(CeleryTestContainer):
                 tries += 1
         return None
 
-    def celeryconfig(self, vhost: str = "0") -> dict:
+    @cached_property
+    def celeryconfig(self) -> dict:
+        return {
+            "url": self.url,
+            "local_url": self.local_url,
+            "hostname": self.hostname,
+            "port": self.port,
+            "vhost": self.vhost,
+        }
+
+    @cached_property
+    def url(self) -> str:
+        return f"redis://{self.hostname}/{self.vhost}"
+
+    @cached_property
+    def local_url(self) -> str:
+        return f"redis://localhost:{self.port}/{self.vhost}"
+
+    @cached_property
+    def hostname(self) -> str:
+        return self.attrs["Config"]["Hostname"]
+
+    @cached_property
+    def port(self) -> int:
         try:
             wait_for_callable(
                 "Waiting for port to be ready",
@@ -54,17 +77,11 @@ class RedisContainer(CeleryTestContainer):
             sleep(1)
 
         _, port = self.get_addr("6379/tcp")
+        return port
 
-        hostname = self.attrs["Config"]["Hostname"]
-        url = f"redis://{hostname}/{vhost}"
-        local_url = f"redis://localhost:{port}/{vhost}"
-        return {
-            "url": url,
-            "local_url": local_url,
-            "hostname": hostname,
-            "port": port,
-            "vhost": vhost,
-        }
+    @cached_property
+    def vhost(self) -> str:
+        return "0"
 
     @classmethod
     def version(cls) -> str:

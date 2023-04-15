@@ -33,7 +33,7 @@ class CeleryTestNode:
         )
 
     def config(self, *args: tuple, **kwargs: dict) -> dict:
-        return self.container.celeryconfig()
+        return self.container.celeryconfig
 
     @classmethod
     def default_config(cls) -> dict:

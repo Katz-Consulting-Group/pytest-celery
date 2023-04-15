@@ -1,4 +1,3 @@
-from abc import abstractmethod
 from typing import Any
 
 from pytest_docker_tools import wrappers
@@ -15,7 +14,7 @@ class CeleryTestContainer(wrappers.Container):
     def client(self) -> Any:
         raise NotImplementedError("CeleryTestContainer.client")
 
-    @abstractmethod
+    @cached_property
     def celeryconfig(self) -> dict:
         raise NotImplementedError("CeleryTestContainer.celeryconfig")
 

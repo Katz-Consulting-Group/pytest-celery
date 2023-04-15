@@ -11,7 +11,7 @@ class test_redis_container:
 
     def test_celeryconfig(self, redis_test_container: RedisContainer):
         expected_keys = {"url", "local_url", "hostname", "port", "vhost"}
-        assert set(redis_test_container.celeryconfig().keys()) == expected_keys
+        assert set(redis_test_container.celeryconfig.keys()) == expected_keys
 
     def test_version(self, redis_test_container: RedisContainer):
         assert redis_test_container.version() == "latest"

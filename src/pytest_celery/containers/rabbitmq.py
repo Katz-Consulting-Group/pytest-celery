@@ -30,7 +30,7 @@ class RabbitMQContainer(CeleryTestContainer):
         max_tries = defaults.DEFAULT_MAX_RETRIES
         while tries <= max_tries:
             try:
-                celeryconfig = self.celeryconfig()
+                celeryconfig = self.celeryconfig
                 client = Connection(
                     f"amqp://localhost/{celeryconfig['vhost']}",
                     port=celeryconfig["port"],
@@ -41,7 +41,26 @@ class RabbitMQContainer(CeleryTestContainer):
                     raise e
                 tries += 1
 
-    def celeryconfig(self, vhost: str = "/") -> dict:
+    @cached_property
+    def celeryconfig(self) -> dict:
+        return {
+            "url": self.url,
+            "local_url": self.local_url,
+            "hostname": self.hostname,
+            "port": self.port,
+            "vhost": self.vhost,
+        }
+
+    @cached_property
+    def url(self) -> str:
+        return f"amqp://{self.hostname}/{self.vhost}"
+
+    @cached_property
+    def local_url(self) -> str:
+        return f"amqp://localhost:{self.port}/{self.vhost}"
+
+    @cached_property
+    def port(self) -> int:
         try:
             wait_for_callable(
                 "Waiting for port to be ready",
@@ -51,17 +70,15 @@ class RabbitMQContainer(CeleryTestContainer):
             sleep(1)
 
         _, port = self.get_addr("5672/tcp")
+        return port
 
-        hostname = self.attrs["Config"]["Hostname"]
-        url = f"amqp://{hostname}/{vhost}"
-        local_url = f"amqp://localhost:{port}/{vhost}"
-        return {
-            "url": url,
-            "local_url": local_url,
-            "hostname": hostname,
-            "port": port,
-            "vhost": vhost,
-        }
+    @cached_property
+    def hostname(self) -> str:
+        return self.attrs["Config"]["Hostname"]
+
+    @cached_property
+    def vhost(self) -> str:
+        return "/"
 
     @classmethod
     def version(cls) -> str:

@@ -64,7 +64,7 @@ class CeleryTestCluster:
         return all(node.ready() for node in self)
 
     def config(self, *args: tuple, **kwargs: dict) -> dict:
-        config = [node.container.celeryconfig() for node in self]
+        config = [node.container.celeryconfig for node in self]
         return {
             "urls": [c["url"] for c in config],
             "local_urls": [c["local_url"] for c in config],
