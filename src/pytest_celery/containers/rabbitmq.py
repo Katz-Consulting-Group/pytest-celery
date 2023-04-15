@@ -12,7 +12,7 @@ class RabbitMQContainer(CeleryTestContainer):
     __ready_prompt__ = "Server startup complete"
 
     def ready(self) -> bool:
-        return self._full_ready(self.__ready_prompt__, check_client=False)
+        return self._full_ready(self.__ready_prompt__)
 
     def _full_ready(self, match_log: str = "", check_client: bool = True) -> bool:
         ready = super()._full_ready(match_log, check_client)
