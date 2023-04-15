@@ -29,6 +29,13 @@ class CeleryTestCluster:
     def __len__(self) -> int:
         return len(self.nodes)
 
+    def __eq__(self, __value: object) -> bool:
+        if isinstance(__value, CeleryTestCluster):
+            for node in self:
+                if node not in __value:
+                    return False
+        return False
+
     @property
     def nodes(self) -> Tuple[CeleryTestNode]:
         return self._nodes

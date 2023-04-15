@@ -38,3 +38,8 @@ class CeleryTestNode:
     @classmethod
     def default_config(cls) -> dict:
         return {}
+
+    def __eq__(self, __value: object) -> bool:
+        if isinstance(__value, CeleryTestNode):
+            return self.container == __value.container
+        return False
