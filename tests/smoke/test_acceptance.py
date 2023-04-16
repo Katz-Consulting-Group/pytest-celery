@@ -6,5 +6,5 @@ from tests.smoke.tasks import add
 class test_acceptance:
     def test_sanity(self, celery_setup: CeleryTestSetup):
         assert 3 <= len(celery_setup) <= 4
-        assert identity.s("test_ready").delay().get() == "test_ready"
-        assert add.s(1, 2).delay().get() == 3
+        assert identity.s("test_ready").delay().get(timeout=60) == "test_ready"
+        assert add.s(1, 2).delay().get(timeout=60) == 3

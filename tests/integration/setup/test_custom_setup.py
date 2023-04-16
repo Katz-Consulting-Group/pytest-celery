@@ -37,6 +37,6 @@ class test_custom_setup(shared_celery_test_setup_suite):
         # TODO: Set each task to use a different queue/worker respectively
         r1 = identity.s("test_ready").delay()
         r2 = identity.s("test_ready").delay()
-        assert r1.get() == "test_ready"
-        assert r2.get() == "test_ready"
+        assert r1.get(timeout=60) == "test_ready"
+        assert r2.get(timeout=60) == "test_ready"
         assert celery_setup.app
