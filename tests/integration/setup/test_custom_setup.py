@@ -1,3 +1,5 @@
+from typing import Type
+
 import pytest
 
 from pytest_celery.api.components.worker.cluster import CeleryWorkerCluster
@@ -7,6 +9,18 @@ from tests.common.celery4.api import Celery4TestWorker
 from tests.common.celery4.fixtures import *  # noqa
 from tests.common.tasks import identity
 from tests.common.test_setup import shared_celery_test_setup_suite
+
+
+class Celery5TestWorker(CeleryTestWorker):
+    @property
+    def version(self) -> str:
+        return "5.2.7"
+
+
+@pytest.fixture
+def default_worker_cls() -> Type[CeleryTestWorker]:
+    # TODO: Make/add class decorator
+    return Celery5TestWorker
 
 
 @pytest.fixture(scope="session")
@@ -40,3 +54,10 @@ class test_custom_setup(shared_celery_test_setup_suite):
         assert r1.get(timeout=60) == "test_ready"
         assert r2.get(timeout=60) == "test_ready"
         assert celery_setup.app
+
+    def test_custom_cluster_version(self, celery_setup: CeleryTestSetup, default_worker_celery_version: str):
+        assert len(celery_setup.worker_cluster) == 2
+        assert celery_setup.worker_cluster.versions == {
+            default_worker_celery_version,
+            "4.4.7",
+        }

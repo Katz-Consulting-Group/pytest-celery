@@ -13,11 +13,17 @@ from pytest_celery.containers.worker import CeleryWorkerContainer
 
 
 @pytest.fixture
+def default_worker_cls() -> Type[CeleryTestWorker]:
+    return CeleryTestWorker
+
+
+@pytest.fixture
 def celery_setup_worker(
+    default_worker_cls: Type[CeleryTestWorker],
     default_worker_container: CeleryWorkerContainer,
     celery_setup_app: Celery,
 ) -> CeleryTestWorker:
-    return CeleryTestWorker(
+    return default_worker_cls(
         container=default_worker_container,
         app=celery_setup_app,
     )
