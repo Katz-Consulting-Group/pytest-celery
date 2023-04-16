@@ -78,10 +78,19 @@ def default_worker_env(
 def default_worker_initial_content(
     default_worker_container_cls: Type[CeleryWorkerContainer],
     default_worker_tasks: set,
+    default_worker_signals: set,
 ) -> dict:
-    return default_worker_container_cls.initial_content(default_worker_tasks)
+    return default_worker_container_cls.initial_content(
+        worker_tasks=default_worker_tasks,
+        worker_signals=default_worker_signals,
+    )
 
 
 @pytest.fixture
 def default_worker_tasks(default_worker_container_cls: Type[CeleryWorkerContainer]) -> set:
     return default_worker_container_cls.tasks_modules()
+
+
+@pytest.fixture
+def default_worker_signals(default_worker_container_cls: Type[CeleryWorkerContainer]) -> set:
+    return default_worker_container_cls.signals_modules()

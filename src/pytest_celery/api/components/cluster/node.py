@@ -43,3 +43,6 @@ class CeleryTestNode:
         if isinstance(__value, CeleryTestNode):
             return self.container == __value.container
         return False
+
+    def logs(self) -> str:
+        return self.container.logs()
