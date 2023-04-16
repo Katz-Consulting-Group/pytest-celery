@@ -2,6 +2,7 @@ from typing import Type
 
 import pytest
 
+from pytest_celery import defaults
 from pytest_celery.api.components.worker.cluster import CeleryWorkerCluster
 from pytest_celery.api.components.worker.node import CeleryTestWorker
 from pytest_celery.api.setup import CeleryTestSetup
@@ -51,8 +52,8 @@ class test_custom_setup(shared_celery_test_setup_suite):
         # TODO: Set each task to use a different queue/worker respectively
         r1 = identity.s("test_ready").delay()
         r2 = identity.s("test_ready").delay()
-        assert r1.get(timeout=60) == "test_ready"
-        assert r2.get(timeout=60) == "test_ready"
+        assert r1.get(timeout=defaults.RESULT_TIMEOUT) == "test_ready"
+        assert r2.get(timeout=defaults.RESULT_TIMEOUT) == "test_ready"
         assert celery_setup.app
 
     def test_custom_cluster_version(self, celery_setup: CeleryTestSetup, default_worker_celery_version: str):

@@ -5,6 +5,7 @@ from celery.signals import after_task_publish
 from celery.signals import before_task_publish
 
 from pytest_celery import CeleryTestSetup
+from pytest_celery import defaults
 from pytest_celery.api.components.worker.node import CeleryTestWorker
 from tests.common.tasks import identity
 from tests.smoke.tasks import add
@@ -28,8 +29,8 @@ class test_signals:
             signal_was_called = True
 
         assert signal_was_called is False
-        assert identity.s("test_signals").delay().get(timeout=60) == "test_signals"
-        assert add.s(1, 2).delay().get(timeout=60) == 3
+        assert identity.s("test_signals").delay().get(timeout=defaults.RESULT_TIMEOUT) == "test_signals"
+        assert add.s(1, 2).delay().get(timeout=defaults.RESULT_TIMEOUT) == 3
         assert signal_was_called is True
 
     def test_after_task_publish(self, celery_setup: CeleryTestSetup):
@@ -41,8 +42,8 @@ class test_signals:
             signal_was_called = True
 
         assert signal_was_called is False
-        assert identity.s("test_signals").delay().get(timeout=60) == "test_signals"
-        assert add.s(1, 2).delay().get(timeout=60) == 3
+        assert identity.s("test_signals").delay().get(timeout=defaults.RESULT_TIMEOUT) == "test_signals"
+        assert add.s(1, 2).delay().get(timeout=defaults.RESULT_TIMEOUT) == 3
         assert signal_was_called is True
 
     def test_worker_init(self, celery_setup: CeleryTestSetup):

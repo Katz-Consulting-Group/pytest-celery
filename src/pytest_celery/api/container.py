@@ -19,14 +19,14 @@ class CeleryTestContainer(wrappers.Container):
         raise NotImplementedError("CeleryTestContainer.celeryconfig")
 
     def ready(self) -> bool:
-        max_tries = defaults.DEFAULT_MAX_RETRIES
+        max_tries = defaults.MAX_RETRIES
         tries = 1
         while tries <= max_tries:
             try:
                 wait_for_callable(
                     f" Container '{self.name}' is warming up",
                     super().ready,
-                    timeout=defaults.DEFAULT_READY_TIMEOUT,
+                    timeout=defaults.READY_TIMEOUT,
                 )
                 return True
             except TimeoutError:

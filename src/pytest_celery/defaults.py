@@ -11,8 +11,9 @@ from pytest_docker_tools import network
 # Docker
 ##########
 
-DEFAULT_READY_TIMEOUT = 30
-DEFAULT_MAX_RETRIES = 5
+READY_TIMEOUT = 30
+RESULT_TIMEOUT = 120
+MAX_RETRIES = 5
 try:
     DEFAULT_NETWORK = network()
 except Exception:
@@ -21,7 +22,7 @@ except Exception:
     from time import sleep
 
     tries = 1
-    while tries <= DEFAULT_MAX_RETRIES:
+    while tries <= MAX_RETRIES:
         try:
             DEFAULT_NETWORK = network()
         except Exception as e:
@@ -126,7 +127,7 @@ WORKER_VOLUME = {
 DEFAULT_WORKER_APP_NAME = WORKER_CELERY_APP_NAME
 DEFAULT_WORKER_VERSION = WORKER_CELERY_VERSION
 DEFAULT_WORKER_ENV = WORKER_ENV
-DEFAULT_WORKER_CONTAINER_TIMEOUT = DEFAULT_READY_TIMEOUT
+DEFAULT_WORKER_CONTAINER_TIMEOUT = READY_TIMEOUT
 DEFAULT_WORKER_VOLUME = WORKER_VOLUME
 
 ##########################
@@ -138,7 +139,7 @@ DEFAULT_WORKER_VOLUME = WORKER_VOLUME
 REDIS_IMAGE = "redis:latest"
 REDIS_PORTS = {"6379/tcp": None}
 REDIS_ENV: dict = {}
-REDIS_CONTAINER_TIMEOUT = DEFAULT_READY_TIMEOUT
+REDIS_CONTAINER_TIMEOUT = READY_TIMEOUT
 
 # Docker containers settings
 #################################################

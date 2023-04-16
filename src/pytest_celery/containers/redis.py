@@ -28,7 +28,7 @@ class RedisContainer(CeleryTestContainer):
     @cached_property
     def client(self) -> Union[Redis, None]:
         tries = 1
-        max_tries = defaults.DEFAULT_MAX_RETRIES
+        max_tries = defaults.MAX_RETRIES
         while tries <= max_tries:
             try:
                 celeryconfig = self.celeryconfig

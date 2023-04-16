@@ -14,14 +14,14 @@ class CeleryTestNode:
     def container(self) -> CeleryTestContainer:
         return self._container
 
-    def ready(self, max_tries: int = defaults.DEFAULT_MAX_RETRIES) -> bool:
+    def ready(self, max_tries: int = defaults.MAX_RETRIES) -> bool:
         tries = 1
         while tries <= max_tries:
             try:
                 wait_for_callable(
                     f"Waiting for the node's container to be ready: '{self.container.name}'",
                     self.container.ready,
-                    timeout=defaults.DEFAULT_READY_TIMEOUT,
+                    timeout=defaults.READY_TIMEOUT,
                 )
                 return True
             except TimeoutError:
