@@ -32,13 +32,8 @@ class test_acceptance:
         assert sig.delay().get(timeout=60) == "task2"
 
     def test_chord(self, celery_setup: CeleryTestSetup):
-        try:
-            celery_setup.app.backend.ensure_chords_allowed()
-        except NotImplementedError as e:
-            raise pytest.skip(e.args[0])
-
-        if any([v.startswith("4.") for v in celery_setup.worker_cluster.versions]):
-            pytest.skip("Celery 4.x is not supported")
+        if not celery_setup.chords_allowed():
+            pytest.skip("Chords are not supported")
 
         for sig in [
             chord(group(identity.si("header_task1"), identity.si("header_task2")), identity.si("body_task")),
