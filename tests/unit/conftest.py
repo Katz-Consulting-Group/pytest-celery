@@ -23,7 +23,7 @@ from tests.unit.docker.api import UnitWorkerContainer
 try:
     unit_tests_network = network(scope="session")
 except Exception:
-    # This is a workaround for a bug in pytest-docker-tools
+    # This is a workaround when running out of IPv4 addresses
     # that causes the network fixture to fail when running tests in parallel.
     from time import sleep
 

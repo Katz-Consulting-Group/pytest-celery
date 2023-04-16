@@ -1,7 +1,6 @@
 from time import sleep
 
 from kombu import Connection
-from pytest_docker_tools.wrappers.container import wait_for_callable
 
 from pytest_celery import defaults
 from pytest_celery.api.container import CeleryTestContainer
@@ -61,16 +60,18 @@ class RabbitMQContainer(CeleryTestContainer):
 
     @cached_property
     def port(self) -> int:
-        try:
-            wait_for_callable(
-                "Waiting for port to be ready",
-                lambda: self.get_addr("5672/tcp"),
-            )
-        except IndexError:
-            sleep(1)
-
-        _, port = self.get_addr("5672/tcp")
-        return port
+        tries = 1
+        max_tries = defaults.MAX_RETRIES
+        while tries <= max_tries:
+            try:
+                _, port = self.get_addr("5672/tcp")
+                return port
+            except Exception as e:
+                if tries == max_tries:
+                    raise e
+                sleep(5 * tries)
+                tries += 1
+        return 0
 
     @cached_property
     def hostname(self) -> str:

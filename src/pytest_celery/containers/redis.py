@@ -1,7 +1,6 @@
 from time import sleep
 from typing import Union
 
-from pytest_docker_tools.wrappers.container import wait_for_callable
 from redis import Redis
 
 from pytest_celery import defaults
@@ -68,16 +67,18 @@ class RedisContainer(CeleryTestContainer):
 
     @cached_property
     def port(self) -> int:
-        try:
-            wait_for_callable(
-                "Waiting for port to be ready",
-                lambda: self.get_addr("6379/tcp"),
-            )
-        except IndexError:
-            sleep(1)
-
-        _, port = self.get_addr("6379/tcp")
-        return port
+        tries = 1
+        max_tries = defaults.MAX_RETRIES
+        while tries <= max_tries:
+            try:
+                _, port = self.get_addr("6379/tcp")
+                return port
+            except Exception as e:
+                if tries == max_tries:
+                    raise e
+                sleep(5 * tries)
+                tries += 1
+        return 0
 
     @cached_property
     def vhost(self) -> str:

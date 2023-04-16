@@ -17,7 +17,7 @@ MAX_RETRIES = 5
 try:
     DEFAULT_NETWORK = network()
 except Exception:
-    # This is a workaround for a bug in pytest-docker-tools
+    # This is a workaround when running out of IPv4 addresses
     # that causes the network fixture to fail when running tests in parallel.
     from time import sleep
 
@@ -130,7 +130,7 @@ DEFAULT_WORKER_VERSION = WORKER_CELERY_VERSION
 DEFAULT_WORKER_LOG_LEVEL = WORKER_LOG_LEVEL
 DEFAULT_WORKER_NAME = WORKER_NAME
 DEFAULT_WORKER_ENV = WORKER_ENV
-DEFAULT_WORKER_CONTAINER_TIMEOUT = READY_TIMEOUT
+DEFAULT_WORKER_CONTAINER_TIMEOUT = 60
 DEFAULT_WORKER_VOLUME = WORKER_VOLUME
 
 ##########################
