@@ -15,7 +15,8 @@ def default_worker_tasks() -> set:
 
 class test_celery_test_setup(shared_celery_test_setup_suite):
     def test_ready(self, celery_setup: CeleryTestSetup):
-        r = identity.s("test_ready").delay()
+        queue = celery_setup.worker_cluster[0].worker_queue
+        r = identity.s("test_ready").apply_async(queue=queue)
         assert r.get(timeout=defaults.RESULT_TIMEOUT) == "test_ready"
 
     def test_celery_test_setup_ready_ping(self, celery_setup: CeleryTestSetup):

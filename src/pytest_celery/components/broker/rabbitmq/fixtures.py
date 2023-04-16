@@ -11,7 +11,9 @@ from pytest_celery.containers.rabbitmq import RabbitMQContainer
 
 @pytest.fixture
 def celery_rabbitmq_broker(default_rabbitmq_broker: RabbitMQContainer) -> RabbitMQTestBroker:
-    return RabbitMQTestBroker(default_rabbitmq_broker)
+    broker = RabbitMQTestBroker(default_rabbitmq_broker)
+    broker.ready()
+    return broker
 
 
 @pytest.fixture

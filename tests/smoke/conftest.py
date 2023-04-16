@@ -2,11 +2,14 @@ from typing import Any
 from typing import Type
 
 import pytest
+from celery import Celery
+from pytest_docker_tools import build
 from pytest_docker_tools import container
 from pytest_docker_tools import fxtr
 
 from pytest_celery import defaults
 from pytest_celery.api.components.worker.cluster import CeleryWorkerCluster
+from pytest_celery.api.components.worker.node import CeleryTestWorker
 from pytest_celery.containers.worker import CeleryWorkerContainer
 from pytest_celery.utils import cached_property
 from tests.common.celery4.fixtures import *  # noqa
@@ -16,9 +19,15 @@ class SmokeWorkerContainer(CeleryWorkerContainer):
     @cached_property
     def client(self) -> Any:
         # Overriding the worker container until we have a proper client class
-        # to return. This will be applied only to the integration & smoke tests.
-        # Unit tests have their own worker container.
         return self
+
+    @classmethod
+    def worker_name(cls) -> str:
+        return CeleryWorkerContainer.worker_name() + "-smoke-worker"
+
+    @classmethod
+    def worker_queue(cls) -> str:
+        return CeleryWorkerContainer.worker_queue() + "-smoke-tests-queue"
 
 
 @pytest.fixture
@@ -41,12 +50,58 @@ default_worker_container = container(
 )
 
 
+class AltWorkerContainer(SmokeWorkerContainer):
+    @classmethod
+    def worker_name(cls) -> str:
+        return CeleryWorkerContainer.worker_name() + "-alt-worker"
+
+    @classmethod
+    def worker_queue(cls) -> str:
+        return CeleryWorkerContainer.worker_queue() + "-smoke-tests-alt-queue"
+
+
+alt_worker_image = build(
+    path="src/pytest_celery/components/worker",
+    tag="pytest-celery/components/worker:alt",
+    buildargs={
+        "CELERY_VERSION": AltWorkerContainer.version(),
+        "CELERY_LOG_LEVEL": AltWorkerContainer.log_level(),
+        "CELERY_WORKER_NAME": AltWorkerContainer.worker_name(),
+        "CELERY_WORKER_QUEUE": AltWorkerContainer.worker_queue(),
+    },
+)
+
+alt_worker_container = container(
+    image="{alt_worker_image.id}",
+    environment=fxtr("default_worker_env"),
+    network="{DEFAULT_NETWORK.name}",
+    volumes={"{default_worker_volume.name}": defaults.DEFAULT_WORKER_VOLUME},
+    wrapper_class=AltWorkerContainer,
+    timeout=defaults.DEFAULT_WORKER_CONTAINER_TIMEOUT,
+)
+
+
+@pytest.fixture
+def alt_worker(
+    alt_worker_container: CeleryWorkerContainer,
+    celery_setup_app: Celery,
+) -> CeleryTestWorker:
+    worker = CeleryTestWorker(
+        alt_worker_container,
+        app=celery_setup_app,
+    )
+    worker.ready()
+    return worker
+
+
 @pytest.fixture(
     # Each param item is a list of workers to be used in the cluster
     params=[
         ["celery_setup_worker"],
         ["celery4_worker"],
         ["celery_setup_worker", "celery4_worker"],
+        ["celery_setup_worker", "alt_worker"],
+        ["celery_setup_worker", "alt_worker", "celery4_worker"],
     ]
 )
 def celery_worker_cluster(request: pytest.FixtureRequest) -> CeleryWorkerCluster:

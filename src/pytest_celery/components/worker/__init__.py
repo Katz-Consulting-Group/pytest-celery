@@ -3,6 +3,7 @@
 
 from pytest_celery.components.worker.fixtures import celery_base_worker_image
 from pytest_celery.components.worker.fixtures import celery_setup_worker
+from pytest_celery.components.worker.fixtures import default_worker_celerky_worker_queue
 from pytest_celery.components.worker.fixtures import default_worker_celery_log_level
 from pytest_celery.components.worker.fixtures import default_worker_celery_version
 from pytest_celery.components.worker.fixtures import default_worker_celery_worker_name

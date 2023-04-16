@@ -34,7 +34,7 @@ except Exception:
         except Exception as e:
             if tries == 3:
                 raise e
-            sleep(5 * tries)
+            sleep(0.1 * tries)
             tries += 1
 
 unit_tests_image = build(

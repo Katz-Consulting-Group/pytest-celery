@@ -29,8 +29,15 @@ class test_signals:
             signal_was_called = True
 
         assert signal_was_called is False
-        assert identity.s("test_signals").delay().get(timeout=defaults.RESULT_TIMEOUT) == "test_signals"
-        assert add.s(1, 2).delay().get(timeout=defaults.RESULT_TIMEOUT) == 3
+        queue = celery_setup.worker_cluster[0].worker_queue
+        res = identity.s("test_before_task_publish").apply_async(queue=queue)
+        assert res.get(timeout=defaults.RESULT_TIMEOUT) == "test_before_task_publish"
+
+        if len(celery_setup.worker_cluster) > 1:
+            queue = celery_setup.worker_cluster[1].worker_queue
+
+        res = add.s(1, 2).apply_async(queue=queue)
+        assert res.get(timeout=defaults.RESULT_TIMEOUT) == 3
         assert signal_was_called is True
 
     def test_after_task_publish(self, celery_setup: CeleryTestSetup):
@@ -42,8 +49,15 @@ class test_signals:
             signal_was_called = True
 
         assert signal_was_called is False
-        assert identity.s("test_signals").delay().get(timeout=defaults.RESULT_TIMEOUT) == "test_signals"
-        assert add.s(1, 2).delay().get(timeout=defaults.RESULT_TIMEOUT) == 3
+        queue = celery_setup.worker_cluster[0].worker_queue
+        res = identity.s("test_after_task_publish").apply_async(queue=queue)
+        assert res.get(timeout=defaults.RESULT_TIMEOUT) == "test_after_task_publish"
+
+        if len(celery_setup.worker_cluster) > 1:
+            queue = celery_setup.worker_cluster[1].worker_queue
+
+        res = add.s(1, 2).apply_async(queue=queue)
+        assert res.get(timeout=defaults.RESULT_TIMEOUT) == 3
         assert signal_was_called is True
 
     def test_worker_init(self, celery_setup: CeleryTestSetup):

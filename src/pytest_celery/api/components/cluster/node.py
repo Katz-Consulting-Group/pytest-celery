@@ -4,13 +4,14 @@ from pytest_docker_tools.wrappers.container import wait_for_callable
 
 from pytest_celery import defaults
 from pytest_celery.api.container import CeleryTestContainer
+from pytest_celery.utils import cached_property
 
 
 class CeleryTestNode:
     def __init__(self, container: CeleryTestContainer):
         self._container = container
 
-    @property
+    @cached_property
     def container(self) -> CeleryTestContainer:
         return self._container
 
@@ -46,3 +47,6 @@ class CeleryTestNode:
 
     def logs(self) -> str:
         return self.container.logs()
+
+    def kill(self) -> None:
+        self.container.kill()

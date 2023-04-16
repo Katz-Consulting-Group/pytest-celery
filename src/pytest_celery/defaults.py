@@ -13,7 +13,7 @@ from pytest_docker_tools import network
 
 READY_TIMEOUT = 30
 RESULT_TIMEOUT = 120
-MAX_RETRIES = 5
+MAX_RETRIES = 10
 try:
     DEFAULT_NETWORK = network()
 except Exception:
@@ -28,7 +28,7 @@ except Exception:
         except Exception as e:
             if tries == 3:
                 raise e
-            sleep(5 * tries)
+            sleep(0.1 * tries)
             tries += 1
 
 
@@ -110,6 +110,7 @@ WORKER_CELERY_APP_NAME = "celery_test_app"
 WORKER_CELERY_VERSION = "5.3.0b2"
 WORKER_LOG_LEVEL = "INFO"
 WORKER_NAME = CELERY_SETUP_WORKER
+WORKER_QUEUE = "celery"
 WORKER_ENV = {
     "CELERY_BROKER_URL": "memory://",
     "CELERY_RESULT_BACKEND": "cache+memory://",
@@ -130,7 +131,8 @@ DEFAULT_WORKER_VERSION = WORKER_CELERY_VERSION
 DEFAULT_WORKER_LOG_LEVEL = WORKER_LOG_LEVEL
 DEFAULT_WORKER_NAME = WORKER_NAME
 DEFAULT_WORKER_ENV = WORKER_ENV
-DEFAULT_WORKER_CONTAINER_TIMEOUT = 60
+DEFAULT_WORKER_QUEUE = WORKER_QUEUE
+DEFAULT_WORKER_CONTAINER_TIMEOUT = 90
 DEFAULT_WORKER_VOLUME = WORKER_VOLUME
 
 ##########################

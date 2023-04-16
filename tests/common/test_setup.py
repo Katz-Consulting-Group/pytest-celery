@@ -26,4 +26,4 @@ class shared_celery_test_setup_suite:
         worker: CeleryTestWorker
         for worker in celery_setup.worker_cluster:
             if worker.logs():
-                assert worker.log_level() in worker.logs()
+                assert worker.log_level in worker.logs()

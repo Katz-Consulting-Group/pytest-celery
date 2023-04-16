@@ -22,7 +22,7 @@ def resilient_getfixturevalue(
         except BaseException as pytest_error:
             if tries == max_tries:
                 raise e from pytest_error
-            sleep(5 * tries)
+            sleep(0.1 * tries)
             tries += 1
 
 
@@ -40,5 +40,5 @@ def resilient_lazy_fixture(
         except BaseException as pytest_error:
             if tries == max_tries:
                 raise e from pytest_error
-            sleep(5 * tries)
+            sleep(0.1 * tries)
             tries += 1

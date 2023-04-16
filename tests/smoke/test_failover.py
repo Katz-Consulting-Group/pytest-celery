@@ -34,9 +34,10 @@ def celery_broker_cluster(
 
 class test_failover:
     def test_broker_failover(self, celery_setup: CeleryTestSetup):
-        assert 3 <= len(celery_setup) <= 5
+        assert 3 <= len(celery_setup) <= 6
         assert len(celery_setup.broker_cluster) == 2
-        celery_setup.broker_cluster[0].container.kill()  # TODO: Move to cluster API
-        res = identity.s("test_broker_failover").delay()
-        res = res.get()
-        assert res == "test_broker_failover"
+        celery_setup.broker_cluster[0].kill()
+        for worker in celery_setup.worker_cluster:
+            expected = "test_broker_failover"
+            res = identity.s(expected).apply_async(queue=worker.worker_queue)
+            assert res.get() == expected

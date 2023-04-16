@@ -15,6 +15,8 @@ celery4_worker_image = build(
     buildargs={
         "CELERY_VERSION": Worker4Container.version(),
         "CELERY_LOG_LEVEL": Worker4Container.log_level(),
+        "CELERY_WORKER_NAME": Worker4Container.worker_name(),
+        "CELERY_WORKER_QUEUE": Worker4Container.worker_queue(),
     },
 )
 
@@ -24,10 +26,12 @@ def celery4_worker(
     celery4_worker_container: CeleryWorkerContainer,
     celery_setup_app: Celery,
 ) -> CeleryTestWorker:
-    return CeleryTestWorker(
+    worker = CeleryTestWorker(
         celery4_worker_container,
         app=celery_setup_app,
     )
+    worker.ready()
+    return worker
 
 
 celery4_worker_container = container(

@@ -1,6 +1,7 @@
 from time import sleep
 from typing import Union
 
+from pytest_docker_tools.wrappers.container import wait_for_callable
 from redis import Redis
 
 from pytest_celery import defaults
@@ -12,7 +13,7 @@ class RedisContainer(CeleryTestContainer):
     __ready_prompt__ = "Ready to accept connections"
 
     def ready(self) -> bool:
-        return self._full_ready(self.__ready_prompt__)
+        return self._full_ready(self.__ready_prompt__, check_client=False)
 
     def _full_ready(self, match_log: str = "", check_client: bool = True) -> bool:
         ready = super()._full_ready(match_log, check_client)
@@ -39,7 +40,7 @@ class RedisContainer(CeleryTestContainer):
             except Exception as e:
                 if tries == max_tries:
                     raise e
-                sleep(5 * tries)
+                sleep(0.1 * tries)
                 tries += 1
         return None
 
@@ -71,12 +72,16 @@ class RedisContainer(CeleryTestContainer):
         max_tries = defaults.MAX_RETRIES
         while tries <= max_tries:
             try:
+                wait_for_callable(
+                    "Waiting for port to be ready",
+                    lambda: self.get_addr("6379/tcp"),
+                )
                 _, port = self.get_addr("6379/tcp")
                 return port
             except Exception as e:
                 if tries == max_tries:
                     raise e
-                sleep(5 * tries)
+                sleep(0.1 * tries)
                 tries += 1
         return 0
 

@@ -15,13 +15,19 @@ class IntegrationWorkerContainer(CeleryWorkerContainer):
     @cached_property
     def client(self) -> Any:
         # Overriding the worker container until we have a proper client class
-        # to return. This will be applied only to the integration & smoke tests.
-        # Unit tests have their own worker container.
         return self
 
     @classmethod
     def log_level(cls) -> str:
         return "DEBUG"
+
+    @classmethod
+    def worker_name(cls) -> str:
+        return CeleryWorkerContainer.worker_name() + "-integration-worker"
+
+    @classmethod
+    def worker_queue(cls) -> str:
+        return CeleryWorkerContainer.worker_queue() + "-integration-tests-queue"
 
 
 @pytest.fixture

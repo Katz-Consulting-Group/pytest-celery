@@ -13,7 +13,9 @@ def celery_broker(request: pytest.FixtureRequest) -> CeleryTestBroker:
 
 @pytest.fixture
 def celery_broker_cluster(celery_broker: CeleryTestBroker) -> CeleryBrokerCluster:
-    return CeleryBrokerCluster(celery_broker)  # type: ignore
+    cluster = CeleryBrokerCluster(celery_broker)  # type: ignore
+    cluster.ready()
+    return cluster
 
 
 @pytest.fixture
@@ -24,5 +26,4 @@ def celery_broker_cluster_config(
         celery_broker_cluster: CeleryBrokerCluster = request.getfixturevalue(defaults.CELERY_BROKER_CLUSTER)
         return celery_broker_cluster.config()
     except BaseException:
-        # TODO: Add logging
         return CeleryBrokerCluster.default_config()

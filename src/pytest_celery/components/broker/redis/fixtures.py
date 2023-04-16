@@ -11,7 +11,9 @@ from pytest_celery.containers.redis import RedisContainer
 
 @pytest.fixture
 def celery_redis_broker(default_redis_broker: RedisContainer) -> RedisTestBroker:
-    return RedisTestBroker(default_redis_broker)
+    broker = RedisTestBroker(default_redis_broker)
+    broker.ready()
+    return broker
 
 
 @pytest.fixture

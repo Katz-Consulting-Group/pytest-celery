@@ -26,6 +26,7 @@ from pytest_celery.components.broker import default_redis_broker_image
 from pytest_celery.components.broker import default_redis_broker_ports
 from pytest_celery.components.worker import celery_base_worker_image
 from pytest_celery.components.worker import celery_setup_worker
+from pytest_celery.components.worker import default_worker_celerky_worker_queue
 from pytest_celery.components.worker import default_worker_celery_log_level
 from pytest_celery.components.worker import default_worker_celery_version
 from pytest_celery.components.worker import default_worker_celery_worker_name

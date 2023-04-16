@@ -11,7 +11,9 @@ from pytest_celery.containers.redis import RedisContainer
 
 @pytest.fixture
 def celery_redis_backend(default_redis_backend: RedisContainer) -> RedisTestBackend:
-    return RedisTestBackend(default_redis_backend)
+    backend = RedisTestBackend(default_redis_backend)
+    backend.ready()
+    return backend
 
 
 @pytest.fixture

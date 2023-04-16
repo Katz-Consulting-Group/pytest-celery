@@ -7,6 +7,7 @@ from pytest_celery.api.components.cluster.base import CeleryTestCluster
 from pytest_celery.api.components.cluster.node import CeleryTestNode
 from pytest_celery.api.components.worker.node import CeleryTestWorker
 from pytest_celery.api.container import CeleryTestContainer
+from pytest_celery.utils import cached_property
 
 
 class CeleryWorkerCluster(CeleryTestCluster):
@@ -20,6 +21,6 @@ class CeleryWorkerCluster(CeleryTestCluster):
     ) -> Tuple[CeleryTestNode]:
         return super()._set_nodes(*nodes, node_cls=node_cls)
 
-    @property
+    @cached_property
     def versions(self) -> Set[str]:
         return {worker.version for worker in self}  # type: ignore
