@@ -19,3 +19,6 @@ class CeleryTestWorker(CeleryTestNode):
             return self.container.version()
         else:
             return "unknown"
+
+    def log_level(self) -> str:
+        return self.container.log_level()

@@ -14,6 +14,7 @@ celery4_worker_image = build(
     tag="pytest-celery/components/worker:celery4",
     buildargs={
         "CELERY_VERSION": Worker4Container.version(),
+        "CELERY_LOG_LEVEL": Worker4Container.log_level(),
     },
 )
 

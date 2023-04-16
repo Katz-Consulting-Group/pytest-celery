@@ -12,3 +12,7 @@ class Worker4Container(CeleryWorkerContainer):
     @classmethod
     def version(cls) -> str:
         return "4.4.7"
+
+    @classmethod
+    def log_level(cls) -> str:
+        return "DEBUG"

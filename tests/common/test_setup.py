@@ -5,7 +5,7 @@ from pytest_celery.api.setup import CeleryTestSetup
 
 
 class shared_celery_test_setup_suite:
-    def test_ready(self, celery_setup: CeleryTestSetup):
+    def test_basic_ready(self, celery_setup: CeleryTestSetup):
         assert celery_setup.ready()
 
     def test_worker_is_connected_to_backend(self, celery_setup: CeleryTestSetup):
@@ -21,3 +21,9 @@ class shared_celery_test_setup_suite:
         for worker in celery_setup.worker_cluster:
             app: Celery = worker.app
             assert app.connection().as_uri().replace("guest:**@", "") in broker_urls
+
+    def test_log_level(self, celery_setup: CeleryTestSetup):
+        worker: CeleryTestWorker
+        for worker in celery_setup.worker_cluster:
+            if worker.logs():
+                assert worker.log_level() in worker.logs()

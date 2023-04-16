@@ -45,7 +45,9 @@ from pytest_celery.components import default_redis_broker_cls
 from pytest_celery.components import default_redis_broker_env
 from pytest_celery.components import default_redis_broker_image
 from pytest_celery.components import default_redis_broker_ports
+from pytest_celery.components import default_worker_celery_log_level
 from pytest_celery.components import default_worker_celery_version
+from pytest_celery.components import default_worker_celery_worker_name
 from pytest_celery.components import default_worker_cls
 from pytest_celery.components import default_worker_container
 from pytest_celery.components import default_worker_container_cls

@@ -16,6 +16,14 @@ class CeleryWorkerContainer(CeleryTestContainer):
         return defaults.DEFAULT_WORKER_VERSION
 
     @classmethod
+    def log_level(cls) -> str:
+        return defaults.DEFAULT_WORKER_LOG_LEVEL
+
+    @classmethod
+    def worker_name(cls) -> str:
+        return defaults.DEFAULT_WORKER_NAME
+
+    @classmethod
     def env(cls, celery_worker_cluster_config: dict) -> dict:
         celery_broker_cluster_config = celery_worker_cluster_config.get("celery_broker_cluster_config")
         celery_backend_cluster_config = celery_worker_cluster_config.get("celery_backend_cluster_config")

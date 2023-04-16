@@ -53,6 +53,8 @@ celery_base_worker_image = build(
     tag="pytest-celery/components/worker:base",
     buildargs={
         "CELERY_VERSION": fxtr("default_worker_celery_version"),
+        "CELERY_LOG_LEVEL": fxtr("default_worker_celery_log_level"),
+        "CELERY_WORKER_NAME": fxtr("default_worker_celery_worker_name"),
     },
 )
 
@@ -64,6 +66,16 @@ default_worker_volume = volume(
 @pytest.fixture(scope="session")
 def default_worker_celery_version(default_worker_container_session_cls: Type[CeleryWorkerContainer]) -> str:
     return default_worker_container_session_cls.version()
+
+
+@pytest.fixture(scope="session")
+def default_worker_celery_log_level(default_worker_container_session_cls: Type[CeleryWorkerContainer]) -> str:
+    return default_worker_container_session_cls.log_level()
+
+
+@pytest.fixture(scope="session")
+def default_worker_celery_worker_name(default_worker_container_session_cls: Type[CeleryWorkerContainer]) -> str:
+    return default_worker_container_session_cls.worker_name()
 
 
 @pytest.fixture
