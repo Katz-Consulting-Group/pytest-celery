@@ -13,3 +13,7 @@ class Worker4Container(CeleryWorkerContainer):
     @cached_property
     def client(self) -> Any:
         return self
+
+    @classmethod
+    def version(cls) -> str:
+        return "4.4.7"
