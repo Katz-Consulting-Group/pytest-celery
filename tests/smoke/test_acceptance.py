@@ -35,12 +35,14 @@ class test_acceptance:
         if not celery_setup.chords_allowed():
             pytest.skip("Chords are not supported")
 
-        for sig in [
-            chord(group(identity.si("header_task1"), identity.si("header_task2")), identity.si("body_task")),
-            group(identity.si("header_task1"), identity.si("header_task2")) | identity.si("body_task"),
-            chord(
-                (sig for sig in [identity.si("header_task1"), identity.si("header_task2")]),
-                identity.si("body_task"),
-            ),
-        ]:
-            assert sig.delay().get(timeout=60) == "body_task"
+        sig = group(
+            [
+                chord(group(identity.si("header_task1"), identity.si("header_task2")), identity.si("body_task")),
+                group(identity.si("header_task1"), identity.si("header_task2")) | identity.si("body_task"),
+                chord(
+                    (sig for sig in [identity.si("header_task1"), identity.si("header_task2")]),
+                    identity.si("body_task"),
+                ),
+            ]
+        )
+        assert sig.delay().get(timeout=60) == ["body_task"] * 3
