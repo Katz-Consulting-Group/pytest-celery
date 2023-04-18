@@ -9,6 +9,9 @@ matchin fixture and returning your own value.
 from typing import Any
 
 import docker
+import pytest
+import pytest_docker_tools
+import redis
 import requests
 from pytest_docker_tools import network
 from retry import retry
@@ -21,6 +24,12 @@ RETRY_ERRORS = (
     docker.errors.NotFound,
     docker.errors.APIError,
     requests.exceptions.HTTPError,
+    redis.exceptions.ConnectionError,
+    ConnectionRefusedError,
+    BrokenPipeError,
+    TimeoutError,
+    pytest_docker_tools.exceptions.TimeoutError,
+    pytest.PytestUnraisableExceptionWarning,
 )
 
 READY_TIMEOUT = 30
