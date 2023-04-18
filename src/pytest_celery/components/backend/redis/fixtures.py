@@ -21,7 +21,7 @@ def celery_redis_backend(default_redis_backend: RedisContainer) -> RedisTestBack
 
 @pytest.fixture
 def default_redis_backend_cls() -> Type[RedisContainer]:
-    yield RedisContainer
+    return RedisContainer
 
 
 default_redis_backend = container(

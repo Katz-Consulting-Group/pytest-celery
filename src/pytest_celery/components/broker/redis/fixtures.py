@@ -21,7 +21,7 @@ def celery_redis_broker(default_redis_broker: RedisContainer) -> RedisTestBroker
 
 @pytest.fixture
 def default_redis_broker_cls() -> Type[RedisContainer]:
-    yield RedisContainer
+    return RedisContainer
 
 
 default_redis_broker = container(

@@ -21,7 +21,7 @@ def celery_rabbitmq_broker(default_rabbitmq_broker: RabbitMQContainer) -> Rabbit
 
 @pytest.fixture
 def default_rabbitmq_broker_cls() -> Type[RabbitMQContainer]:
-    yield RabbitMQContainer
+    return RabbitMQContainer
 
 
 default_rabbitmq_broker = container(

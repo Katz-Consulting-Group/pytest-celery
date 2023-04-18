@@ -36,12 +36,12 @@ def celery_setup_worker(
 
 @pytest.fixture
 def default_worker_container_cls() -> Type[CeleryWorkerContainer]:
-    yield CeleryWorkerContainer
+    return CeleryWorkerContainer
 
 
 @pytest.fixture(scope="session")
 def default_worker_container_session_cls() -> Type[CeleryWorkerContainer]:
-    yield CeleryWorkerContainer
+    return CeleryWorkerContainer
 
 
 default_worker_container = container(
