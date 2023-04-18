@@ -11,7 +11,7 @@ from tests.common.tasks import identity
 def default_worker_tasks() -> set:
     from tests.common import tasks
 
-    return {tasks}
+    yield {tasks}
 
 
 class test_celery_test_setup_integration:

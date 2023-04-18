@@ -31,7 +31,7 @@ def celery4_worker(
         app=celery_setup_app,
     )
     worker.ready()
-    return worker
+    yield worker
 
 
 celery4_worker_container = container(

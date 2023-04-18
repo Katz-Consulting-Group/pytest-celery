@@ -31,12 +31,12 @@ class SmokeWorkerContainer(CeleryWorkerContainer):
 
 @pytest.fixture
 def default_worker_container_cls() -> Type[CeleryWorkerContainer]:
-    return SmokeWorkerContainer
+    yield SmokeWorkerContainer
 
 
 @pytest.fixture(scope="session")
 def default_worker_container_session_cls() -> Type[CeleryWorkerContainer]:
-    return SmokeWorkerContainer
+    yield SmokeWorkerContainer
 
 
 smoke_tests_worker_image = build(
@@ -64,11 +64,11 @@ default_worker_container = container(
 class AltWorkerContainer(SmokeWorkerContainer):
     @classmethod
     def worker_name(cls) -> str:
-        return CeleryWorkerContainer.worker_name() + "-alt-worker"
+        yield CeleryWorkerContainer.worker_name() + "-alt-worker"
 
     @classmethod
     def worker_queue(cls) -> str:
-        return CeleryWorkerContainer.worker_queue() + "-smoke-tests-alt-queue"
+        yield CeleryWorkerContainer.worker_queue() + "-smoke-tests-alt-queue"
 
 
 alt_worker_image = build(
@@ -102,7 +102,7 @@ def alt_worker(
         app=celery_setup_app,
     )
     worker.ready()
-    return worker
+    yield worker
 
 
 @pytest.fixture(
@@ -116,7 +116,7 @@ def alt_worker(
     ]
 )
 def celery_worker_cluster(request: pytest.FixtureRequest) -> CeleryWorkerCluster:
-    return CeleryWorkerCluster(*[request.getfixturevalue(worker) for worker in request.param])
+    yield CeleryWorkerCluster(*[request.getfixturevalue(worker) for worker in request.param])
 
 
 @pytest.fixture
@@ -124,7 +124,7 @@ def default_worker_tasks() -> set:
     from tests.common import tasks as common_tasks
     from tests.smoke import tasks as smoke_tasks
 
-    return {
+    yield {
         common_tasks,
         smoke_tasks,
     }

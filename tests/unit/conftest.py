@@ -56,7 +56,7 @@ worker_test_container_volume = volume(
 
 @pytest.fixture(scope="session")
 def default_worker_container_cls() -> Type[CeleryWorkerContainer]:
-    return UnitWorkerContainer
+    yield UnitWorkerContainer
 
 
 @pytest.fixture(scope="session")
@@ -64,12 +64,12 @@ def worker_test_container_initial_content(
     default_worker_container_cls: Type[CeleryWorkerContainer],
     worker_test_container_tasks: set,
 ) -> dict:
-    return default_worker_container_cls.initial_content(worker_test_container_tasks)
+    yield default_worker_container_cls.initial_content(worker_test_container_tasks)
 
 
 @pytest.fixture(scope="session")
 def worker_test_container_tasks(default_worker_container_cls: Type[CeleryWorkerContainer]) -> set:
-    return default_worker_container_cls.tasks_modules()
+    yield default_worker_container_cls.tasks_modules()
 
 
 worker_test_container = container(
@@ -88,7 +88,7 @@ def celery_setup_worker(
     worker_test_container: UnitWorkerContainer,
     celery_setup_app: Celery,
 ) -> CeleryTestWorker:
-    return CeleryTestWorker(
+    yield CeleryTestWorker(
         container=worker_test_container,
         app=celery_setup_app,
     )
@@ -126,12 +126,12 @@ redis_broker_container = container(
 
 @pytest.fixture
 def celery_redis_backend(redis_backend_container: RedisContainer) -> RedisTestBackend:
-    return RedisTestBackend(redis_backend_container)
+    yield RedisTestBackend(redis_backend_container)
 
 
 @pytest.fixture
 def celery_redis_broker(redis_broker_container: RedisContainer) -> RedisTestBroker:
-    return RedisTestBroker(redis_broker_container)
+    yield RedisTestBroker(redis_broker_container)
 
 
 rabbitmq_image = fetch(repository=defaults.RABBITMQ_IMAGE)
@@ -148,4 +148,4 @@ rabbitmq_test_container = container(
 
 @pytest.fixture
 def celery_rabbitmq_broker(rabbitmq_test_container: RabbitMQContainer) -> RabbitMQTestBroker:
-    return RabbitMQTestBroker(rabbitmq_test_container)
+    yield RabbitMQTestBroker(rabbitmq_test_container)

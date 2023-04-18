@@ -32,12 +32,12 @@ class IntegrationWorkerContainer(CeleryWorkerContainer):
 
 @pytest.fixture
 def default_worker_container_cls() -> Type[CeleryWorkerContainer]:
-    return IntegrationWorkerContainer
+    yield IntegrationWorkerContainer
 
 
 @pytest.fixture(scope="session")
 def default_worker_container_session_cls() -> Type[CeleryWorkerContainer]:
-    return IntegrationWorkerContainer
+    yield IntegrationWorkerContainer
 
 
 integration_tests_worker_image = build(
@@ -65,9 +65,9 @@ default_worker_container = container(
 class IntegrationSetup(CeleryTestSetup):
     def ready(self, *args: tuple, **kwargs: dict) -> bool:
         kwargs["ping"] = True
-        return super().ready(*args, **kwargs)
+        yield super().ready(*args, **kwargs)
 
 
 @pytest.fixture
 def celery_setup_cls() -> Type[CeleryTestSetup]:
-    return IntegrationSetup
+    yield IntegrationSetup
