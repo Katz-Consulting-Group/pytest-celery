@@ -9,6 +9,7 @@ matchin fixture and returning your own value.
 from typing import Any
 
 import docker
+import requests
 from pytest_docker_tools import network
 from retry import retry
 
@@ -16,20 +17,21 @@ from retry import retry
 # Docker
 ##########
 
-DOCKER_ERRORS = (
+RETRY_ERRORS = (
     docker.errors.NotFound,
     docker.errors.APIError,
+    requests.exceptions.HTTPError,
 )
 
 READY_TIMEOUT = 30
 RESULT_TIMEOUT = 30
 MAX_TRIES = 5
-DELAY_SECONDS = 1
-MAX_DELAY_SECONDS = 10
+DELAY_SECONDS = 10
+MAX_DELAY_SECONDS = 120
 
 
 @retry(
-    DOCKER_ERRORS,
+    RETRY_ERRORS,
     tries=MAX_TRIES,
     delay=DELAY_SECONDS,
     max_delay=MAX_DELAY_SECONDS,

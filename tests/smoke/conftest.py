@@ -6,6 +6,7 @@ from celery import Celery
 from pytest_docker_tools import build
 from pytest_docker_tools import container
 from pytest_docker_tools import fxtr
+from retry.api import retry_call
 
 from pytest_celery import defaults
 from pytest_celery.api.components.worker.cluster import CeleryWorkerCluster
@@ -117,7 +118,15 @@ def alt_worker(
     ]
 )
 def celery_worker_cluster(request: pytest.FixtureRequest) -> CeleryWorkerCluster:
-    nodes = [request.getfixturevalue(worker) for worker in request.param]
+    nodes = tuple(
+        retry_call(
+            lambda: [request.getfixturevalue(worker) for worker in request.param],
+            exceptions=defaults.RETRY_ERRORS,
+            tries=defaults.MAX_TRIES,
+            delay=defaults.DELAY_SECONDS,
+            max_delay=defaults.MAX_DELAY_SECONDS,
+        )
+    )
     cluster = CeleryWorkerCluster(*nodes)
     cluster.ready()
     yield cluster

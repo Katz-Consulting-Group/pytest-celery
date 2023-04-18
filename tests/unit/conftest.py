@@ -24,7 +24,7 @@ from tests.unit.docker.api import UnitWorkerContainer
 
 
 @retry(
-    defaults.DOCKER_ERRORS,
+    defaults.RETRY_ERRORS,
     tries=defaults.MAX_TRIES,
     delay=defaults.DELAY_SECONDS,
     max_delay=defaults.MAX_DELAY_SECONDS,
