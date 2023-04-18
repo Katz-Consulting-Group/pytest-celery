@@ -117,7 +117,11 @@ def alt_worker(
     ]
 )
 def celery_worker_cluster(request: pytest.FixtureRequest) -> CeleryWorkerCluster:
-    return CeleryWorkerCluster(*[request.getfixturevalue(worker) for worker in request.param])
+    nodes = [request.getfixturevalue(worker) for worker in request.param]
+    cluster = CeleryWorkerCluster(*nodes)
+    cluster.ready()
+    yield cluster
+    cluster.teardown()
 
 
 @pytest.fixture

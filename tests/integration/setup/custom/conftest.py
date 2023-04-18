@@ -75,4 +75,5 @@ def celery_worker_cluster(
         celery4_worker,
     )
     cluster.ready()
-    return cluster
+    yield cluster
+    cluster.teardown()

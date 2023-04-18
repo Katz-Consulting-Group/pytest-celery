@@ -6,15 +6,40 @@ matchin fixture and returning your own value.
 """
 
 
+from typing import Any
+
+import docker
 from pytest_docker_tools import network
+from retry import retry
 
 ##########
 # Docker
 ##########
 
-DEFAULT_NETWORK = network()
-READY_TIMEOUT = 120
-RESULT_TIMEOUT = 60
+DOCKER_ERRORS = (
+    docker.errors.NotFound,
+    docker.errors.APIError,
+)
+
+READY_TIMEOUT = 30
+RESULT_TIMEOUT = 30
+MAX_TRIES = 5
+DELAY_SECONDS = 1
+MAX_DELAY_SECONDS = 10
+
+
+@retry(
+    DOCKER_ERRORS,
+    tries=MAX_TRIES,
+    delay=DELAY_SECONDS,
+    max_delay=MAX_DELAY_SECONDS,
+)
+def network_with_retry() -> Any:
+    return network()
+
+
+DEFAULT_NETWORK = network_with_retry()
+
 
 ##########
 # Fixtures

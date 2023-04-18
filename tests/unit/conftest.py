@@ -1,3 +1,4 @@
+from typing import Any
 from typing import Type
 
 import pytest
@@ -8,6 +9,7 @@ from pytest_docker_tools import fetch
 from pytest_docker_tools import fxtr
 from pytest_docker_tools import network
 from pytest_docker_tools import volume
+from retry import retry
 
 from pytest_celery import defaults
 from pytest_celery.api.components.worker.node import CeleryTestWorker
@@ -20,7 +22,18 @@ from pytest_celery.containers.worker import CeleryWorkerContainer
 from tests.unit.docker.api import UnitTestContainer
 from tests.unit.docker.api import UnitWorkerContainer
 
-unit_tests_network = network(scope="session")
+
+@retry(
+    defaults.DOCKER_ERRORS,
+    tries=defaults.MAX_TRIES,
+    delay=defaults.DELAY_SECONDS,
+    max_delay=defaults.MAX_DELAY_SECONDS,
+)
+def session_network_with_retry() -> Any:
+    return network(scope="session")
+
+
+unit_tests_network = session_network_with_retry()
 
 unit_tests_image = build(
     path="tests/unit/docker",
