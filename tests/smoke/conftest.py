@@ -11,12 +11,11 @@ from pytest_celery import defaults
 from pytest_celery.api.components.worker.cluster import CeleryWorkerCluster
 from pytest_celery.api.components.worker.node import CeleryTestWorker
 from pytest_celery.containers.worker import CeleryWorkerContainer
-from pytest_celery.utils import cached_property
 from tests.common.celery4.fixtures import *  # noqa
 
 
 class SmokeWorkerContainer(CeleryWorkerContainer):
-    @cached_property
+    @property
     def client(self) -> Any:
         # Overriding the worker container until we have a proper client class
         return self
@@ -40,8 +39,20 @@ def default_worker_container_session_cls() -> Type[CeleryWorkerContainer]:
     return SmokeWorkerContainer
 
 
+smoke_tests_worker_image = build(
+    path="src/pytest_celery/components/worker",
+    tag="pytest-celery/components/worker:smoke",
+    buildargs={
+        "CELERY_VERSION": SmokeWorkerContainer.version(),
+        "CELERY_LOG_LEVEL": SmokeWorkerContainer.log_level(),
+        "CELERY_WORKER_NAME": SmokeWorkerContainer.worker_name(),
+        "CELERY_WORKER_QUEUE": SmokeWorkerContainer.worker_queue(),
+    },
+)
+
+
 default_worker_container = container(
-    image="{celery_base_worker_image.id}",
+    image="{smoke_tests_worker_image.id}",
     environment=fxtr("default_worker_env"),
     network="{DEFAULT_NETWORK.name}",
     volumes={"{default_worker_volume.name}": defaults.DEFAULT_WORKER_VOLUME},

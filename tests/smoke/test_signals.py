@@ -76,7 +76,7 @@ class test_signals:
         worker: CeleryTestWorker
         for worker in celery_setup.worker_cluster:
             worker.app.control.broadcast("shutdown")
-            sleep(2)
+            sleep(2)  # wait for logs to be flushed
             logs = worker.logs()
             assert "worker_process_shutdown_handler" in logs
 
@@ -90,6 +90,6 @@ class test_signals:
         worker: CeleryTestWorker
         for worker in celery_setup.worker_cluster:
             worker.app.control.broadcast("shutdown")
-            sleep(2)
+            sleep(2)  # wait for logs to be flushed
             logs = worker.logs()
             assert "worker_shutdown_handler" in logs

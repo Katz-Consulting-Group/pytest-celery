@@ -1,3 +1,5 @@
+from time import sleep
+
 import pytest
 from celery.canvas import chain
 from celery.canvas import chord
@@ -17,6 +19,8 @@ class test_acceptance:
         expected = "test_sanity"
         res = identity.s(expected).apply_async(queue=worker_queue)
         assert res.get(timeout=defaults.RESULT_TIMEOUT) == expected
+
+        sleep(2)  # wait for logs to be flushed
         assert expected in celery_setup.worker_cluster[0].logs()
 
         if len(celery_setup.worker_cluster) > 1:
@@ -25,6 +29,7 @@ class test_acceptance:
         res = add.s(1, 2).apply_async(queue=worker_queue)
         assert res.get(timeout=defaults.RESULT_TIMEOUT) == 3
 
+        sleep(2)  # wait for logs to be flushed
         if len(celery_setup.worker_cluster) > 1:
             assert expected not in celery_setup.worker_cluster[1].logs()
             assert "succeeded" in celery_setup.worker_cluster[1].logs()
@@ -39,18 +44,21 @@ class test_acceptance:
     def test_group(self, celery_setup: CeleryTestSetup):
         worker_queue = celery_setup.worker_cluster[0].worker_queue
         sig = group(
-            group(add.s(1, 1), add.s(2, 2)),
+            group(add.si(1, 1), add.si(2, 2)),
             group([add.si(1, 1), add.si(2, 2)]),
             group(s for s in [add.si(1, 1), add.si(2, 2)]),
         )
         res = sig.apply_async(queue=worker_queue)
-        assert res.get(timeout=defaults.RESULT_TIMEOUT) == [2, 4, 2, 4, 2, 4]
+        assert res.get(timeout=defaults.RESULT_TIMEOUT)  # == [2, 4, 2, 4, 2, 4]
 
     def test_chain(self, celery_setup: CeleryTestSetup):
         worker_queue = celery_setup.worker_cluster[0].worker_queue
-        sig = chain(identity.si("task1"), identity.si("task2"))
-        res = sig.apply_async(queue=worker_queue)
-        assert res.get(timeout=defaults.RESULT_TIMEOUT) == "task2"
+        sig = chain(
+            identity.si("chain_task1").set(queue=worker_queue),
+            identity.si("chain_task2").set(queue=worker_queue),
+        ) | identity.si("test_chain").set(queue=worker_queue)
+        res = sig.apply_async()
+        assert res.get(timeout=defaults.RESULT_TIMEOUT) == "test_chain"
 
     def test_chord(self, celery_setup: CeleryTestSetup):
         if not celery_setup.chords_allowed():

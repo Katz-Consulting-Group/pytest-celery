@@ -2,23 +2,19 @@ from typing import Any
 from typing import Type
 
 import pytest
+from pytest_docker_tools import build
 from pytest_docker_tools import container
 from pytest_docker_tools import fxtr
 
 from pytest_celery import defaults
 from pytest_celery.api.components.worker.cluster import CeleryWorkerCluster
 from pytest_celery.api.components.worker.node import CeleryTestWorker
-from pytest_celery.api.setup import CeleryTestSetup
 from pytest_celery.containers.worker import CeleryWorkerContainer
-from pytest_celery.utils import cached_property
-from tests.common.celery4.api import Worker4Container
 from tests.common.celery4.fixtures import *  # noqa
-from tests.common.tasks import identity
-from tests.common.test_setup import shared_celery_test_setup_suite
 
 
 class Celery5WorkerContainer(CeleryWorkerContainer):
-    @cached_property
+    @property
     def client(self) -> Any:
         # Overriding the worker container until we have a proper client class
         return self
@@ -41,8 +37,19 @@ def default_worker_container_session_cls() -> Type[CeleryWorkerContainer]:
     return Celery5WorkerContainer
 
 
+celery5_worker_image = build(
+    path="src/pytest_celery/components/worker",
+    tag="pytest-celery/components/worker:celery5",
+    buildargs={
+        "CELERY_VERSION": Celery5WorkerContainer.version(),
+        "CELERY_LOG_LEVEL": Celery5WorkerContainer.log_level(),
+        "CELERY_WORKER_NAME": Celery5WorkerContainer.worker_name(),
+        "CELERY_WORKER_QUEUE": Celery5WorkerContainer.worker_queue(),
+    },
+)
+
 default_worker_container = container(
-    image="{celery_base_worker_image.id}",
+    image="{celery5_worker_image.id}",
     environment=fxtr("default_worker_env"),
     network="{DEFAULT_NETWORK.name}",
     volumes={"{default_worker_volume.name}": defaults.DEFAULT_WORKER_VOLUME},
@@ -69,22 +76,3 @@ def celery_worker_cluster(
     )
     cluster.ready()
     return cluster
-
-
-class test_custom_setup(shared_celery_test_setup_suite):
-    def test_celery_setup_override(self, celery_setup: CeleryTestSetup):
-        assert celery_setup.app
-        worker: CeleryTestWorker
-        for worker in celery_setup.worker_cluster:
-            expected = "test_celery_setup_override"
-            queue = worker.worker_queue
-            sig = identity.s(expected)
-            res = sig.apply_async(queue=queue)
-            assert res.get(timeout=defaults.RESULT_TIMEOUT) == expected
-
-    def test_custom_cluster_version(self, celery_setup: CeleryTestSetup, default_worker_celery_version: str):
-        assert len(celery_setup.worker_cluster) == 2
-        assert celery_setup.worker_cluster.versions == {
-            default_worker_celery_version,
-            Worker4Container.version(),
-        }

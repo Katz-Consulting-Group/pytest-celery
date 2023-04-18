@@ -2,17 +2,17 @@ from typing import Any
 from typing import Type
 
 import pytest
+from pytest_docker_tools import build
 from pytest_docker_tools import container
 from pytest_docker_tools import fxtr
 
 from pytest_celery import defaults
 from pytest_celery.api.setup import CeleryTestSetup
 from pytest_celery.containers.worker import CeleryWorkerContainer
-from pytest_celery.utils import cached_property
 
 
 class IntegrationWorkerContainer(CeleryWorkerContainer):
-    @cached_property
+    @property
     def client(self) -> Any:
         # Overriding the worker container until we have a proper client class
         return self
@@ -40,8 +40,20 @@ def default_worker_container_session_cls() -> Type[CeleryWorkerContainer]:
     return IntegrationWorkerContainer
 
 
+integration_tests_worker_image = build(
+    path="src/pytest_celery/components/worker",
+    tag="pytest-celery/components/worker:integration",
+    buildargs={
+        "CELERY_VERSION": IntegrationWorkerContainer.version(),
+        "CELERY_LOG_LEVEL": IntegrationWorkerContainer.log_level(),
+        "CELERY_WORKER_NAME": IntegrationWorkerContainer.worker_name(),
+        "CELERY_WORKER_QUEUE": IntegrationWorkerContainer.worker_queue(),
+    },
+)
+
+
 default_worker_container = container(
-    image="{celery_base_worker_image.id}",
+    image="{integration_tests_worker_image.id}",
     environment=fxtr("default_worker_env"),
     network="{DEFAULT_NETWORK.name}",
     volumes={"{default_worker_volume.name}": defaults.DEFAULT_WORKER_VOLUME},

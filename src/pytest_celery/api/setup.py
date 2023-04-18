@@ -4,7 +4,6 @@ from pytest_celery import defaults
 from pytest_celery.api.components.backend.cluster import CeleryBackendCluster
 from pytest_celery.api.components.broker.cluster import CeleryBrokerCluster
 from pytest_celery.api.components.worker.cluster import CeleryWorkerCluster
-from pytest_celery.utils import cached_property
 
 
 class CeleryTestSetup:
@@ -27,19 +26,19 @@ class CeleryTestSetup:
     def __len__(self) -> int:
         return len(self._worker_cluster) + len(self._broker_cluster) + len(self._backend_cluster)
 
-    @cached_property
+    @property
     def app(self) -> Celery:
         return self._app
 
-    @cached_property
+    @property
     def worker_cluster(self) -> CeleryWorkerCluster:
         return self._worker_cluster
 
-    @cached_property
+    @property
     def broker_cluster(self) -> CeleryBrokerCluster:
         return self._broker_cluster
 
-    @cached_property
+    @property
     def backend_cluster(self) -> CeleryBackendCluster:
         return self._backend_cluster
 
@@ -105,3 +104,8 @@ class CeleryTestSetup:
             return False
 
         return True
+
+    def teardown(self) -> None:
+        self.worker_cluster.teardown()
+        self.broker_cluster.teardown()
+        self.backend_cluster.teardown()

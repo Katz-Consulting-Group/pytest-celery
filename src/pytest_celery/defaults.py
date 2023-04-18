@@ -5,32 +5,16 @@ components fixtures. You can override these values by hooking to the
 matchin fixture and returning your own value.
 """
 
+
 from pytest_docker_tools import network
 
 ##########
 # Docker
 ##########
 
-READY_TIMEOUT = 30
-RESULT_TIMEOUT = 120
-MAX_RETRIES = 10
-try:
-    DEFAULT_NETWORK = network()
-except Exception:
-    # This is a workaround when running out of IPv4 addresses
-    # that causes the network fixture to fail when running tests in parallel.
-    from time import sleep
-
-    tries = 1
-    while tries <= MAX_RETRIES:
-        try:
-            DEFAULT_NETWORK = network()
-        except Exception as e:
-            if tries == 3:
-                raise e
-            sleep(0.1 * tries)
-            tries += 1
-
+DEFAULT_NETWORK = network()
+READY_TIMEOUT = 120
+RESULT_TIMEOUT = 60
 
 ##########
 # Fixtures
@@ -132,7 +116,7 @@ DEFAULT_WORKER_LOG_LEVEL = WORKER_LOG_LEVEL
 DEFAULT_WORKER_NAME = WORKER_NAME
 DEFAULT_WORKER_ENV = WORKER_ENV
 DEFAULT_WORKER_QUEUE = WORKER_QUEUE
-DEFAULT_WORKER_CONTAINER_TIMEOUT = 90
+DEFAULT_WORKER_CONTAINER_TIMEOUT = READY_TIMEOUT
 DEFAULT_WORKER_VOLUME = WORKER_VOLUME
 
 ##########################
@@ -172,7 +156,7 @@ DEFAULT_REDIS_BROKER_PORTS = REDIS_PORTS
 RABBITMQ_IMAGE = "rabbitmq:latest"
 RABBITMQ_PORTS = {"5672/tcp": None}
 RABBITMQ_ENV: dict = {}
-RABBITMQ_CONTAINER_TIMEOUT = 120
+RABBITMQ_CONTAINER_TIMEOUT = READY_TIMEOUT
 
 # Docker containers settings
 #################################################

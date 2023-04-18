@@ -1,18 +1,14 @@
-from time import sleep
-
 from kombu import Connection
-from pytest_docker_tools.wrappers.container import wait_for_callable
 
 from pytest_celery import defaults
 from pytest_celery.api.container import CeleryTestContainer
-from pytest_celery.utils import cached_property
 
 
 class RabbitMQContainer(CeleryTestContainer):
     __ready_prompt__ = "Server startup complete"
 
     def ready(self) -> bool:
-        return self._full_ready(self.__ready_prompt__, check_client=False)
+        return self._full_ready(self.__ready_prompt__)
 
     def _full_ready(self, match_log: str = "", check_client: bool = True) -> bool:
         ready = super()._full_ready(match_log, check_client)
@@ -24,24 +20,16 @@ class RabbitMQContainer(CeleryTestContainer):
                 c.release()
         return ready
 
-    @cached_property
+    @property
     def client(self) -> Connection:
-        tries = 1
-        max_tries = defaults.MAX_RETRIES
-        while tries <= max_tries:
-            try:
-                celeryconfig = self.celeryconfig
-                client = Connection(
-                    f"amqp://localhost/{celeryconfig['vhost']}",
-                    port=celeryconfig["port"],
-                )
-                return client
-            except Exception as e:
-                if tries == max_tries:
-                    raise e
-                tries += 1
+        celeryconfig = self.celeryconfig
+        client = Connection(
+            f"amqp://localhost/{celeryconfig['vhost']}",
+            port=celeryconfig["port"],
+        )
+        return client
 
-    @cached_property
+    @property
     def celeryconfig(self) -> dict:
         return {
             "url": self.url,
@@ -51,38 +39,23 @@ class RabbitMQContainer(CeleryTestContainer):
             "vhost": self.vhost,
         }
 
-    @cached_property
+    @property
     def url(self) -> str:
         return f"amqp://{self.hostname}/{self.vhost}"
 
-    @cached_property
+    @property
     def local_url(self) -> str:
         return f"amqp://localhost:{self.port}/{self.vhost}"
 
-    @cached_property
-    def port(self) -> int:
-        tries = 1
-        max_tries = defaults.MAX_RETRIES
-        while tries <= max_tries:
-            try:
-                wait_for_callable(
-                    "Waiting for port to be ready",
-                    lambda: self.get_addr("5672/tcp"),
-                )
-                _, port = self.get_addr("5672/tcp")
-                return port
-            except Exception as e:
-                if tries == max_tries:
-                    raise e
-                sleep(0.1 * tries)
-                tries += 1
-        return 0
-
-    @cached_property
+    @property
     def hostname(self) -> str:
         return self.attrs["Config"]["Hostname"]
 
-    @cached_property
+    @property
+    def port(self) -> int:
+        return self._port("5672/tcp")
+
+    @property
     def vhost(self) -> str:
         return "/"
 

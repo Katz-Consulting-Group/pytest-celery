@@ -35,7 +35,7 @@ def celery_setup_cls() -> Type[CeleryTestSetup]:
 
 
 @pytest.fixture
-def celery_setup(
+def celery_setup(  # type: ignore
     celery_setup_cls: Type[CeleryTestSetup],
     celery_worker_cluster: CeleryWorkerCluster,
     celery_broker_cluster: CeleryBrokerCluster,
@@ -49,4 +49,7 @@ def celery_setup(
         app=celery_setup_app,
     )
     setup.ready()
-    return setup
+
+    yield setup
+
+    setup.teardown()

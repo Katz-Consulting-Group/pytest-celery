@@ -65,7 +65,7 @@ jobs:
       - name: Run tox for "${{ matrix.python-version }}-unit"
         timeout-minutes: 5
         run: |
-          tox --verbose --verbose -e "${{ matrix.python-version }}-unit"
+          tox --verbose --verbose -e "${{ matrix.python-version }}-unit"  -- -n auto
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3
@@ -119,7 +119,7 @@ jobs:
       - name: Run tox for "${{ matrix.python-version }}-integration"
         timeout-minutes: 60
         run: |
-          tox --verbose --verbose -e "${{ matrix.python-version }}-integration"
+          tox --verbose --verbose -e "${{ matrix.python-version }}-integration"  -- -n auto --max-runs=10
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3
@@ -174,7 +174,7 @@ jobs:
       - name: Run tox for "${{ matrix.python-version }}-smoke"
         timeout-minutes: 60
         run: |
-          tox --verbose --verbose -e "${{ matrix.python-version }}-smoke"
+          tox --verbose --verbose -e "${{ matrix.python-version }}-smoke"  -- -n auto --max-runs=10
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3

@@ -20,22 +20,7 @@ from pytest_celery.containers.worker import CeleryWorkerContainer
 from tests.unit.docker.api import UnitTestContainer
 from tests.unit.docker.api import UnitWorkerContainer
 
-try:
-    unit_tests_network = network(scope="session")
-except Exception:
-    # This is a workaround when running out of IPv4 addresses
-    # that causes the network fixture to fail when running tests in parallel.
-    from time import sleep
-
-    tries = 1
-    while tries <= defaults.MAX_RETRIES:
-        try:
-            unit_tests_network = network(scope="session")
-        except Exception as e:
-            if tries == 3:
-                raise e
-            sleep(0.1 * tries)
-            tries += 1
+unit_tests_network = network(scope="session")
 
 unit_tests_image = build(
     path="tests/unit/docker",
