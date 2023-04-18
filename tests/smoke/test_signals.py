@@ -16,7 +16,7 @@ def default_worker_signals(default_worker_signals: set) -> set:
     from tests.smoke import signal_handlers
 
     default_worker_signals.add(signal_handlers)
-    return default_worker_signals
+    yield default_worker_signals
 
 
 class test_signals:
@@ -76,7 +76,7 @@ class test_signals:
         worker: CeleryTestWorker
         for worker in celery_setup.worker_cluster:
             worker.app.control.broadcast("shutdown")
-            sleep(2)
+            sleep(2)  # wait for logs to be flushed
             logs = worker.logs()
             assert "worker_process_shutdown_handler" in logs
 
@@ -90,6 +90,6 @@ class test_signals:
         worker: CeleryTestWorker
         for worker in celery_setup.worker_cluster:
             worker.app.control.broadcast("shutdown")
-            sleep(2)
+            sleep(2)  # wait for logs to be flushed
             logs = worker.logs()
             assert "worker_shutdown_handler" in logs

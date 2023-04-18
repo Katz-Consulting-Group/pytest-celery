@@ -1,3 +1,5 @@
+# mypy: disable-error-code="misc"
+
 import pytest
 from pytest_docker_tools import container
 from pytest_docker_tools import fxtr
@@ -21,7 +23,10 @@ failover_broker = container(
 
 @pytest.fixture
 def failover_rabbitmq_broker(failover_broker: RabbitMQContainer) -> RabbitMQTestBroker:
-    return RabbitMQTestBroker(failover_broker)
+    broker = RabbitMQTestBroker(failover_broker)
+    broker.ready()
+    yield broker
+    broker.teardown()
 
 
 @pytest.fixture
@@ -29,7 +34,10 @@ def celery_broker_cluster(
     celery_rabbitmq_broker: RabbitMQTestBroker,
     failover_rabbitmq_broker: RabbitMQTestBroker,
 ) -> CeleryBrokerCluster:
-    return CeleryBrokerCluster(celery_rabbitmq_broker, failover_rabbitmq_broker)
+    cluster = CeleryBrokerCluster(celery_rabbitmq_broker, failover_rabbitmq_broker)
+    cluster.ready()
+    yield cluster
+    cluster.teardown()
 
 
 class test_failover:

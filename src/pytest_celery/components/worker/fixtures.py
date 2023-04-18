@@ -1,3 +1,5 @@
+# mypy: disable-error-code="misc"
+
 from typing import Type
 
 import pytest
@@ -28,7 +30,8 @@ def celery_setup_worker(
         app=celery_setup_app,
     )
     worker.ready()
-    return worker
+    yield worker
+    worker.teardown()
 
 
 @pytest.fixture
@@ -68,22 +71,22 @@ default_worker_volume = volume(
 
 @pytest.fixture(scope="session")
 def default_worker_celery_version(default_worker_container_session_cls: Type[CeleryWorkerContainer]) -> str:
-    return default_worker_container_session_cls.version()
+    yield default_worker_container_session_cls.version()
 
 
 @pytest.fixture(scope="session")
 def default_worker_celery_log_level(default_worker_container_session_cls: Type[CeleryWorkerContainer]) -> str:
-    return default_worker_container_session_cls.log_level()
+    yield default_worker_container_session_cls.log_level()
 
 
 @pytest.fixture(scope="session")
 def default_worker_celery_worker_name(default_worker_container_session_cls: Type[CeleryWorkerContainer]) -> str:
-    return default_worker_container_session_cls.worker_name()
+    yield default_worker_container_session_cls.worker_name()
 
 
 @pytest.fixture(scope="session")
 def default_worker_celerky_worker_queue(default_worker_container_session_cls: Type[CeleryWorkerContainer]) -> str:
-    return default_worker_container_session_cls.worker_queue()
+    yield default_worker_container_session_cls.worker_queue()
 
 
 @pytest.fixture
@@ -91,7 +94,7 @@ def default_worker_env(
     default_worker_container_cls: Type[CeleryWorkerContainer],
     celery_worker_cluster_config: dict,
 ) -> dict:
-    return default_worker_container_cls.env(celery_worker_cluster_config)
+    yield default_worker_container_cls.env(celery_worker_cluster_config)
 
 
 @pytest.fixture
@@ -100,7 +103,7 @@ def default_worker_initial_content(
     default_worker_tasks: set,
     default_worker_signals: set,
 ) -> dict:
-    return default_worker_container_cls.initial_content(
+    yield default_worker_container_cls.initial_content(
         worker_tasks=default_worker_tasks,
         worker_signals=default_worker_signals,
     )
@@ -108,9 +111,9 @@ def default_worker_initial_content(
 
 @pytest.fixture
 def default_worker_tasks(default_worker_container_cls: Type[CeleryWorkerContainer]) -> set:
-    return default_worker_container_cls.tasks_modules()
+    yield default_worker_container_cls.tasks_modules()
 
 
 @pytest.fixture
 def default_worker_signals(default_worker_container_cls: Type[CeleryWorkerContainer]) -> set:
-    return default_worker_container_cls.signals_modules()
+    yield default_worker_container_cls.signals_modules()

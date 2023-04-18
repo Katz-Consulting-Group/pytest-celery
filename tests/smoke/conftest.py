@@ -6,17 +6,17 @@ from celery import Celery
 from pytest_docker_tools import build
 from pytest_docker_tools import container
 from pytest_docker_tools import fxtr
+from retry.api import retry_call
 
 from pytest_celery import defaults
 from pytest_celery.api.components.worker.cluster import CeleryWorkerCluster
 from pytest_celery.api.components.worker.node import CeleryTestWorker
 from pytest_celery.containers.worker import CeleryWorkerContainer
-from pytest_celery.utils import cached_property
 from tests.common.celery4.fixtures import *  # noqa
 
 
 class SmokeWorkerContainer(CeleryWorkerContainer):
-    @cached_property
+    @property
     def client(self) -> Any:
         # Overriding the worker container until we have a proper client class
         return self
@@ -40,8 +40,20 @@ def default_worker_container_session_cls() -> Type[CeleryWorkerContainer]:
     return SmokeWorkerContainer
 
 
+smoke_tests_worker_image = build(
+    path="src/pytest_celery/components/worker",
+    tag="pytest-celery/components/worker:smoke",
+    buildargs={
+        "CELERY_VERSION": SmokeWorkerContainer.version(),
+        "CELERY_LOG_LEVEL": SmokeWorkerContainer.log_level(),
+        "CELERY_WORKER_NAME": SmokeWorkerContainer.worker_name(),
+        "CELERY_WORKER_QUEUE": SmokeWorkerContainer.worker_queue(),
+    },
+)
+
+
 default_worker_container = container(
-    image="{celery_base_worker_image.id}",
+    image="{smoke_tests_worker_image.id}",
     environment=fxtr("default_worker_env"),
     network="{DEFAULT_NETWORK.name}",
     volumes={"{default_worker_volume.name}": defaults.DEFAULT_WORKER_VOLUME},
@@ -91,7 +103,8 @@ def alt_worker(
         app=celery_setup_app,
     )
     worker.ready()
-    return worker
+    yield worker
+    worker.teardown()
 
 
 @pytest.fixture(
@@ -105,7 +118,19 @@ def alt_worker(
     ]
 )
 def celery_worker_cluster(request: pytest.FixtureRequest) -> CeleryWorkerCluster:
-    return CeleryWorkerCluster(*[request.getfixturevalue(worker) for worker in request.param])
+    nodes = tuple(
+        retry_call(
+            lambda: [request.getfixturevalue(worker) for worker in request.param],
+            exceptions=defaults.RETRY_ERRORS,
+            tries=defaults.MAX_TRIES,
+            delay=defaults.DELAY_SECONDS,
+            max_delay=defaults.MAX_DELAY_SECONDS,
+        )
+    )
+    cluster = CeleryWorkerCluster(*nodes)
+    cluster.ready()
+    yield cluster
+    cluster.teardown()
 
 
 @pytest.fixture
@@ -113,7 +138,7 @@ def default_worker_tasks() -> set:
     from tests.common import tasks as common_tasks
     from tests.smoke import tasks as smoke_tasks
 
-    return {
+    yield {
         common_tasks,
         smoke_tasks,
     }
