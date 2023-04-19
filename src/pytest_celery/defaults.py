@@ -67,6 +67,8 @@ DEFAULT_NETWORK = network_with_retry()
 # Fixtures names
 ################
 
+CELERY_FIXTURES_PREFIX = "celery"
+
 # Generic components fixtures
 CELERY_SETUP = "celery_setup"
 CELERY_WORKER = "celery_worker"
