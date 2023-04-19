@@ -43,12 +43,7 @@ def default_worker_container_session_cls() -> Type[CeleryWorkerContainer]:
 integration_tests_worker_image = build(
     path="src/pytest_celery/components/worker",
     tag="pytest-celery/components/worker:integration",
-    buildargs={
-        "CELERY_VERSION": IntegrationWorkerContainer.version(),
-        "CELERY_LOG_LEVEL": IntegrationWorkerContainer.log_level(),
-        "CELERY_WORKER_NAME": IntegrationWorkerContainer.worker_name(),
-        "CELERY_WORKER_QUEUE": IntegrationWorkerContainer.worker_queue(),
-    },
+    buildargs=IntegrationWorkerContainer.buildargs(),
 )
 
 

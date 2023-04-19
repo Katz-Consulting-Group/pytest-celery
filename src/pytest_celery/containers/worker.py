@@ -28,6 +28,15 @@ class CeleryWorkerContainer(CeleryTestContainer):
         return defaults.DEFAULT_WORKER_QUEUE
 
     @classmethod
+    def buildargs(cls) -> dict:
+        return {
+            "CELERY_VERSION": cls.version(),
+            "CELERY_LOG_LEVEL": cls.log_level(),
+            "CELERY_WORKER_NAME": cls.worker_name(),
+            "CELERY_WORKER_QUEUE": cls.worker_queue(),
+        }
+
+    @classmethod
     def env(cls, celery_worker_cluster_config: dict) -> dict:
         celery_broker_cluster_config = celery_worker_cluster_config.get("celery_broker_cluster_config")
         celery_backend_cluster_config = celery_worker_cluster_config.get("celery_backend_cluster_config")

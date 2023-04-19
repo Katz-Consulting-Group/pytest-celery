@@ -19,8 +19,17 @@ from pytest_celery.components.broker.redis.api import RedisTestBroker
 from pytest_celery.containers.rabbitmq import RabbitMQContainer
 from pytest_celery.containers.redis import RedisContainer
 from pytest_celery.containers.worker import CeleryWorkerContainer
-from tests.unit.docker.api import UnitTestContainer
-from tests.unit.docker.api import UnitWorkerContainer
+from tests.smoke.conftest import SmokeWorkerContainer
+
+
+class SanityWorkerContainer(SmokeWorkerContainer):
+    @classmethod
+    def worker_name(cls) -> str:
+        return CeleryWorkerContainer.worker_name() + "-session-worker"
+
+    @classmethod
+    def worker_queue(cls) -> str:
+        return CeleryWorkerContainer.worker_queue() + "-smoke-tests-session-queue"
 
 
 @retry(
@@ -38,29 +47,12 @@ def session_network_with_retry() -> Any:
         return network(scope="session")
 
 
-unit_tests_network = session_network_with_retry()
+sanity_tests_network = session_network_with_retry()
 
-unit_tests_image = build(
-    path="tests/unit/docker",
-    tag="pytest-celery/tests/unit:latest",
-)
 
-unit_tests_container = container(
-    image="{unit_tests_image.id}",
-    scope="session",
-    network="{unit_tests_network.name}",
-    wrapper_class=UnitTestContainer,
-)
-
-local_test_container = container(
-    image="{unit_tests_image.id}",
-    network="{unit_tests_network.name}",
-    wrapper_class=UnitTestContainer,
-)
-
-celery_unit_worker_image = build(
+celery_sanity_worker_image = build(
     path="src/pytest_celery/components/worker",
-    tag="pytest-celery/components/worker:unit",
+    tag="pytest-celery/components/worker:sanity",
     buildargs={
         "CELERY_VERSION": fxtr("default_worker_celery_version"),
         "CELERY_LOG_LEVEL": fxtr("default_worker_celery_log_level"),
@@ -69,48 +61,48 @@ celery_unit_worker_image = build(
     },
 )
 
-worker_test_container_volume = volume(
-    initial_content=fxtr("worker_test_container_initial_content"),
+session_worker_test_container_volume = volume(
+    initial_content=fxtr("session_worker_test_container_initial_content"),
     scope="session",
 )
 
 
 @pytest.fixture(scope="session")
 def default_worker_container_cls() -> Type[CeleryWorkerContainer]:
-    return UnitWorkerContainer
+    return SanityWorkerContainer
 
 
 @pytest.fixture(scope="session")
-def worker_test_container_initial_content(
+def session_worker_test_container_initial_content(
     default_worker_container_cls: Type[CeleryWorkerContainer],
-    worker_test_container_tasks: set,
+    session_worker_test_container_tasks: set,
 ) -> dict:
-    yield default_worker_container_cls.initial_content(worker_test_container_tasks)
+    yield default_worker_container_cls.initial_content(session_worker_test_container_tasks)
 
 
 @pytest.fixture(scope="session")
-def worker_test_container_tasks(default_worker_container_cls: Type[CeleryWorkerContainer]) -> set:
+def session_worker_test_container_tasks(default_worker_container_cls: Type[CeleryWorkerContainer]) -> set:
     yield default_worker_container_cls.tasks_modules()
 
 
-worker_test_container = container(
-    image="{celery_unit_worker_image.id}",
+session_worker_test_container = container(
+    image="{celery_sanity_worker_image.id}",
     scope="session",
     environment=defaults.DEFAULT_WORKER_ENV,
-    network="{unit_tests_network.name}",
-    volumes={"{worker_test_container_volume.name}": defaults.DEFAULT_WORKER_VOLUME},
-    wrapper_class=UnitWorkerContainer,
+    network="{sanity_tests_network.name}",
+    volumes={"{session_worker_test_container_volume.name}": defaults.DEFAULT_WORKER_VOLUME},
+    wrapper_class=SanityWorkerContainer,
     timeout=defaults.DEFAULT_WORKER_CONTAINER_TIMEOUT,
 )
 
 
 @pytest.fixture
 def celery_setup_worker(
-    worker_test_container: UnitWorkerContainer,
+    session_worker_test_container: SanityWorkerContainer,
     celery_setup_app: Celery,
 ) -> CeleryTestWorker:
     worker = CeleryTestWorker(
-        container=worker_test_container,
+        container=session_worker_test_container,
         app=celery_setup_app,
     )
     worker.ready()
@@ -118,13 +110,19 @@ def celery_setup_worker(
     worker.teardown()
 
 
-redis_image = fetch(repository=defaults.REDIS_IMAGE)
-redis_test_container = container(
-    image="{redis_image.id}",
-    scope="session",
-    ports=defaults.REDIS_PORTS,
-    environment=defaults.REDIS_ENV,
-    network="{unit_tests_network.name}",
+session_redis_backend = container(
+    image="{default_redis_backend_image}",
+    ports=fxtr("default_redis_backend_ports"),
+    environment=fxtr("default_redis_backend_env"),
+    network="{DEFAULT_NETWORK.name}",
+    wrapper_class=RedisContainer,
+    timeout=defaults.REDIS_CONTAINER_TIMEOUT,
+)
+session_redis_broker = container(
+    image="{default_redis_broker_image}",
+    ports=fxtr("default_redis_broker_ports"),
+    environment=fxtr("default_redis_broker_env"),
+    network="{DEFAULT_NETWORK.name}",
     wrapper_class=RedisContainer,
     timeout=defaults.REDIS_CONTAINER_TIMEOUT,
 )
@@ -133,7 +131,7 @@ redis_backend_container = container(
     scope="session",
     ports=defaults.REDIS_PORTS,
     environment=defaults.REDIS_ENV,
-    network="{unit_tests_network.name}",
+    network="{sanity_tests_network.name}",
     wrapper_class=RedisContainer,
     timeout=defaults.REDIS_CONTAINER_TIMEOUT,
 )
@@ -142,7 +140,7 @@ redis_broker_container = container(
     scope="session",
     ports=defaults.REDIS_PORTS,
     environment=defaults.REDIS_ENV,
-    network="{unit_tests_network.name}",
+    network="{sanity_tests_network.name}",
     wrapper_class=RedisContainer,
     timeout=defaults.REDIS_CONTAINER_TIMEOUT,
 )
@@ -164,13 +162,20 @@ def celery_redis_broker(redis_broker_container: RedisContainer) -> RedisTestBrok
     broker.teardown()
 
 
-rabbitmq_image = fetch(repository=defaults.RABBITMQ_IMAGE)
+session_rabbitmq_broker = container(
+    image="{default_rabbitmq_broker_image}",
+    scope="session",
+    ports=fxtr("default_rabbitmq_broker_ports"),
+    environment=fxtr("default_rabbitmq_broker_env"),
+    network="{sanity_tests_network.name}",
+    wrapper_class=RabbitMQContainer,
+    timeout=defaults.RABBITMQ_CONTAINER_TIMEOUT,
+)
 rabbitmq_test_container = container(
     image="{rabbitmq_image.id}",
-    scope="session",
     ports=defaults.RABBITMQ_PORTS,
     environment=defaults.RABBITMQ_ENV,
-    network="{unit_tests_network.name}",
+    network="{sanity_tests_network.name}",
     wrapper_class=RabbitMQContainer,
     timeout=defaults.RABBITMQ_CONTAINER_TIMEOUT,
 )

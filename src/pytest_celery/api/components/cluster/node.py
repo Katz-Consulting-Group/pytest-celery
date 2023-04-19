@@ -39,4 +39,5 @@ class CeleryTestNode:
         self.container.kill()
 
     def teardown(self) -> None:
+        # TODO: Maybe call at __del__?
         pass

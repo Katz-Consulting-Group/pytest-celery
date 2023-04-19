@@ -43,12 +43,7 @@ def default_worker_container_session_cls() -> Type[CeleryWorkerContainer]:
 smoke_tests_worker_image = build(
     path="src/pytest_celery/components/worker",
     tag="pytest-celery/components/worker:smoke",
-    buildargs={
-        "CELERY_VERSION": SmokeWorkerContainer.version(),
-        "CELERY_LOG_LEVEL": SmokeWorkerContainer.log_level(),
-        "CELERY_WORKER_NAME": SmokeWorkerContainer.worker_name(),
-        "CELERY_WORKER_QUEUE": SmokeWorkerContainer.worker_queue(),
-    },
+    buildargs=SmokeWorkerContainer.buildargs(),
 )
 
 
@@ -75,12 +70,7 @@ class AltWorkerContainer(SmokeWorkerContainer):
 alt_worker_image = build(
     path="src/pytest_celery/components/worker",
     tag="pytest-celery/components/worker:alt",
-    buildargs={
-        "CELERY_VERSION": AltWorkerContainer.version(),
-        "CELERY_LOG_LEVEL": AltWorkerContainer.log_level(),
-        "CELERY_WORKER_NAME": AltWorkerContainer.worker_name(),
-        "CELERY_WORKER_QUEUE": AltWorkerContainer.worker_queue(),
-    },
+    buildargs=AltWorkerContainer.buildargs(),
 )
 
 alt_worker_container = container(
@@ -111,7 +101,7 @@ def alt_worker(
     # Each param item is a list of workers to be used in the cluster
     params=[
         ["celery_setup_worker"],
-        ["celery_setup_worker", "alt_worker", "celery4_worker"],
+        ["celery_setup_worker", "celery4_worker", "alt_worker"],
     ]
 )
 def celery_worker_cluster(request: pytest.FixtureRequest) -> CeleryWorkerCluster:
