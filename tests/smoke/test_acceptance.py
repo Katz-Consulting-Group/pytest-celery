@@ -13,7 +13,7 @@ from tests.common.tasks import identity
 from tests.smoke.tasks import add
 
 
-class test_canvas:
+class test_acceptance:
     def test_sanity(self, celery_setup: CeleryTestSetup):
         assert celery_setup.ready(ping=True)
         worker = celery_setup.worker_cluster[0]

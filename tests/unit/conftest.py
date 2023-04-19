@@ -63,9 +63,6 @@ celery_unit_worker_image = build(
     tag="pytest-celery/components/worker:unit",
     buildargs={
         "CELERY_VERSION": fxtr("default_worker_celery_version"),
-        "CELERY_LOG_LEVEL": fxtr("default_worker_celery_log_level"),
-        "CELERY_WORKER_NAME": fxtr("default_worker_celery_worker_name"),
-        "CELERY_WORKER_QUEUE": fxtr("default_worker_celerky_worker_queue"),
     },
 )
 

@@ -12,7 +12,12 @@ from tests.common.celery4.api import Celery4WorkerContainer
 celery4_worker_image = build(
     path="tests/common/celery4",
     tag="pytest-celery/components/worker:celery4",
-    buildargs=Celery4WorkerContainer.buildargs(),
+    buildargs={
+        "CELERY_VERSION": Celery4WorkerContainer.version(),
+        "CELERY_LOG_LEVEL": Celery4WorkerContainer.log_level(),
+        "CELERY_WORKER_NAME": Celery4WorkerContainer.worker_name(),
+        "CELERY_WORKER_QUEUE": Celery4WorkerContainer.worker_queue(),
+    },
 )
 
 
