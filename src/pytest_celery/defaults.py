@@ -34,9 +34,9 @@ RETRY_ERRORS = (
 
 READY_TIMEOUT = 30
 RESULT_TIMEOUT = 30
-MAX_TRIES = 5
+MAX_TRIES = 10
 DELAY_SECONDS = 10
-MAX_DELAY_SECONDS = 120
+MAX_DELAY_SECONDS = 300
 
 
 @retry(
@@ -46,7 +46,12 @@ MAX_DELAY_SECONDS = 120
     max_delay=MAX_DELAY_SECONDS,
 )
 def network_with_retry() -> Any:
-    return network()
+    try:
+        return network()
+    except RETRY_ERRORS as exc:
+        # This is a workaround when running out of IPv4 addresses
+        # that causes the network fixture to fail when running tests in parallel.
+        raise exc
 
 
 DEFAULT_NETWORK = network_with_retry()

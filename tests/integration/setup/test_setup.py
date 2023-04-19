@@ -39,9 +39,10 @@ class test_celery_test_setup_integration:
                 assert worker.log_level in worker.logs()
 
     def test_ready(self, celery_setup: CeleryTestSetup):
-        queue = celery_setup.worker_cluster[0].worker_queue
-        r = identity.s("test_ready").apply_async(queue=queue)
-        assert r.get(timeout=defaults.RESULT_TIMEOUT) == "test_ready"
+        for worker in celery_setup.worker_cluster:
+            queue = worker.worker_queue
+            r = identity.s("test_ready").apply_async(queue=queue)
+            assert r.get(timeout=defaults.RESULT_TIMEOUT) == "test_ready"
 
     def test_celery_test_setup_ready_ping(self, celery_setup: CeleryTestSetup):
         assert celery_setup.ready(ping=True)
