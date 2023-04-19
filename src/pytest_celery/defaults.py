@@ -48,10 +48,10 @@ MAX_DELAY_SECONDS = 300
 def network_with_retry() -> Any:
     try:
         return network()
-    except RETRY_ERRORS as exc:
+    except RETRY_ERRORS:
         # This is a workaround when running out of IPv4 addresses
         # that causes the network fixture to fail when running tests in parallel.
-        raise exc
+        return network()
 
 
 DEFAULT_NETWORK = network_with_retry()
