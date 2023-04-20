@@ -1,4 +1,7 @@
+# mypy: disable-error-code="misc"
+
 import pytest
+from retry.api import retry_call
 
 from pytest_celery import defaults
 from pytest_celery.api.components.worker import CeleryTestWorker
@@ -7,7 +10,13 @@ from pytest_celery.api.components.worker import CeleryWorkerCluster
 
 @pytest.fixture(params=defaults.ALL_CELERY_WORKERS)
 def celery_worker(request: pytest.FixtureRequest) -> CeleryTestWorker:  # type: ignore
-    worker: CeleryTestWorker = request.getfixturevalue(request.param)
+    worker: CeleryTestWorker = retry_call(
+        lambda: request.getfixturevalue(request.param),
+        exceptions=defaults.COMPONENT_RETRYABLE_ERRORS,
+        tries=defaults.MAX_TRIES,
+        delay=defaults.DELAY_SECONDS,
+        max_delay=defaults.MAX_DELAY_SECONDS,
+    )
     worker.ready()
     yield worker
     worker.teardown()
