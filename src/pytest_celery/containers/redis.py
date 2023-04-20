@@ -31,6 +31,7 @@ class RedisContainer(CeleryTestContainer):
 
         pool = BlockingConnectionPool.from_url(
             self.celeryconfig["local_url"],
+            max_connections=int(self.command()[-1]),
             timeout=None,
             decode_responses=True,
         )
@@ -86,6 +87,7 @@ class RedisContainer(CeleryTestContainer):
     @classmethod
     def app_transport_options(cls) -> dict:
         return {
+            "max_connections": int(cls.command()[-1]),
             "timeout": None,
             "pool_class": "redis.BlockingConnectionPool",
         }

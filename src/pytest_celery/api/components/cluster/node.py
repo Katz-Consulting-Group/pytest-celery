@@ -1,6 +1,6 @@
-from pytest_docker_tools.wrappers.container import wait_for_callable
+# from pytest_docker_tools.wrappers.container import wait_for_callable
 
-from pytest_celery import defaults
+# from pytest_celery import defaults
 from pytest_celery.api.container import CeleryTestContainer
 
 
@@ -13,11 +13,11 @@ class CeleryTestNode:
         return self._container
 
     def ready(self) -> bool:
-        wait_for_callable(
-            f">>> Waiting for the node's container to be ready: '{self.__class__.__name__}::{self.container.name}'",
-            self.container.ready,
-            timeout=defaults.READY_TIMEOUT,
-        )
+        # wait_for_callable(
+        #     f">>> Waiting for the node's container to be ready: '{self.__class__.__name__}::{self.container.name}'",
+        #     self.container.ready,
+        #     timeout=defaults.READY_TIMEOUT,
+        # )
         return self.container.ready()
 
     def config(self, *args: tuple, **kwargs: dict) -> dict:
