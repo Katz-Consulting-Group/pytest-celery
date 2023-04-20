@@ -1,5 +1,6 @@
 from typing import Optional
 
+from kombu.utils import cached_property
 from redis import BlockingConnectionPool
 from redis import StrictRedis as Redis
 
@@ -23,24 +24,18 @@ class RedisContainer(CeleryTestContainer):
                 c.delete("ready")
         return ready
 
-    @property
+    @cached_property
     def client(self) -> Optional[Redis]:
         if self._client:
             return self._client
 
         pool = BlockingConnectionPool.from_url(
             self.celeryconfig["local_url"],
-            max_connections=100,
+            max_connections=1000,
             timeout=20,
             decode_responses=True,
         )
         self._client = Redis(connection_pool=pool)
-        return self._client
-
-        self._client = Redis.from_url(
-            self.celeryconfig["local_url"],
-            decode_responses=True,
-        )
         return self._client
 
     @property

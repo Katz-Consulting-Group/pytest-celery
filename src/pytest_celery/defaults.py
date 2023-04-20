@@ -32,15 +32,15 @@ RETRY_ERRORS = (
 
 READY_TIMEOUT = 30
 RESULT_TIMEOUT = 30
-MAX_TRIES = 60
-DELAY_SECONDS = 0.5
+MAX_TRIES = 30
+DELAY_SECONDS = 1
 MAX_DELAY_SECONDS = 300
 
 
 @retry(
     RETRY_ERRORS,
     tries=MAX_TRIES,
-    delay=DELAY_SECONDS,
+    delay=0.1,
     max_delay=MAX_DELAY_SECONDS,
 )
 def network_with_retry() -> Any:
