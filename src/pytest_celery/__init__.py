@@ -5,6 +5,7 @@ pytest-celery a shim pytest plugin to enable celery.contrib.pytest
 # flake8: noqa
 
 from pytest_celery.defaults import *
+from pytest_celery.utils import *
 
 __version__ = "1.0.0a1"
 
