@@ -29,8 +29,8 @@ class CeleryTestContainer(wrappers.Container):
 
     @retry(
         RETRY_ERRORS + (IndexError,),
-        tries=defaults.MAX_TRIES,
-        delay=defaults.DELAY_SECONDS,
+        tries=100,
+        delay=1,
         max_delay=defaults.MAX_DELAY_SECONDS,
     )
     def _wait_port(self, port: str) -> int:
