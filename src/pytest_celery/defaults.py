@@ -19,6 +19,7 @@ from retry import retry
 # Docker
 ##########
 
+# TODO: Split and use where needed instead of using the global one
 RETRY_ERRORS = (
     docker.errors.NotFound,
     docker.errors.APIError,
@@ -34,13 +35,13 @@ READY_TIMEOUT = 30
 RESULT_TIMEOUT = 30
 MAX_TRIES = 30
 DELAY_SECONDS = 1
-MAX_DELAY_SECONDS = 300
+MAX_DELAY_SECONDS = 120
 
 
 @retry(
     RETRY_ERRORS,
     tries=MAX_TRIES,
-    delay=0.1,
+    delay=0.5,
     max_delay=MAX_DELAY_SECONDS,
 )
 def network_with_retry() -> Any:
