@@ -32,7 +32,7 @@ def celery_backend_cluster(celery_backend: CeleryTestBackend) -> CeleryBackendCl
 def celery_backend_cluster_config(request: pytest.FixtureRequest) -> dict:
     try:
         use_default_config = pytest.fail.Exception
-        assert use_default_config not in defaults.COMPONENT_RETRYABLE_ERRORS
+        assert use_default_config not in defaults.RETRYABLE_ERRORS
         cluster: CeleryBackendCluster = retry_call(
             lambda: request.getfixturevalue(defaults.CELERY_BACKEND_CLUSTER),
             exceptions=defaults.RETRYABLE_ERRORS,
