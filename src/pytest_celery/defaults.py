@@ -12,11 +12,8 @@ import docker
 import pytest_docker_tools
 import redis
 import requests
-
-# from pytest_docker_tools import network
+from pytest_docker_tools import network
 from retry import retry
-
-from pytest_celery.utils import network_with_retry
 
 ##########
 # Docker
@@ -36,27 +33,27 @@ RETRY_ERRORS = (
 
 READY_TIMEOUT = 30
 RESULT_TIMEOUT = 30
-MAX_TRIES = 5
-DELAY_SECONDS = 0.5
+MAX_TRIES = 30
+DELAY_SECONDS = 1
 MAX_DELAY_SECONDS = 120
 
 
 @retry(
     RETRY_ERRORS,
     tries=MAX_TRIES,
-    delay=DELAY_SECONDS,
+    delay=0.5,
     max_delay=MAX_DELAY_SECONDS,
 )
-def network_with_retry2() -> Any:
+def network_with_retry() -> Any:
     try:
-        return network_with_retry()
+        return network()
     except RETRY_ERRORS:
         # This is a workaround when running out of IPv4 addresses
         # that causes the network fixture to fail when running tests in parallel.
-        return network_with_retry()
+        return network()
 
 
-DEFAULT_NETWORK = network_with_retry2()
+DEFAULT_NETWORK = network_with_retry()
 
 
 ##########

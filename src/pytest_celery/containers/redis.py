@@ -31,8 +31,8 @@ class RedisContainer(CeleryTestContainer):
 
         pool = BlockingConnectionPool.from_url(
             self.celeryconfig["local_url"],
-            max_connections=100,
-            timeout=60,
+            max_connections=1000,
+            timeout=20,
             decode_responses=True,
         )
         self._client = Redis(connection_pool=pool)
