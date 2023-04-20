@@ -62,12 +62,12 @@ default_worker_container = container(
 )
 
 
-# class IntegrationSetup(CeleryTestSetup):
-#     def ready(self, *args: tuple, **kwargs: dict) -> bool:
-#         kwargs["ping"] = True
-#         return super().ready(*args, **kwargs)
+class IntegrationSetup(CeleryTestSetup):
+    def ready(self, *args: tuple, **kwargs: dict) -> bool:
+        kwargs["ping"] = True
+        return super().ready(*args, **kwargs)
 
 
-# @pytest.fixture
-# def celery_setup_cls() -> Type[CeleryTestSetup]:
-#     return IntegrationSetup
+@pytest.fixture
+def celery_setup_cls() -> Type[CeleryTestSetup]:
+    return IntegrationSetup
