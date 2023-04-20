@@ -27,11 +27,11 @@ RESULT_TIMEOUT = 30
 DOCKER_RETRYABLE_ERRORS = (
     docker.errors.NotFound,
     docker.errors.APIError,
+    requests.exceptions.HTTPError,
 )
 
 NETWORK_RETRYABLE_ERRORS = DOCKER_RETRYABLE_ERRORS + (
     TimeoutError,
-    requests.exceptions.HTTPError,
     requests.exceptions.Timeout,
     requests.exceptions.RetryError,
     pytest_docker_tools.exceptions.ContainerNotReady,
