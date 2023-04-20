@@ -30,26 +30,6 @@ DOCKER_RETRYABLE_ERRORS = (
     requests.exceptions.HTTPError,
 )
 
-NETWORK_RETRYABLE_ERRORS = DOCKER_RETRYABLE_ERRORS + (
-    TimeoutError,
-    requests.exceptions.Timeout,
-    requests.exceptions.RetryError,
-    pytest_docker_tools.exceptions.ContainerNotReady,
-    pytest_docker_tools.exceptions.TimeoutError,
-)
-NETWORK_RETRYABLE_DELAY = 2
-
-READY_RETRYABLE_ERRORS = NETWORK_RETRYABLE_ERRORS + (
-    ConnectionError,
-    requests.exceptions.ConnectionError,
-    amqp.exceptions.NotFound,
-    CeleryTimeoutError,
-)
-READY_RETRYABLE_DELAY = 1
-
-PORT_RETRYABLE_ERRORS = READY_RETRYABLE_ERRORS + (IndexError,)
-PORT_RETRYABLE_DELAY = 2
-
 REDIS_RETRYABLE_ERRORS = DOCKER_RETRYABLE_ERRORS + (
     TimeoutError,
     ConnectionError,
@@ -59,11 +39,35 @@ REDIS_RETRYABLE_ERRORS = DOCKER_RETRYABLE_ERRORS + (
     redis.exceptions.TimeoutError,
 )
 
-RETRYABLE_ERRORS = READY_RETRYABLE_ERRORS + REDIS_RETRYABLE_ERRORS
-RETRYABLE_DELAY = 2
+NETWORK_RETRYABLE_ERRORS = DOCKER_RETRYABLE_ERRORS + (
+    TimeoutError,
+    requests.exceptions.Timeout,
+    requests.exceptions.RetryError,
+    pytest_docker_tools.exceptions.ContainerNotReady,
+    pytest_docker_tools.exceptions.TimeoutError,
+)
 
+
+READY_RETRYABLE_ERRORS = (
+    NETWORK_RETRYABLE_ERRORS
+    + REDIS_RETRYABLE_ERRORS
+    + (
+        ConnectionError,
+        requests.exceptions.ConnectionError,
+        amqp.exceptions.NotFound,
+        CeleryTimeoutError,
+    )
+)
+PORT_RETRYABLE_ERRORS = READY_RETRYABLE_ERRORS + (IndexError,)
+RETRYABLE_ERRORS = READY_RETRYABLE_ERRORS
 COMPONENT_RETRYABLE_ERRORS = RETRYABLE_ERRORS + (Exception,)
-COMPONENT_RETRYABLE_DELAY = 2
+
+DELAY = 5
+READY_RETRYABLE_DELAY = DELAY or 5
+NETWORK_RETRYABLE_DELAY = DELAY or 5
+PORT_RETRYABLE_DELAY = DELAY or 5
+RETRYABLE_DELAY = DELAY or 5
+COMPONENT_RETRYABLE_DELAY = DELAY or 5
 
 
 @retry(
