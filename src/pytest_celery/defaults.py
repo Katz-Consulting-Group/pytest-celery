@@ -9,7 +9,6 @@ matchin fixture and returning your own value.
 from typing import Any
 
 import docker
-import pytest
 import pytest_docker_tools
 import redis
 import requests
@@ -29,13 +28,12 @@ RETRY_ERRORS = (
     BrokenPipeError,
     TimeoutError,
     pytest_docker_tools.exceptions.TimeoutError,
-    pytest.PytestUnraisableExceptionWarning,
 )
 
 READY_TIMEOUT = 30
 RESULT_TIMEOUT = 30
-MAX_TRIES = 10
-DELAY_SECONDS = 10
+MAX_TRIES = 60
+DELAY_SECONDS = 0.5
 MAX_DELAY_SECONDS = 300
 
 

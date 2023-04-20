@@ -110,5 +110,5 @@ class CeleryWorkerContainer(CeleryTestContainer):
     def signals_modules(cls) -> set:
         return set()
 
-    def _port(self, port: str) -> int:
+    def _wait_port(self, port: str) -> int:
         raise NotImplementedError

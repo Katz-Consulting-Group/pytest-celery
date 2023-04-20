@@ -1,5 +1,6 @@
 from typing import Optional
 
+from redis import BlockingConnectionPool
 from redis import StrictRedis as Redis
 
 from pytest_celery import defaults
@@ -24,12 +25,23 @@ class RedisContainer(CeleryTestContainer):
 
     @property
     def client(self) -> Optional[Redis]:
-        celeryconfig = self.celeryconfig
-        client = Redis.from_url(
-            celeryconfig["local_url"],
+        if self._client:
+            return self._client
+
+        pool = BlockingConnectionPool.from_url(
+            self.celeryconfig["local_url"],
+            max_connections=100,
+            timeout=20,
             decode_responses=True,
         )
-        return client
+        self._client = Redis(connection_pool=pool)
+        return self._client
+
+        self._client = Redis.from_url(
+            self.celeryconfig["local_url"],
+            decode_responses=True,
+        )
+        return self._client
 
     @property
     def celeryconfig(self) -> dict:
@@ -55,7 +67,7 @@ class RedisContainer(CeleryTestContainer):
 
     @property
     def port(self) -> int:
-        return self._port("6379/tcp")
+        return self._wait_port("6379/tcp")
 
     @property
     def vhost(self) -> str:

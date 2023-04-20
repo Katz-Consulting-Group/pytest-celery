@@ -22,12 +22,14 @@ class RabbitMQContainer(CeleryTestContainer):
 
     @property
     def client(self) -> Connection:
-        celeryconfig = self.celeryconfig
-        client = Connection(
-            f"amqp://localhost/{celeryconfig['vhost']}",
-            port=celeryconfig["port"],
+        if self._client:
+            return self._client
+
+        self._client = Connection(
+            f"amqp://localhost/{self.celeryconfig['vhost']}",
+            port=self.celeryconfig["port"],
         )
-        return client
+        return self._client
 
     @property
     def celeryconfig(self) -> dict:
@@ -53,7 +55,7 @@ class RabbitMQContainer(CeleryTestContainer):
 
     @property
     def port(self) -> int:
-        return self._port("5672/tcp")
+        return self._wait_port("5672/tcp")
 
     @property
     def vhost(self) -> str:
