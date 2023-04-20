@@ -84,7 +84,7 @@ class CeleryTestSetup:
         }
 
     @classmethod
-    def update_app_config(cls, app: Celery) -> dict:
+    def update_app_config(cls, app: Celery) -> None:
         # called before the worker starts
         if app.conf.broker_url.startswith("redis"):
             app.conf.update(broker_transport_options=RedisContainer.app_transport_options())

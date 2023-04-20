@@ -23,7 +23,7 @@ class CeleryTestContainer(wrappers.Container):
 
     @classmethod
     def command(cls) -> list:
-        return NotImplementedError("CeleryTestContainer.command")
+        raise NotImplementedError("CeleryTestContainer.command")
 
     @retry(
         defaults.PORT_RETRYABLE_ERRORS,
