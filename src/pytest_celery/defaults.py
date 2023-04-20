@@ -16,13 +16,14 @@ import requests
 from pytest_docker_tools import network
 from retry import retry
 
+# from celery.exceptions import TimeoutError as CeleryTimeoutError
+
 ##########
 # Docker
 ##########
 
 READY_TIMEOUT = 30
 RESULT_TIMEOUT = 30
-MAX_DELAY_SECONDS = None
 
 DOCKER_RETRYABLE_ERRORS = (
     docker.errors.NotFound,
@@ -37,20 +38,16 @@ NETWORK_RETRYABLE_ERRORS = DOCKER_RETRYABLE_ERRORS + (
     pytest_docker_tools.exceptions.ContainerNotReady,
     pytest_docker_tools.exceptions.TimeoutError,
 )
-
-NETWORK_RETRYABLE_TRIES = -1
 NETWORK_RETRYABLE_DELAY = 1.5
 
 READY_RETRYABLE_ERRORS = NETWORK_RETRYABLE_ERRORS + (
     ConnectionError,
     requests.exceptions.ConnectionError,
-    amqp.NotFound,
+    amqp.exceptions.NotFound,
 )
-READY_RETRYABLE_TRIES = -1
 READY_RETRYABLE_DELAY = 1
 
 PORT_RETRYABLE_ERRORS = READY_RETRYABLE_ERRORS + (IndexError,)
-PORT_RETRYABLE_TRIES = -1
 PORT_RETRYABLE_DELAY = 0.5
 
 REDIS_RETRYABLE_ERRORS = DOCKER_RETRYABLE_ERRORS + (
@@ -63,19 +60,15 @@ REDIS_RETRYABLE_ERRORS = DOCKER_RETRYABLE_ERRORS + (
 )
 
 RETRYABLE_ERRORS = READY_RETRYABLE_ERRORS + REDIS_RETRYABLE_ERRORS
-RETRYABLE_TRIES = -1
 RETRYABLE_DELAY = 1
 
 COMPONENT_RETRYABLE_ERRORS = RETRYABLE_ERRORS + (Exception,)
-COMPONENT_RETRYABLE_TRIES = -1
 COMPONENT_RETRYABLE_DELAY = 1
 
 
 @retry(
     NETWORK_RETRYABLE_ERRORS,
-    tries=NETWORK_RETRYABLE_TRIES,
     delay=NETWORK_RETRYABLE_DELAY,
-    max_delay=MAX_DELAY_SECONDS,
 )
 def network_with_retry() -> Any:
     return network()

@@ -27,9 +27,7 @@ class CeleryTestContainer(wrappers.Container):
 
     @retry(
         defaults.PORT_RETRYABLE_ERRORS,
-        tries=defaults.PORT_RETRYABLE_TRIES,
         delay=defaults.PORT_RETRYABLE_DELAY,
-        max_delay=defaults.MAX_DELAY_SECONDS,
     )
     def _wait_port(self, port: str) -> int:
         wait_for_callable(
@@ -42,9 +40,7 @@ class CeleryTestContainer(wrappers.Container):
 
     @retry(
         defaults.READY_RETRYABLE_ERRORS,
-        tries=defaults.READY_RETRYABLE_TRIES,
         delay=defaults.READY_RETRYABLE_DELAY,
-        max_delay=defaults.MAX_DELAY_SECONDS,
     )
     def _full_ready(self, match_log: str = "", check_client: bool = True) -> bool:
         wait_for_callable(
@@ -63,9 +59,7 @@ class CeleryTestContainer(wrappers.Container):
 
     @retry(
         defaults.READY_RETRYABLE_ERRORS,
-        tries=defaults.READY_RETRYABLE_TRIES,
         delay=defaults.READY_RETRYABLE_DELAY,
-        max_delay=defaults.MAX_DELAY_SECONDS,
     )
     def _wait_client(self) -> Any:
         wait_for_callable(

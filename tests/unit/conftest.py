@@ -25,9 +25,7 @@ from tests.unit.docker.api import UnitWorkerContainer
 
 @retry(
     defaults.NETWORK_RETRYABLE_ERRORS,
-    tries=defaults.NETWORK_RETRYABLE_TRIES,
     delay=defaults.NETWORK_RETRYABLE_DELAY,
-    max_delay=defaults.MAX_DELAY_SECONDS,
 )
 def session_network_with_retry() -> Any:
     try:
