@@ -4,6 +4,7 @@ from pytest_celery import defaults
 from pytest_celery.api.components.backend.cluster import CeleryBackendCluster
 from pytest_celery.api.components.broker.cluster import CeleryBrokerCluster
 from pytest_celery.api.components.worker.cluster import CeleryWorkerCluster
+from pytest_celery.containers.redis import RedisContainer
 
 
 class CeleryTestSetup:
@@ -83,6 +84,14 @@ class CeleryTestSetup:
         }
 
     @classmethod
+    def update_app_config(cls, app: Celery) -> dict:
+        # called before the worker starts
+        if app.conf.broker_url.startswith("redis"):
+            app.conf.update(broker_transport_options=RedisContainer.app_transport_options())
+        if app.conf.result_backend.startswith("redis"):
+            app.conf.update(result_backend_transport_options=RedisContainer.app_transport_options())
+
+    @classmethod
     def create_setup_app(cls, celery_setup_config: dict, celery_setup_app_name: str) -> Celery:
         if not celery_setup_config:
             raise ValueError("celery_setup_config is empty")
@@ -92,6 +101,8 @@ class CeleryTestSetup:
 
         app = Celery(celery_setup_app_name)
         app.config_from_object(celery_setup_config)
+        cls.update_app_config(app)
+
         return app
 
     def chords_allowed(self) -> bool:

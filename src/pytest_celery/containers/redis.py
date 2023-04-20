@@ -82,3 +82,14 @@ class RedisContainer(CeleryTestContainer):
     @classmethod
     def ports(cls) -> dict:
         return defaults.DEFAULT_REDIS_BACKEND_PORTS
+
+    @classmethod
+    def app_transport_options(cls) -> dict:
+        return {
+            "timeout": None,
+            "pool_class": "redis.BlockingConnectionPool",
+        }
+
+    @classmethod
+    def command(cls) -> list:
+        return ["redis-server", "--maxclients", "10000"]

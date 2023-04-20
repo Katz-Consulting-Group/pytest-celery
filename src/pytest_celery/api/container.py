@@ -21,10 +21,14 @@ class CeleryTestContainer(wrappers.Container):
     def celeryconfig(self) -> dict:
         raise NotImplementedError("CeleryTestContainer.celeryconfig")
 
+    @classmethod
+    def command(cls) -> list:
+        return NotImplementedError("CeleryTestContainer.command")
+
     @retry(
         defaults.PORT_RETRYABLE_ERRORS,
-        tries=defaults.READY_RETRYABLE_TRIES,
-        delay=defaults.READY_RETRYABLE_DELAY,
+        tries=defaults.PORT_RETRYABLE_TRIES,
+        delay=defaults.PORT_RETRYABLE_DELAY,
         max_delay=defaults.MAX_DELAY_SECONDS,
     )
     def _wait_port(self, port: str) -> int:
