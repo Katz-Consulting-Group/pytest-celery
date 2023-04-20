@@ -19,35 +19,47 @@ from retry import retry
 # Docker
 ##########
 
-# TODO: Split and use where needed instead of using the global one
-RETRY_ERRORS = (
+DOCKER_RETRYABLE_ERRORS = (
     docker.errors.NotFound,
     docker.errors.APIError,
+)
+
+READY_RETRYABLE_ERRORS = PORT_RETRYABLE_ERRORS = DOCKER_RETRYABLE_ERRORS + (
+    IndexError,
+    pytest_docker_tools.exceptions.ContainerNotReady,
+)
+
+NETWORK_RETRYABLE_ERRORS = DOCKER_RETRYABLE_ERRORS + (
     requests.exceptions.HTTPError,
+    pytest_docker_tools.exceptions.TimeoutError,
+    TimeoutError,
+)
+
+REDIS_RETRYABLE_ERRORS = DOCKER_RETRYABLE_ERRORS + (
     redis.exceptions.ConnectionError,
     ConnectionRefusedError,
     BrokenPipeError,
-    TimeoutError,
-    pytest_docker_tools.exceptions.TimeoutError,
 )
 
 READY_TIMEOUT = 30
 RESULT_TIMEOUT = 30
 MAX_TRIES = 5
 DELAY_SECONDS = 0.5
-MAX_DELAY_SECONDS = 120
+MAX_DELAY_SECONDS = 90
 
 
 @retry(
-    RETRY_ERRORS,
+    NETWORK_RETRYABLE_ERRORS,
     tries=1000,
     delay=DELAY_SECONDS,
     max_delay=MAX_DELAY_SECONDS,
+    backoff=2,
+    jitter=(1, 10),
 )
 def network_with_retry() -> Any:
     try:
         return network()
-    except RETRY_ERRORS:
+    except NETWORK_RETRYABLE_ERRORS:
         # This is a workaround when running out of IPv4 addresses
         # that causes the network fixture to fail when running tests in parallel.
         return network()
@@ -168,6 +180,7 @@ DEFAULT_WORKER_VOLUME = WORKER_VOLUME
 REDIS_IMAGE = "redis:latest"
 REDIS_PORTS = {"6379/tcp": None}
 REDIS_ENV: dict = {}
+REDIS_MAX_CONNECTIONS = 10000
 REDIS_CONTAINER_TIMEOUT = READY_TIMEOUT
 
 # Docker containers settings

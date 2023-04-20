@@ -6,13 +6,14 @@ from celery import Celery
 from pytest_docker_tools import build
 from pytest_docker_tools import container
 from pytest_docker_tools import fxtr
-from retry.api import retry_call
 
 from pytest_celery import defaults
 from pytest_celery.api.components.worker.cluster import CeleryWorkerCluster
 from pytest_celery.api.components.worker.node import CeleryTestWorker
 from pytest_celery.containers.worker import CeleryWorkerContainer
 from tests.common.celery4.fixtures import *  # noqa
+
+# from retry.api import retry_call
 
 
 class SmokeWorkerContainer(CeleryWorkerContainer):
@@ -115,19 +116,31 @@ def alt_worker(
     ]
 )
 def celery_worker_cluster(request: pytest.FixtureRequest) -> CeleryWorkerCluster:
-    nodes = tuple(
-        retry_call(
-            lambda: [request.getfixturevalue(worker) for worker in request.param],
-            exceptions=defaults.RETRY_ERRORS,
-            tries=defaults.MAX_TRIES,
-            delay=defaults.DELAY_SECONDS,
-            max_delay=defaults.MAX_DELAY_SECONDS,
-        )
-    )
-    cluster = CeleryWorkerCluster(*nodes)
+    cluster = CeleryWorkerCluster(*[request.getfixturevalue(worker) for worker in request.param])
     cluster.ready()
     yield cluster
     cluster.teardown()
+
+
+# def celery_worker_cluster(request: pytest.FixtureRequest) -> CeleryWorkerCluster:
+#     RETRY_ERRORS = defaults.READY_RETRYABLE_ERRORS
+#     RETRY_ERRORS += defaults.NETWORK_RETRYABLE_ERRORS
+#     RETRY_ERRORS += defaults.REDIS_RETRYABLE_ERRORS
+#     RETRY_ERRORS += (ConnectionError,)
+
+#     nodes = tuple(
+#         retry_call(
+#             lambda: [request.getfixturevalue(worker) for worker in request.param],
+#             exceptions=RETRY_ERRORS,
+#             tries=defaults.MAX_TRIES,
+#             delay=defaults.DELAY_SECONDS,
+#             max_delay=defaults.MAX_DELAY_SECONDS,
+#         )
+#     )
+#     cluster = CeleryWorkerCluster(*nodes)
+#     cluster.ready()
+#     yield cluster
+#     cluster.teardown()
 
 
 @pytest.fixture

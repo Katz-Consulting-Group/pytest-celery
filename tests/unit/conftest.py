@@ -24,15 +24,15 @@ from tests.unit.docker.api import UnitWorkerContainer
 
 
 @retry(
-    defaults.RETRY_ERRORS,
-    tries=defaults.MAX_TRIES,
-    delay=defaults.DELAY_SECONDS,
+    defaults.NETWORK_RETRYABLE_ERRORS,
+    tries=10,
+    delay=1,
     max_delay=defaults.MAX_DELAY_SECONDS,
 )
 def session_network_with_retry() -> Any:
     try:
         return network(scope="session")
-    except defaults.RETRY_ERRORS:
+    except defaults.NETWORK_RETRYABLE_ERRORS:
         # This is a workaround when running out of IPv4 addresses
         # that causes the network fixture to fail when running tests in parallel.
         return network(scope="session")
