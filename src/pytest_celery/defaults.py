@@ -20,30 +20,33 @@ from retry import retry
 ##########
 
 READY_TIMEOUT = 30
-RESULT_TIMEOUT = 60
-MAX_DELAY_SECONDS = 90
+RESULT_TIMEOUT = 30
+MAX_DELAY_SECONDS = 300
 
 DOCKER_RETRYABLE_ERRORS = (
     docker.errors.NotFound,
     docker.errors.APIError,
 )
 
-READY_RETRYABLE_ERRORS = PORT_RETRYABLE_ERRORS = DOCKER_RETRYABLE_ERRORS + (
-    IndexError,
-    pytest_docker_tools.exceptions.ContainerNotReady,
-    Exception,
-)
-READY_RETRYABLE_TRIES = 100
-READY_RETRYABLE_DELAY = 0.5
-
 NETWORK_RETRYABLE_ERRORS = DOCKER_RETRYABLE_ERRORS + (
+    TimeoutError,
     requests.exceptions.HTTPError,
+    requests.exceptions.Timeout,
+    requests.exceptions.RetryError,
     pytest_docker_tools.exceptions.ContainerNotReady,
     pytest_docker_tools.exceptions.TimeoutError,
-    TimeoutError,
 )
-NETWORK_RETRYABLE_TRIES = 100
-NETWORK_RETRYABLE_DELAY = 5
+
+NETWORK_RETRYABLE_TRIES = 1000
+NETWORK_RETRYABLE_DELAY = 1
+
+READY_RETRYABLE_ERRORS = NETWORK_RETRYABLE_ERRORS + (
+    ConnectionError,
+    requests.exceptions.ConnectionError,
+)
+PORT_RETRYABLE_ERRORS = READY_RETRYABLE_ERRORS + (IndexError,)
+READY_RETRYABLE_TRIES = 1000
+READY_RETRYABLE_DELAY = 1.5
 
 REDIS_RETRYABLE_ERRORS = DOCKER_RETRYABLE_ERRORS + (
     redis.exceptions.ConnectionError,
@@ -51,13 +54,13 @@ REDIS_RETRYABLE_ERRORS = DOCKER_RETRYABLE_ERRORS + (
     BrokenPipeError,
 )
 
-RETRYABLE_ERRORS = READY_RETRYABLE_ERRORS + NETWORK_RETRYABLE_ERRORS + REDIS_RETRYABLE_ERRORS + (Exception,)
-RETRYABLE_TRIES = 100
-RETRYABLE_DELAY = 1
+RETRYABLE_ERRORS = READY_RETRYABLE_ERRORS + REDIS_RETRYABLE_ERRORS
+RETRYABLE_TRIES = 1000
+RETRYABLE_DELAY = 1.5
 
-COMPONENT_RETRYABLE_ERRORS = RETRYABLE_ERRORS
-COMPONENT_RETRYABLE_TRIES = 100
-COMPONENT_RETRYABLE_DELAY = 2
+COMPONENT_RETRYABLE_ERRORS = RETRYABLE_ERRORS + (requests.exceptions.RequestException,)
+COMPONENT_RETRYABLE_TRIES = 1000
+COMPONENT_RETRYABLE_DELAY = 1.5
 
 
 @retry(
@@ -67,12 +70,7 @@ COMPONENT_RETRYABLE_DELAY = 2
     max_delay=MAX_DELAY_SECONDS,
 )
 def network_with_retry() -> Any:
-    try:
-        return network()
-    except NETWORK_RETRYABLE_ERRORS:
-        # This is a workaround when running out of IPv4 addresses
-        # that causes the network fixture to fail when running tests in parallel.
-        return network()
+    return network()
 
 
 DEFAULT_NETWORK = network_with_retry()
