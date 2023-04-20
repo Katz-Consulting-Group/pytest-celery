@@ -78,7 +78,7 @@ def network_with_retry() -> Any:
     return network()
 
 
-DEFAULT_NETWORK = network_with_retry()
+DEFAULT_NETWORK = network()
 
 ##########
 # Fixtures
