@@ -13,10 +13,9 @@ import docker
 import pytest_docker_tools
 import redis
 import requests
+from celery.exceptions import TimeoutError as CeleryTimeoutError
 from pytest_docker_tools import network
 from retry import retry
-
-# from celery.exceptions import TimeoutError as CeleryTimeoutError
 
 ##########
 # Docker
@@ -44,6 +43,7 @@ READY_RETRYABLE_ERRORS = NETWORK_RETRYABLE_ERRORS + (
     ConnectionError,
     requests.exceptions.ConnectionError,
     amqp.exceptions.NotFound,
+    CeleryTimeoutError,
 )
 READY_RETRYABLE_DELAY = 1
 
