@@ -7,9 +7,9 @@ matchin fixture and returning your own value.
 
 
 import amqp
-import docker
-import kombu
-import pytest_docker_tools
+import docker.errors
+import kombu.exceptions
+import pytest_docker_tools.exceptions
 import redis
 import requests
 
