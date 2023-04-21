@@ -22,21 +22,19 @@ from pytest_celery.containers.worker import CeleryWorkerContainer
 from tests.unit.docker.api import UnitTestContainer
 from tests.unit.docker.api import UnitWorkerContainer
 
+# @retry(
+#     defaults.NETWORK_RETRYABLE_ERRORS,
+#     delay=defaults.NETWORK_RETRYABLE_DELAY,
+# )
+# def session_network_with_retry() -> Any:
+#     try:
+#         return network(scope="session")
+#     except defaults.NETWORK_RETRYABLE_ERRORS:
+#         # This is a workaround when running out of IPv4 addresses
+#         # that causes the network fixture to fail when running tests in parallel.
+#         return network(scope="session")
 
-@retry(
-    defaults.NETWORK_RETRYABLE_ERRORS,
-    delay=defaults.NETWORK_RETRYABLE_DELAY,
-)
-def session_network_with_retry() -> Any:
-    try:
-        return network(scope="session")
-    except defaults.NETWORK_RETRYABLE_ERRORS:
-        # This is a workaround when running out of IPv4 addresses
-        # that causes the network fixture to fail when running tests in parallel.
-        return network(scope="session")
-
-
-unit_tests_network = session_network_with_retry()
+unit_tests_network = network(scope="session")
 
 unit_tests_image = build(
     path="tests/unit/docker",
