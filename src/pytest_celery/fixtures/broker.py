@@ -15,6 +15,7 @@ def celery_broker(request: pytest.FixtureRequest) -> CeleryTestBroker:  # type: 
         exceptions=defaults.COMPONENT_RETRYABLE_ERRORS,
         delay=defaults.COMPONENT_RETRYABLE_DELAY,
     )
+    # broker: CeleryTestBroker = request.getfixturevalue(request.param)
     broker.ready()
     yield broker
     broker.teardown()
@@ -35,9 +36,10 @@ def celery_broker_cluster_config(request: pytest.FixtureRequest) -> dict:
         assert use_default_config not in defaults.RETRYABLE_ERRORS
         cluster: CeleryBrokerCluster = retry_call(
             lambda: request.getfixturevalue(defaults.CELERY_BROKER_CLUSTER),
-            exceptions=defaults.RETRYABLE_ERRORS + (Exception,),
+            exceptions=defaults.RETRYABLE_ERRORS,
             delay=defaults.RETRYABLE_DELAY,
         )
+        # cluster: CeleryBrokerCluster = request.getfixturevalue(defaults.CELERY_BROKER_CLUSTER)
         cluster.ready()
         return cluster.config()
     except use_default_config:

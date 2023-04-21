@@ -12,19 +12,20 @@ from tests.common.celery4.fixtures import *  # noqa
 @pytest.fixture(
     # Each param item is a list of workers to be used in the cluster
     params=[
-        # ["celery_setup_worker"],
-        # ["celery4_worker"],
+        ["celery_setup_worker"],
+        ["celery4_worker"],
         ["celery_setup_worker", "celery4_worker"],
     ]
 )
 def celery_worker_cluster(request: pytest.FixtureRequest) -> CeleryWorkerCluster:
-    nodes: Tuple[CeleryTestWorker] = tuple(
-        retry_call(
-            lambda: [request.getfixturevalue(worker) for worker in request.param],
-            exceptions=defaults.COMPONENT_RETRYABLE_ERRORS,  # + (Exception,),
-            delay=defaults.COMPONENT_RETRYABLE_DELAY,
-        )
-    )
+    # nodes: Tuple[CeleryTestWorker] = tuple(
+    #     retry_call(
+    #         lambda: [request.getfixturevalue(worker) for worker in request.param],
+    #         exceptions=defaults.COMPONENT_RETRYABLE_ERRORS,  # + (Exception,),
+    #         delay=defaults.COMPONENT_RETRYABLE_DELAY,
+    #     )
+    # )
+    nodes: Tuple[CeleryTestWorker] = [request.getfixturevalue(worker) for worker in request.param]
     cluster = CeleryWorkerCluster(*nodes)
     cluster.ready()
     yield cluster

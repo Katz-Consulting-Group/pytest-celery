@@ -15,6 +15,7 @@ def celery_backend(request: pytest.FixtureRequest) -> CeleryTestBackend:  # type
         exceptions=defaults.COMPONENT_RETRYABLE_ERRORS,
         delay=defaults.COMPONENT_RETRYABLE_DELAY,
     )
+    # backend: CeleryTestBackend = request.getfixturevalue(request.param)
     backend.ready()
     yield backend
     backend.teardown()
@@ -38,6 +39,7 @@ def celery_backend_cluster_config(request: pytest.FixtureRequest) -> dict:
             exceptions=defaults.RETRYABLE_ERRORS + (Exception,),
             delay=defaults.RETRYABLE_DELAY,
         )
+        # cluster: CeleryBackendCluster = request.getfixturevalue(defaults.CELERY_BACKEND_CLUSTER)
         cluster.ready()
         return cluster.config()
     except use_default_config:

@@ -15,6 +15,7 @@ def celery_worker(request: pytest.FixtureRequest) -> CeleryTestWorker:  # type: 
         exceptions=defaults.COMPONENT_RETRYABLE_ERRORS + (Exception,),
         delay=defaults.COMPONENT_RETRYABLE_DELAY,
     )
+    # worker: CeleryTestWorker = request.getfixturevalue(request.param)
     worker.ready()
     yield worker
     worker.teardown()
