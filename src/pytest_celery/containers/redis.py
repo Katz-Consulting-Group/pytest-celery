@@ -18,10 +18,9 @@ class RedisContainer(CeleryTestContainer):
         ready = super()._full_ready(match_log, check_client)
         if ready and check_client:
             c: Redis = self.client  # type: ignore
-            if c.ping():
-                c.set("ready", "1")
-                ready = c.get("ready") == "1"
-                c.delete("ready")
+            c.set("ping", "pong")
+            ready = c.get("ping") == "pong"
+            c.delete("ping")
         return ready
 
     @cached_property
