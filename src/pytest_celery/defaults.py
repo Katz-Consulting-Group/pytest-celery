@@ -10,6 +10,7 @@ from typing import Any
 
 import amqp
 import docker
+import kombu
 import pytest_docker_tools
 import redis
 import requests
@@ -56,6 +57,7 @@ READY_RETRYABLE_ERRORS = (
         requests.exceptions.ConnectionError,
         amqp.exceptions.NotFound,
         amqp.exceptions.ConnectionError,
+        kombu.exceptions.OperationalError,
         CeleryTimeoutError,
     )
 )
