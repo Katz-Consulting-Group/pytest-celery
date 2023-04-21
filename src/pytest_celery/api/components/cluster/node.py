@@ -1,4 +1,5 @@
 from pytest_docker_tools.wrappers.container import wait_for_callable
+from retry import retry
 
 from pytest_celery import defaults
 from pytest_celery.api.container import CeleryTestContainer
@@ -12,6 +13,10 @@ class CeleryTestNode:
     def container(self) -> CeleryTestContainer:
         return self._container
 
+    @retry(
+        defaults.READY_RETRYABLE_ERRORS,
+        max_delay=defaults.READY_RETRYABLE_DELAY,
+    )
     def ready(self) -> bool:
         wait_for_callable(
             f">>> Waiting for the node's container to be ready: '{self.__class__.__name__}::{self.container.name}'",
@@ -39,7 +44,4 @@ class CeleryTestNode:
         self.container.kill()
 
     def teardown(self) -> None:
-        try:
-            self.kill()
-        except defaults.DOCKER_RETRYABLE_ERRORS:
-            pass
+        self.container.teardown()

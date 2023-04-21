@@ -68,3 +68,9 @@ class CeleryTestContainer(wrappers.Container):
             timeout=defaults.READY_TIMEOUT,
         )
         return self.client
+
+    def teardown(self) -> None:
+        try:
+            self.kill()
+        except defaults.DOCKER_RETRYABLE_ERRORS:
+            pass

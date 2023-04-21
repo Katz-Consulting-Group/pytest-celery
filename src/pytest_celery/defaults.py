@@ -25,7 +25,7 @@ RESULT_TIMEOUT = 10
 DOCKER_RETRYABLE_ERRORS = (
     docker.errors.NotFound,
     docker.errors.APIError,
-    requests.exceptions.HTTPError,
+    requests.HTTPError,
 )
 
 REDIS_RETRYABLE_ERRORS = DOCKER_RETRYABLE_ERRORS + (
@@ -50,17 +50,15 @@ READY_RETRYABLE_ERRORS = (
     NETWORK_RETRYABLE_ERRORS
     + REDIS_RETRYABLE_ERRORS
     + (
-        ConnectionError,
         requests.exceptions.ConnectionError,
         amqp.exceptions.NotFound,
         amqp.exceptions.ConnectionError,
         kombu.exceptions.OperationalError,
-        CeleryTimeoutError,
     )
 )
 PORT_RETRYABLE_ERRORS = READY_RETRYABLE_ERRORS + (IndexError,)
 RETRYABLE_ERRORS = READY_RETRYABLE_ERRORS
-COMPONENT_RETRYABLE_ERRORS = RETRYABLE_ERRORS  # + (Exception,)
+COMPONENT_RETRYABLE_ERRORS = RETRYABLE_ERRORS + (Exception,)
 
 MAX_DELAY = 5
 READY_RETRYABLE_DELAY = MAX_DELAY
