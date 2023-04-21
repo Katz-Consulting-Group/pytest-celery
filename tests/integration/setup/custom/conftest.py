@@ -40,12 +40,7 @@ def default_worker_container_session_cls() -> Type[CeleryWorkerContainer]:
 celery5_worker_image = build(
     path="src/pytest_celery/components/worker",
     tag="pytest-celery/components/worker:celery5",
-    buildargs={
-        "CELERY_VERSION": Celery5WorkerContainer.version(),
-        "CELERY_LOG_LEVEL": Celery5WorkerContainer.log_level(),
-        "CELERY_WORKER_NAME": Celery5WorkerContainer.worker_name(),
-        "CELERY_WORKER_QUEUE": Celery5WorkerContainer.worker_queue(),
-    },
+    buildargs=Celery5WorkerContainer.buildargs(),
 )
 
 default_worker_container = container(

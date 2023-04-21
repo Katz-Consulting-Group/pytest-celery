@@ -49,12 +49,7 @@ def default_worker_container_session_cls() -> Type[CeleryWorkerContainer]:
 smoke_tests_worker_image = build(
     path="src/pytest_celery/components/worker",
     tag="pytest-celery/components/worker:smoke",
-    buildargs={
-        "CELERY_VERSION": SmokeWorkerContainer.version(),
-        "CELERY_LOG_LEVEL": SmokeWorkerContainer.log_level(),
-        "CELERY_WORKER_NAME": SmokeWorkerContainer.worker_name(),
-        "CELERY_WORKER_QUEUE": SmokeWorkerContainer.worker_queue(),
-    },
+    buildargs=SmokeWorkerContainer.buildargs(),
 )
 
 

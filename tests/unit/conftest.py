@@ -59,9 +59,7 @@ local_test_container = container(
 celery_unit_worker_image = build(
     path="src/pytest_celery/components/worker",
     tag="pytest-celery/components/worker:unit",
-    buildargs={
-        "CELERY_VERSION": fxtr("default_worker_celery_version"),
-    },
+    buildargs=UnitWorkerContainer.buildargs(),
 )
 
 worker_test_container_volume = volume(
