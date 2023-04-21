@@ -78,7 +78,7 @@ worker_test_container = container(
     network="{unit_tests_network.name}",
     volumes={"{worker_test_container_volume.name}": defaults.DEFAULT_WORKER_VOLUME},
     wrapper_class=UnitWorkerContainer,
-    timeout=defaults.DEFAULT_WORKER_CONTAINER_TIMEOUT,
+    # timeout=defaults.DEFAULT_WORKER_CONTAINER_TIMEOUT,
 )
 
 
@@ -104,7 +104,7 @@ redis_test_container = container(
     environment=defaults.REDIS_ENV,
     network="{unit_tests_network.name}",
     wrapper_class=RedisContainer,
-    timeout=defaults.REDIS_CONTAINER_TIMEOUT,
+    # timeout=defaults.REDIS_CONTAINER_TIMEOUT,
     command=RedisContainer.command(),  # TODO: use fxtr
 )
 redis_backend_container = container(
@@ -114,7 +114,7 @@ redis_backend_container = container(
     environment=defaults.REDIS_ENV,
     network="{unit_tests_network.name}",
     wrapper_class=RedisContainer,
-    timeout=defaults.REDIS_CONTAINER_TIMEOUT,
+    # timeout=defaults.REDIS_CONTAINER_TIMEOUT,
     command=RedisContainer.command(),  # TODO: use fxtr
 )
 redis_broker_container = container(
@@ -124,7 +124,7 @@ redis_broker_container = container(
     environment=defaults.REDIS_ENV,
     network="{unit_tests_network.name}",
     wrapper_class=RedisContainer,
-    timeout=defaults.REDIS_CONTAINER_TIMEOUT,
+    # timeout=defaults.REDIS_CONTAINER_TIMEOUT,
     command=RedisContainer.command(),  # TODO: use fxtr
 )
 
@@ -153,7 +153,7 @@ rabbitmq_test_container = container(
     environment=defaults.RABBITMQ_ENV,
     network="{unit_tests_network.name}",
     wrapper_class=RabbitMQContainer,
-    timeout=defaults.RABBITMQ_CONTAINER_TIMEOUT,
+    # timeout=defaults.RABBITMQ_CONTAINER_TIMEOUT,
 )
 
 
