@@ -36,7 +36,7 @@ class SmokeWorkerContainer(CeleryWorkerContainer):
         return CeleryWorkerContainer.worker_queue() + "-smoke-tests-queue"
 
 
-@pytest.fixture
+@pytest.fixture  # TODO: Needed?
 def default_worker_container_cls() -> Type[CeleryWorkerContainer]:
     return SmokeWorkerContainer
 

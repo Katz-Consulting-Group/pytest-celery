@@ -13,6 +13,13 @@ from pytest_celery.containers.worker import CeleryWorkerContainer
 from tests.common.celery4.fixtures import *  # noqa
 
 
+@pytest.fixture
+def default_worker_tasks() -> set:
+    from tests.common import tasks
+
+    return {tasks}
+
+
 class Celery5WorkerContainer(CeleryWorkerContainer):
     @property
     def client(self) -> Any:
@@ -51,13 +58,6 @@ default_worker_container = container(
     wrapper_class=Celery5WorkerContainer,
     timeout=defaults.DEFAULT_WORKER_CONTAINER_TIMEOUT,
 )
-
-
-@pytest.fixture
-def default_worker_tasks() -> set:
-    from tests.common import tasks
-
-    return {tasks}
 
 
 @pytest.fixture

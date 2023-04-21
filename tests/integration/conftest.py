@@ -29,7 +29,7 @@ class IntegrationWorkerContainer(CeleryWorkerContainer):
         return CeleryWorkerContainer.worker_queue() + "-integration-tests-queue"
 
 
-@pytest.fixture
+@pytest.fixture  # TODO: Needed?
 def default_worker_container_cls() -> Type[CeleryWorkerContainer]:
     return IntegrationWorkerContainer
 

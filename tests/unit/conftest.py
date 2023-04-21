@@ -1,4 +1,4 @@
-from typing import Any
+# from typing import Any
 from typing import Type
 
 import pytest
@@ -9,7 +9,6 @@ from pytest_docker_tools import fetch
 from pytest_docker_tools import fxtr
 from pytest_docker_tools import network
 from pytest_docker_tools import volume
-from retry import retry
 
 from pytest_celery import defaults
 from pytest_celery.api.components.worker.node import CeleryTestWorker
@@ -21,6 +20,9 @@ from pytest_celery.containers.redis import RedisContainer
 from pytest_celery.containers.worker import CeleryWorkerContainer
 from tests.unit.docker.api import UnitTestContainer
 from tests.unit.docker.api import UnitWorkerContainer
+
+# from retry import retry
+
 
 # @retry(
 #     defaults.NETWORK_RETRYABLE_ERRORS,
