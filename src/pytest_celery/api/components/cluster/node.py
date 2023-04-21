@@ -39,4 +39,7 @@ class CeleryTestNode:
         self.container.kill()
 
     def teardown(self) -> None:
-        pass
+        try:
+            self.kill()
+        except defaults.DOCKER_RETRYABLE_ERRORS:
+            pass
