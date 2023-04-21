@@ -1,8 +1,9 @@
-from functools import partial
+# from functools import partial
 from typing import Any
 
 from pytest_docker_tools import wrappers
-from pytest_docker_tools.wrappers.container import wait_for_callable
+
+# from pytest_docker_tools.wrappers.container import wait_for_callable
 from retry import retry
 
 from pytest_celery import defaults
@@ -30,11 +31,11 @@ class CeleryTestContainer(wrappers.Container):
         max_delay=defaults.PORT_RETRYABLE_DELAY,
     )
     def _wait_port(self, port: str) -> int:
-        wait_for_callable(
-            f">>> Waiting for port '{port}' to be ready: '{self.__class__.__name__}::{self.name}'",
-            partial(self.get_addr, port),
-            timeout=defaults.READY_TIMEOUT,
-        )
+        # wait_for_callable(
+        #     f">>> Waiting for port '{port}' to be ready: '{self.__class__.__name__}::{self.name}'",
+        #     partial(self.get_addr, port),
+        #     timeout=defaults.READY_TIMEOUT,
+        # )
         _, p = self.get_addr(port)
         return p
 
@@ -43,11 +44,11 @@ class CeleryTestContainer(wrappers.Container):
         max_delay=defaults.READY_RETRYABLE_DELAY,
     )
     def _full_ready(self, match_log: str = "", check_client: bool = True) -> bool:
-        wait_for_callable(
-            f">>> Waiting for container to warm up: '{self.__class__.__name__}::{self.name}'",
-            super().ready,
-            timeout=defaults.READY_TIMEOUT,
-        )
+        # wait_for_callable(
+        #     f">>> Waiting for container to warm up: '{self.__class__.__name__}::{self.name}'",
+        #     super().ready,
+        #     timeout=defaults.READY_TIMEOUT,
+        # )
         ready = super().ready()
 
         if ready:
@@ -62,15 +63,15 @@ class CeleryTestContainer(wrappers.Container):
     #     max_delay=defaults.READY_RETRYABLE_DELAY,
     # )
     def _wait_client(self) -> Any:
-        wait_for_callable(
-            f">>> Waiting for client to be ready: '{self.__class__.__name__}::{self.name}'",
-            lambda: self.client is not None,
-            timeout=defaults.READY_TIMEOUT,
-        )
+        # wait_for_callable(
+        #     f">>> Waiting for client to be ready: '{self.__class__.__name__}::{self.name}'",
+        #     lambda: self.client is not None,
+        #     timeout=defaults.READY_TIMEOUT,
+        # )
         return self.client
 
     def teardown(self) -> None:
         try:
             self.kill()
-        except defaults.DOCKER_RETRYABLE_ERRORS:
+        except Exception:
             pass

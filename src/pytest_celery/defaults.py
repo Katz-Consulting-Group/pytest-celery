@@ -12,14 +12,15 @@ import kombu
 import pytest_docker_tools
 import redis
 import requests
-from celery.exceptions import TimeoutError as CeleryTimeoutError
+
+# from celery.exceptions import TimeoutError as CeleryTimeoutError
 from pytest_docker_tools import network
 
 ##########
 # Docker
 ##########
 
-READY_TIMEOUT = 30
+READY_TIMEOUT = 60
 RESULT_TIMEOUT = 10
 
 DOCKER_RETRYABLE_ERRORS = (
