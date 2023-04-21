@@ -13,7 +13,7 @@ def celery_broker(request: pytest.FixtureRequest) -> CeleryTestBroker:  # type: 
     broker: CeleryTestBroker = retry_call(
         lambda: request.getfixturevalue(request.param),
         exceptions=defaults.COMPONENT_RETRYABLE_ERRORS,
-        delay=defaults.COMPONENT_RETRYABLE_DELAY,
+        max_delay=defaults.COMPONENT_RETRYABLE_DELAY,
     )
     # broker: CeleryTestBroker = request.getfixturevalue(request.param)
     broker.ready()
@@ -37,7 +37,7 @@ def celery_broker_cluster_config(request: pytest.FixtureRequest) -> dict:
         cluster: CeleryBrokerCluster = retry_call(
             lambda: request.getfixturevalue(defaults.CELERY_BROKER_CLUSTER),
             exceptions=defaults.RETRYABLE_ERRORS,
-            delay=defaults.RETRYABLE_DELAY,
+            max_delay=defaults.RETRYABLE_DELAY,
         )
         # cluster: CeleryBrokerCluster = request.getfixturevalue(defaults.CELERY_BROKER_CLUSTER)
         cluster.ready()

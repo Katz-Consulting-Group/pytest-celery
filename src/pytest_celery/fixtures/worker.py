@@ -13,7 +13,7 @@ def celery_worker(request: pytest.FixtureRequest) -> CeleryTestWorker:  # type: 
     worker: CeleryTestWorker = retry_call(
         lambda: request.getfixturevalue(request.param),
         exceptions=defaults.COMPONENT_RETRYABLE_ERRORS + (Exception,),
-        delay=defaults.COMPONENT_RETRYABLE_DELAY,
+        max_delay=defaults.COMPONENT_RETRYABLE_DELAY,
     )
     # worker: CeleryTestWorker = request.getfixturevalue(request.param)
     worker.ready()
