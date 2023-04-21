@@ -35,7 +35,7 @@ def celery_backend_cluster_config(request: pytest.FixtureRequest) -> dict:
         assert use_default_config not in defaults.RETRYABLE_ERRORS
         cluster: CeleryBackendCluster = retry_call(
             lambda: request.getfixturevalue(defaults.CELERY_BACKEND_CLUSTER),
-            exceptions=defaults.RETRYABLE_ERRORS,
+            exceptions=defaults.RETRYABLE_ERRORS + (Exception,),
             delay=defaults.RETRYABLE_DELAY,
         )
         cluster.ready()

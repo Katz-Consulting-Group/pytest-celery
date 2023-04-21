@@ -6,8 +6,6 @@ matchin fixture and returning your own value.
 """
 
 
-from typing import Any
-
 import amqp
 import docker
 import kombu
@@ -16,7 +14,6 @@ import redis
 import requests
 from celery.exceptions import TimeoutError as CeleryTimeoutError
 from pytest_docker_tools import network
-from retry import retry
 
 ##########
 # Docker
@@ -63,7 +60,7 @@ READY_RETRYABLE_ERRORS = (
 )
 PORT_RETRYABLE_ERRORS = READY_RETRYABLE_ERRORS + (IndexError,)
 RETRYABLE_ERRORS = READY_RETRYABLE_ERRORS
-COMPONENT_RETRYABLE_ERRORS = RETRYABLE_ERRORS + (Exception,)
+COMPONENT_RETRYABLE_ERRORS = RETRYABLE_ERRORS  # + (Exception,)
 
 DELAY = 0.5
 READY_RETRYABLE_DELAY = DELAY

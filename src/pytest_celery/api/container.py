@@ -26,7 +26,7 @@ class CeleryTestContainer(wrappers.Container):
         raise NotImplementedError("CeleryTestContainer.command")
 
     @retry(
-        defaults.PORT_RETRYABLE_ERRORS,
+        IndexError,
         delay=defaults.PORT_RETRYABLE_DELAY,
     )
     def _wait_port(self, port: str) -> int:
@@ -57,10 +57,10 @@ class CeleryTestContainer(wrappers.Container):
                 ready = ready and self._wait_client() is not None
         return ready
 
-    @retry(
-        defaults.READY_RETRYABLE_ERRORS,
-        delay=defaults.READY_RETRYABLE_DELAY,
-    )
+    # @retry(
+    #     defaults.READY_RETRYABLE_ERRORS,
+    #     delay=defaults.READY_RETRYABLE_DELAY,
+    # )
     def _wait_client(self) -> Any:
         wait_for_callable(
             f">>> Waiting for client to be ready: '{self.__class__.__name__}::{self.name}'",

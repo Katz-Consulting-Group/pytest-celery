@@ -35,7 +35,7 @@ def celery_broker_cluster_config(request: pytest.FixtureRequest) -> dict:
         assert use_default_config not in defaults.RETRYABLE_ERRORS
         cluster: CeleryBrokerCluster = retry_call(
             lambda: request.getfixturevalue(defaults.CELERY_BROKER_CLUSTER),
-            exceptions=defaults.RETRYABLE_ERRORS,
+            exceptions=defaults.RETRYABLE_ERRORS + (Exception,),
             delay=defaults.RETRYABLE_DELAY,
         )
         cluster.ready()

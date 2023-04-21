@@ -39,6 +39,11 @@ class Celery5WorkerContainer(CeleryWorkerContainer):
         return "celery5"
 
 
+@pytest.fixture
+def default_worker_container_cls() -> Type[CeleryWorkerContainer]:
+    return Celery5WorkerContainer
+
+
 @pytest.fixture(scope="session")
 def default_worker_container_session_cls() -> Type[CeleryWorkerContainer]:
     return Celery5WorkerContainer
