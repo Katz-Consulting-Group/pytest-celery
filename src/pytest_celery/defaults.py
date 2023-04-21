@@ -55,6 +55,7 @@ READY_RETRYABLE_ERRORS = (
         ConnectionError,
         requests.exceptions.ConnectionError,
         amqp.exceptions.NotFound,
+        amqp.exceptions.ConnectionError,
         CeleryTimeoutError,
     )
 )
