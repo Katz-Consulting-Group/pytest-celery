@@ -1,4 +1,5 @@
 from kombu import Connection
+from retry import retry
 
 from pytest_celery import defaults
 from pytest_celery.api.container import CeleryTestContainer
@@ -10,6 +11,10 @@ class RabbitMQContainer(CeleryTestContainer):
     def ready(self) -> bool:
         return self._full_ready(self.__ready_prompt__)
 
+    @retry(
+        defaults.READY_RETRYABLE_ERRORS,
+        delay=defaults.READY_RETRYABLE_DELAY,
+    )
     def _full_ready(self, match_log: str = "", check_client: bool = True) -> bool:
         ready = super()._full_ready(match_log, check_client)
         if ready and check_client:
