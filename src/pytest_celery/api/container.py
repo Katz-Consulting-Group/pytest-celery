@@ -2,8 +2,7 @@
 from typing import Any
 
 from pytest_docker_tools import wrappers
-
-# from pytest_docker_tools.wrappers.container import wait_for_callable
+from pytest_docker_tools.wrappers.container import wait_for_callable
 from retry import retry
 
 from pytest_celery import defaults
@@ -38,11 +37,11 @@ class CeleryTestContainer(wrappers.Container):
 
     @retry(defaults.READY_RETRYABLE_ERRORS)
     def _full_ready(self, match_log: str = "", check_client: bool = True) -> bool:
-        # wait_for_callable(
-        #     f">>> Waiting for container to warm up: '{self.__class__.__name__}::{self.name}'",
-        #     super().ready,
-        #     timeout=defaults.READY_TIMEOUT,
-        # )
+        wait_for_callable(
+            f">>> Waiting for container to warm up: '{self.__class__.__name__}::{self.name}'",
+            super().ready,
+            timeout=defaults.READY_TIMEOUT,
+        )
         ready = super().ready()
 
         if ready:
