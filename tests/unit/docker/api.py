@@ -9,6 +9,10 @@ class UnitTestContainer(CeleryTestContainer):
     def client(self) -> Any:
         return self
 
+    def teardown(self) -> None:
+        # session containers are reused between tests
+        pass
+
 
 class UnitWorkerContainer(CeleryWorkerContainer):
     @property
