@@ -23,9 +23,6 @@ from retry.api import retry_call
 # Docker
 ##########
 
-READY_TIMEOUT = 10
-RESULT_TIMEOUT = 10
-
 DOCKER_RETRYABLE_ERRORS = (
     docker.errors.NotFound,
     docker.errors.APIError,
@@ -44,7 +41,6 @@ REDIS_RETRYABLE_ERRORS = DOCKER_RETRYABLE_ERRORS + (
 NETWORK_RETRYABLE_ERRORS = DOCKER_RETRYABLE_ERRORS + (
     TimeoutError,
     requests.exceptions.Timeout,
-    requests.exceptions.RetryError,
     pytest_docker_tools.exceptions.ContainerNotReady,
     pytest_docker_tools.exceptions.TimeoutError,
 )
@@ -60,9 +56,9 @@ READY_RETRYABLE_ERRORS = (
         kombu.exceptions.OperationalError,
     )
 )
-PORT_RETRYABLE_ERRORS = READY_RETRYABLE_ERRORS + (IndexError,)
-RETRYABLE_ERRORS = READY_RETRYABLE_ERRORS
-COMPONENT_RETRYABLE_ERRORS = RETRYABLE_ERRORS  # + (Exception,)
+RETRYABLE_ERRORS = READY_RETRYABLE_ERRORS  # + (Exception,)
+READY_TIMEOUT = 10
+RESULT_TIMEOUT = 10
 
 
 def parallel_network():  # type: ignore

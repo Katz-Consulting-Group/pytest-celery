@@ -26,18 +26,13 @@ class CeleryTestContainer(wrappers.Container):
 
     @retry(IndexError)
     def _wait_port(self, port: str) -> int:
-        # wait_for_callable(
-        #     f">>> Waiting for port '{port}' to be ready: '{self.__class__.__name__}::{self.name}'",
-        #     partial(self.get_addr, port),
-        #     timeout=defaults.READY_TIMEOUT,
-        # )
         _, p = self.get_addr(port)
         return p
 
     @retry(defaults.READY_RETRYABLE_ERRORS)
     def _full_ready(self, match_log: str = "", check_client: bool = True) -> bool:
         wait_for_callable(
-            f">>> Waiting for container to warm up: '{self.__class__.__name__}::{self.name}'",
+            f">>> Warming up: '{self.__class__.__name__}::{self.name}'",
             super().ready,
             timeout=defaults.READY_TIMEOUT,
         )
@@ -52,7 +47,3 @@ class CeleryTestContainer(wrappers.Container):
 
     def teardown(self) -> None:
         pass
-        # try:
-        #     self.kill()  # does not support session scoped fixtures
-        # except Exception:
-        #     pass
