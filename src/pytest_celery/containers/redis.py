@@ -93,4 +93,4 @@ class RedisContainer(CeleryTestContainer):
 
     @classmethod
     def command(cls) -> list:
-        return ["redis-server", "--maxclients", "100"]
+        return ["redis-server", "--maxclients", "10000"]
