@@ -34,7 +34,7 @@ class CeleryTestContainer(wrappers.Container):
         wait_for_callable(
             f">>> Warming up: '{self.__class__.__name__}::{self.name}'",
             super().ready,
-            timeout=defaults.READY_TIMEOUT,
+            # timeout=defaults.READY_TIMEOUT,
         )
         ready = super().ready()
 
