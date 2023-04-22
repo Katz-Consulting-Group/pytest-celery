@@ -68,11 +68,11 @@ default_worker_container = container(
 @pytest.fixture
 def celery_worker_cluster(
     celery_worker: CeleryTestWorker,
-    # celery4_worker: CeleryTestWorker,
+    celery4_worker: CeleryTestWorker,
 ) -> CeleryWorkerCluster:
     cluster = CeleryWorkerCluster(
         celery_worker,
-        # celery4_worker,
+        celery4_worker,
     )
     cluster.ready()
     yield cluster
