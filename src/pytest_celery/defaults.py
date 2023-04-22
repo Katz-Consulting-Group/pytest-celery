@@ -69,7 +69,7 @@ def parallel_network():  # type: ignore
     return n
 
 
-DEFAULT_NETWORK = parallel_network()
+DEFAULT_NETWORK = network()
 
 ##########
 # Fixtures

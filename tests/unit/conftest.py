@@ -9,6 +9,7 @@ from pytest_docker_tools import fetch
 from pytest_docker_tools import fxtr
 from pytest_docker_tools import network
 from pytest_docker_tools import volume
+from retry import retry
 from retry.api import retry_call
 
 from pytest_celery import defaults
@@ -35,7 +36,8 @@ def parallel_network():
     return n
 
 
-unit_tests_network = parallel_network()
+# unit_tests_network = parallel_network()
+unit_tests_network = network(scope="session")
 
 unit_tests_image = build(
     path="tests/unit/docker",
@@ -96,6 +98,7 @@ worker_test_container = container(
 )
 
 
+@retry(defaults.RETRYABLE_ERRORS)
 @pytest.fixture
 def celery_setup_worker(
     worker_test_container: UnitWorkerContainer,
@@ -148,6 +151,7 @@ redis_broker_container = container(
 )
 
 
+@retry(defaults.RETRYABLE_ERRORS)
 @pytest.fixture
 def celery_redis_backend(redis_backend_container: RedisSessionContainer) -> RedisTestBackend:
     backend = RedisTestBackend(redis_backend_container)
@@ -156,6 +160,7 @@ def celery_redis_backend(redis_backend_container: RedisSessionContainer) -> Redi
     backend.teardown()
 
 
+@retry(defaults.RETRYABLE_ERRORS)
 @pytest.fixture
 def celery_redis_broker(redis_broker_container: RedisSessionContainer) -> RedisTestBroker:
     broker = RedisTestBroker(redis_broker_container)
@@ -181,6 +186,7 @@ rabbitmq_test_container = container(
 )
 
 
+@retry(defaults.RETRYABLE_ERRORS)
 @pytest.fixture
 def celery_rabbitmq_broker(rabbitmq_test_container: RabbitMQSessionContainer) -> RabbitMQTestBroker:
     broker = RabbitMQTestBroker(rabbitmq_test_container)

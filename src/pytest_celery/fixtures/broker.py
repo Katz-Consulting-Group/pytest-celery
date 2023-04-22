@@ -1,12 +1,14 @@
 # mypy: disable-error-code="misc"
 
 import pytest
+from retry import retry
 
 from pytest_celery import defaults
 from pytest_celery.api.components.broker import CeleryBrokerCluster
 from pytest_celery.api.components.broker import CeleryTestBroker
 
 
+@retry(defaults.RETRYABLE_ERRORS)
 @pytest.fixture(params=defaults.ALL_CELERY_BROKERS)
 def celery_broker(request: pytest.FixtureRequest) -> CeleryTestBroker:  # type: ignore
     broker: CeleryTestBroker = request.getfixturevalue(request.param)
@@ -15,6 +17,7 @@ def celery_broker(request: pytest.FixtureRequest) -> CeleryTestBroker:  # type: 
     broker.teardown()
 
 
+@retry(defaults.RETRYABLE_ERRORS)
 @pytest.fixture
 def celery_broker_cluster(celery_broker: CeleryTestBroker) -> CeleryBrokerCluster:  # type: ignore
     cluster = CeleryBrokerCluster(celery_broker)  # type: ignore
@@ -23,6 +26,7 @@ def celery_broker_cluster(celery_broker: CeleryTestBroker) -> CeleryBrokerCluste
     cluster.teardown()
 
 
+@retry(defaults.RETRYABLE_ERRORS)
 @pytest.fixture
 def celery_broker_cluster_config(request: pytest.FixtureRequest) -> dict:
     try:
