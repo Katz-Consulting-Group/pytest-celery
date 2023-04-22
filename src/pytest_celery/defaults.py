@@ -16,6 +16,9 @@ import requests
 # from celery.exceptions import TimeoutError as CeleryTimeoutError
 from pytest_docker_tools import network
 
+# from retry import retry
+from retry.api import retry_call
+
 ##########
 # Docker
 ##########
@@ -59,9 +62,18 @@ READY_RETRYABLE_ERRORS = (
 )
 PORT_RETRYABLE_ERRORS = READY_RETRYABLE_ERRORS + (IndexError,)
 RETRYABLE_ERRORS = READY_RETRYABLE_ERRORS
-COMPONENT_RETRYABLE_ERRORS = RETRYABLE_ERRORS + (Exception,)
+COMPONENT_RETRYABLE_ERRORS = RETRYABLE_ERRORS  # + (Exception,)
 
-DEFAULT_NETWORK = network()
+
+def parallel_network():  # type: ignore
+    n = retry_call(
+        f=network,
+        exceptions=NETWORK_RETRYABLE_ERRORS,
+    )
+    return n
+
+
+DEFAULT_NETWORK = parallel_network()
 
 ##########
 # Fixtures

@@ -9,6 +9,7 @@ from pytest_docker_tools import fetch
 from pytest_docker_tools import fxtr
 from pytest_docker_tools import network
 from pytest_docker_tools import volume
+from retry.api import retry_call
 
 from pytest_celery import defaults
 from pytest_celery.api.components.worker.node import CeleryTestWorker
@@ -21,7 +22,20 @@ from pytest_celery.containers.worker import CeleryWorkerContainer
 from tests.unit.docker.api import UnitTestContainer
 from tests.unit.docker.api import UnitWorkerContainer
 
-unit_tests_network = network(scope="session")
+
+# @retry(BaseException)
+# def parallel_network():
+#     return network(scope="session")
+def parallel_network():
+    n = retry_call(
+        f=network,
+        fkwargs={"scope": "session"},
+        exceptions=defaults.NETWORK_RETRYABLE_ERRORS,
+    )
+    return n
+
+
+unit_tests_network = parallel_network()
 
 unit_tests_image = build(
     path="tests/unit/docker",

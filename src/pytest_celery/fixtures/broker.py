@@ -12,7 +12,8 @@ from pytest_celery.api.components.broker import CeleryTestBroker
 @pytest.fixture(params=defaults.ALL_CELERY_BROKERS)
 def celery_broker(request: pytest.FixtureRequest) -> CeleryTestBroker:  # type: ignore
     # broker: CeleryTestBroker = retry_call(
-    #     lambda: request.getfixturevalue(request.param),
+    #     request.getfixturevalue,
+    #     fargs=(request.param,),
     #     exceptions=defaults.COMPONENT_RETRYABLE_ERRORS,
     # )
     broker: CeleryTestBroker = request.getfixturevalue(request.param)
@@ -35,7 +36,8 @@ def celery_broker_cluster_config(request: pytest.FixtureRequest) -> dict:
         use_default_config = pytest.fail.Exception
         # assert use_default_config not in defaults.RETRYABLE_ERRORS
         # cluster: CeleryBrokerCluster = retry_call(
-        #     lambda: request.getfixturevalue(defaults.CELERY_BROKER_CLUSTER),
+        #     request.getfixturevalue,
+        #     fargs=(defaults.CELERY_BACKEND_CLUSTER,),
         #     exceptions=defaults.RETRYABLE_ERRORS,
         # )
         cluster: CeleryBrokerCluster = request.getfixturevalue(defaults.CELERY_BROKER_CLUSTER)

@@ -12,7 +12,8 @@ from pytest_celery.api.components.backend import CeleryTestBackend
 @pytest.fixture(params=defaults.ALL_CELERY_BACKENDS)
 def celery_backend(request: pytest.FixtureRequest) -> CeleryTestBackend:  # type: ignore
     # backend: CeleryTestBackend = retry_call(
-    #     lambda: request.getfixturevalue(request.param),
+    #     request.getfixturevalue,
+    #     fargs=(request.param,),
     #     exceptions=defaults.COMPONENT_RETRYABLE_ERRORS,
     # )
     backend: CeleryTestBackend = request.getfixturevalue(request.param)
@@ -35,8 +36,9 @@ def celery_backend_cluster_config(request: pytest.FixtureRequest) -> dict:
         use_default_config = pytest.fail.Exception
         # assert use_default_config not in defaults.RETRYABLE_ERRORS
         # cluster: CeleryBackendCluster = retry_call(
-        #     lambda: request.getfixturevalue(defaults.CELERY_BACKEND_CLUSTER),
-        #     exceptions=defaults.RETRYABLE_ERRORS + (Exception,),
+        #     request.getfixturevalue,
+        #     fargs=(defaults.CELERY_BACKEND_CLUSTER,),
+        #     exceptions=defaults.RETRYABLE_ERRORS,
         # )
         cluster: CeleryBackendCluster = request.getfixturevalue(defaults.CELERY_BACKEND_CLUSTER)
         cluster.ready()
