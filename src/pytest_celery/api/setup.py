@@ -117,6 +117,4 @@ class CeleryTestSetup:
         return True
 
     def teardown(self) -> None:
-        self.worker_cluster.teardown()
-        self.broker_cluster.teardown()
-        self.backend_cluster.teardown()
+        pass
