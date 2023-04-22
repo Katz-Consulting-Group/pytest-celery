@@ -10,12 +10,10 @@ from pytest_celery.api.components.worker import CeleryWorkerCluster
 
 @pytest.fixture(params=defaults.ALL_CELERY_WORKERS)
 def celery_worker(request: pytest.FixtureRequest) -> CeleryTestWorker:  # type: ignore
-    worker: CeleryTestWorker = retry_call(
-        lambda: request.getfixturevalue(request.param),
-        exceptions=defaults.COMPONENT_RETRYABLE_ERRORS,
-        max_delay=defaults.COMPONENT_RETRYABLE_DELAY,
-    )
-    # worker: CeleryTestWorker = request.getfixturevalue(request.param)
+    # worker: CeleryTestWorker = retry_call(
+    #     lambda: request.getfixturevalue(request.param), exceptions=defaults.COMPONENT_RETRYABLE_ERRORS
+    # )
+    worker: CeleryTestWorker = request.getfixturevalue(request.param)
     worker.ready()
     yield worker
     worker.teardown()

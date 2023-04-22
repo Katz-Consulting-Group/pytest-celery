@@ -13,10 +13,7 @@ class CeleryTestNode:
     def container(self) -> CeleryTestContainer:
         return self._container
 
-    @retry(
-        defaults.READY_RETRYABLE_ERRORS,
-        max_delay=defaults.READY_RETRYABLE_DELAY,
-    )
+    @retry(defaults.READY_RETRYABLE_ERRORS)
     def ready(self) -> bool:
         # wait_for_callable(
         #     f">>> Waiting for the node's container to be ready: '{self.__class__.__name__}::{self.container.name}'",

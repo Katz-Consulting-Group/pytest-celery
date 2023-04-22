@@ -26,10 +26,7 @@ class CeleryTestContainer(wrappers.Container):
     def command(cls) -> list:
         raise NotImplementedError("CeleryTestContainer.command")
 
-    @retry(
-        IndexError,
-        max_delay=defaults.PORT_RETRYABLE_DELAY,
-    )
+    @retry(IndexError)
     def _wait_port(self, port: str) -> int:
         # wait_for_callable(
         #     f">>> Waiting for port '{port}' to be ready: '{self.__class__.__name__}::{self.name}'",
@@ -39,10 +36,7 @@ class CeleryTestContainer(wrappers.Container):
         _, p = self.get_addr(port)
         return p
 
-    @retry(
-        defaults.READY_RETRYABLE_ERRORS,
-        max_delay=defaults.READY_RETRYABLE_DELAY,
-    )
+    @retry(defaults.READY_RETRYABLE_ERRORS)
     def _full_ready(self, match_log: str = "", check_client: bool = True) -> bool:
         # wait_for_callable(
         #     f">>> Waiting for container to warm up: '{self.__class__.__name__}::{self.name}'",
@@ -55,23 +49,12 @@ class CeleryTestContainer(wrappers.Container):
             if match_log:
                 ready = match_log in self.logs()
             if check_client:
-                ready = ready and self._wait_client() is not None
+                ready = ready and self.client is not None
         return ready
 
-    # @retry(
-    #     defaults.READY_RETRYABLE_ERRORS,
-    #     max_delay=defaults.READY_RETRYABLE_DELAY,
-    # )
-    def _wait_client(self) -> Any:
-        # wait_for_callable(
-        #     f">>> Waiting for client to be ready: '{self.__class__.__name__}::{self.name}'",
-        #     lambda: self.client is not None,
-        #     timeout=defaults.READY_TIMEOUT,
-        # )
-        return self.client
-
     def teardown(self) -> None:
-        try:
-            self.kill()  # does not support session scoped fixtures
-        except Exception:
-            pass
+        pass
+        # try:
+        #     self.kill()  # does not support session scoped fixtures
+        # except Exception:
+        #     pass

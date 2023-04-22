@@ -10,12 +10,10 @@ from pytest_celery.api.components.broker import CeleryTestBroker
 
 @pytest.fixture(params=defaults.ALL_CELERY_BROKERS)
 def celery_broker(request: pytest.FixtureRequest) -> CeleryTestBroker:  # type: ignore
-    broker: CeleryTestBroker = retry_call(
-        lambda: request.getfixturevalue(request.param),
-        exceptions=defaults.COMPONENT_RETRYABLE_ERRORS,
-        max_delay=defaults.COMPONENT_RETRYABLE_DELAY,
-    )
-    # broker: CeleryTestBroker = request.getfixturevalue(request.param)
+    # broker: CeleryTestBroker = retry_call(
+    #     lambda: request.getfixturevalue(request.param), exceptions=defaults.COMPONENT_RETRYABLE_ERRORS
+    # )
+    broker: CeleryTestBroker = request.getfixturevalue(request.param)
     broker.ready()
     yield broker
     broker.teardown()
@@ -33,13 +31,11 @@ def celery_broker_cluster(celery_broker: CeleryTestBroker) -> CeleryBrokerCluste
 def celery_broker_cluster_config(request: pytest.FixtureRequest) -> dict:
     try:
         use_default_config = pytest.fail.Exception
-        assert use_default_config not in defaults.RETRYABLE_ERRORS
-        cluster: CeleryBrokerCluster = retry_call(
-            lambda: request.getfixturevalue(defaults.CELERY_BROKER_CLUSTER),
-            exceptions=defaults.RETRYABLE_ERRORS,
-            max_delay=defaults.RETRYABLE_DELAY,
-        )
-        # cluster: CeleryBrokerCluster = request.getfixturevalue(defaults.CELERY_BROKER_CLUSTER)
+        # assert use_default_config not in defaults.RETRYABLE_ERRORS
+        # cluster: CeleryBrokerCluster = retry_call(
+        #     lambda: request.getfixturevalue(defaults.CELERY_BROKER_CLUSTER), exceptions=defaults.RETRYABLE_ERRORS
+        # )
+        cluster: CeleryBrokerCluster = request.getfixturevalue(defaults.CELERY_BROKER_CLUSTER)
         cluster.ready()
         return cluster.config()
     except use_default_config:

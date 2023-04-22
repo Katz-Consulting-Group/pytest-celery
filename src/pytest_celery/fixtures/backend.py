@@ -10,12 +10,10 @@ from pytest_celery.api.components.backend import CeleryTestBackend
 
 @pytest.fixture(params=defaults.ALL_CELERY_BACKENDS)
 def celery_backend(request: pytest.FixtureRequest) -> CeleryTestBackend:  # type: ignore
-    backend: CeleryTestBackend = retry_call(
-        lambda: request.getfixturevalue(request.param),
-        exceptions=defaults.COMPONENT_RETRYABLE_ERRORS,
-        max_delay=defaults.COMPONENT_RETRYABLE_DELAY,
-    )
-    # backend: CeleryTestBackend = request.getfixturevalue(request.param)
+    # backend: CeleryTestBackend = retry_call(
+    #     lambda: request.getfixturevalue(request.param), exceptions=defaults.COMPONENT_RETRYABLE_ERRORS
+    # )
+    backend: CeleryTestBackend = request.getfixturevalue(request.param)
     backend.ready()
     yield backend
     backend.teardown()
@@ -33,13 +31,12 @@ def celery_backend_cluster(celery_backend: CeleryTestBackend) -> CeleryBackendCl
 def celery_backend_cluster_config(request: pytest.FixtureRequest) -> dict:
     try:
         use_default_config = pytest.fail.Exception
-        assert use_default_config not in defaults.RETRYABLE_ERRORS
-        cluster: CeleryBackendCluster = retry_call(
-            lambda: request.getfixturevalue(defaults.CELERY_BACKEND_CLUSTER),
-            exceptions=defaults.RETRYABLE_ERRORS + (Exception,),
-            max_delay=defaults.RETRYABLE_DELAY,
-        )
-        # cluster: CeleryBackendCluster = request.getfixturevalue(defaults.CELERY_BACKEND_CLUSTER)
+        # assert use_default_config not in defaults.RETRYABLE_ERRORS
+        # cluster: CeleryBackendCluster = retry_call(
+        #     lambda: request.getfixturevalue(defaults.CELERY_BACKEND_CLUSTER),
+        #     exceptions=defaults.RETRYABLE_ERRORS + (Exception,),
+        # )
+        cluster: CeleryBackendCluster = request.getfixturevalue(defaults.CELERY_BACKEND_CLUSTER)
         cluster.ready()
         return cluster.config()
     except use_default_config:
