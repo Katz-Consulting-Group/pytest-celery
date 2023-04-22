@@ -3,6 +3,7 @@ from typing import Optional
 from kombu.utils import cached_property
 from redis import BlockingConnectionPool
 from redis import StrictRedis as Redis
+from retry import retry
 
 from pytest_celery import defaults
 from pytest_celery.api.container import CeleryTestContainer
@@ -14,6 +15,7 @@ class RedisContainer(CeleryTestContainer):
     def ready(self) -> bool:
         return self._full_ready(self.__ready_prompt__)
 
+    @retry(defaults.RETRYABLE_ERRORS)
     def _full_ready(self, match_log: str = "", check_client: bool = True) -> bool:
         ready = super()._full_ready(match_log, check_client)
         if ready and check_client:

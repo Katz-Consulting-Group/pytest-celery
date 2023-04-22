@@ -29,12 +29,12 @@ class CeleryTestContainer(wrappers.Container):
         _, p = self.get_addr(port)
         return p
 
-    @retry(defaults.READY_RETRYABLE_ERRORS)
+    @retry(defaults.RETRYABLE_ERRORS)
     def _full_ready(self, match_log: str = "", check_client: bool = True) -> bool:
         wait_for_callable(
             f">>> Warming up: '{self.__class__.__name__}::{self.name}'",
             super().ready,
-            # timeout=defaults.READY_TIMEOUT,
+            timeout=defaults.READY_TIMEOUT,
         )
         ready = super().ready()
 
