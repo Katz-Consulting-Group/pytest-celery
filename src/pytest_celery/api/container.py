@@ -72,6 +72,6 @@ class CeleryTestContainer(wrappers.Container):
 
     def teardown(self) -> None:
         try:
-            self.kill()
+            self.kill()  # does not support session scoped fixtures
         except Exception:
             pass
