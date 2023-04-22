@@ -8,6 +8,7 @@ from pytest_docker_tools import build
 from pytest_docker_tools import container
 from pytest_docker_tools import fxtr
 from pytest_docker_tools import volume
+from retry import retry
 
 from pytest_celery import defaults
 from pytest_celery.api.components.worker.node import CeleryTestWorker
@@ -19,6 +20,7 @@ def default_worker_cls() -> Type[CeleryTestWorker]:
     return CeleryTestWorker
 
 
+@retry(defaults.RETRYABLE_ERRORS)
 @pytest.fixture
 def celery_setup_worker(
     default_worker_cls: Type[CeleryTestWorker],

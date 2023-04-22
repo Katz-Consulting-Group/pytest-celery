@@ -5,12 +5,14 @@ from typing import Type
 import pytest
 from pytest_docker_tools import container
 from pytest_docker_tools import fxtr
+from retry import retry
 
 from pytest_celery import defaults
 from pytest_celery.components.broker.rabbitmq.api import RabbitMQTestBroker
 from pytest_celery.containers.rabbitmq import RabbitMQContainer
 
 
+@retry(defaults.RETRYABLE_ERRORS)
 @pytest.fixture
 def celery_rabbitmq_broker(default_rabbitmq_broker: RabbitMQContainer) -> RabbitMQTestBroker:
     broker = RabbitMQTestBroker(default_rabbitmq_broker)
