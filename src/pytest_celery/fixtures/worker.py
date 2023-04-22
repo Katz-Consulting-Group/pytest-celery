@@ -6,16 +6,9 @@ from pytest_celery import defaults
 from pytest_celery.api.components.worker import CeleryTestWorker
 from pytest_celery.api.components.worker import CeleryWorkerCluster
 
-# from retry.api import retry_call
-
 
 @pytest.fixture(params=defaults.ALL_CELERY_WORKERS)
 def celery_worker(request: pytest.FixtureRequest) -> CeleryTestWorker:  # type: ignore
-    # worker: CeleryTestWorker = retry_call(
-    #     request.getfixturevalue,
-    #     fargs=(request.param,),
-    #     exceptions=defaults.COMPONENT_RETRYABLE_ERRORS,
-    # )
     worker: CeleryTestWorker = request.getfixturevalue(request.param)
     worker.ready()
     yield worker
