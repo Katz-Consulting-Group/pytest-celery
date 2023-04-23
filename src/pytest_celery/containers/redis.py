@@ -3,6 +3,7 @@ from typing import Optional
 from kombu.utils import cached_property
 from redis import BlockingConnectionPool
 from redis import StrictRedis as Redis
+from retry.api import retry_call
 
 from pytest_celery import defaults
 from pytest_celery.api.container import CeleryTestContainer
@@ -16,11 +17,15 @@ class RedisContainer(CeleryTestContainer):
         if self._client:
             return self._client
 
-        pool = BlockingConnectionPool.from_url(
-            self.celeryconfig["local_url"],
-            max_connections=self.app_transport_options()["max_connections"],
-            timeout=self.app_transport_options()["timeout"],
-            decode_responses=True,
+        pool = retry_call(
+            BlockingConnectionPool.from_url,
+            fargs=(self.celeryconfig["local_url"],),
+            fkwargs={
+                "max_connections": self.app_transport_options()["max_connections"],
+                "timeout": self.app_transport_options()["timeout"],
+                "decode_responses": True,
+            },
+            exceptions=defaults.READY_RETRYABLE_ERRORS,
         )
         self._client = Redis(connection_pool=pool)
         return self._client
