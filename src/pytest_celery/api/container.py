@@ -1,5 +1,6 @@
 from typing import Any
 
+from kombu.utils import cached_property
 from pytest_docker_tools import wrappers
 from pytest_docker_tools.wrappers.container import wait_for_callable
 from retry import retry
@@ -15,7 +16,7 @@ class CeleryTestContainer(wrappers.Container):
         super().__init__(*args, **kwargs)
         self._client: Any = None  # type: ignore
 
-    @property
+    @cached_property
     def client(self) -> Any:
         raise NotImplementedError("CeleryTestContainer.client")
 
