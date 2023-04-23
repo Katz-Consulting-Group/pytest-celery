@@ -69,7 +69,6 @@ class test_signals:
             wait_for_callable(
                 "waiting for worker_process_shutdown_handler in worker.logs()",
                 lambda: "worker_process_shutdown_handler" in worker.logs(),
-                timeout=60,
             )
             assert "worker_process_shutdown_handler" in worker.logs()
 
@@ -80,6 +79,5 @@ class test_signals:
             wait_for_callable(
                 "waiting for worker_shutdown_handler in worker.logs()",
                 lambda: "worker_shutdown_handler" in worker.logs(),
-                timeout=60,
             )
             assert "worker_shutdown_handler" in worker.logs()

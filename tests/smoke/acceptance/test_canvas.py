@@ -24,7 +24,6 @@ class test_canvas:
         wait_for_callable(
             f"waiting for {expected} in worker.logs()",
             lambda: expected in worker.logs(),
-            timeout=60,
         )
         assert expected in worker.logs()
 
@@ -40,14 +39,12 @@ class test_canvas:
             wait_for_callable(
                 f"waiting for {expected} in celery_setup.worker_cluster[1].logs()",
                 lambda: expected in celery_setup.worker_cluster[1].logs(),
-                timeout=60,
             )
             assert expected in celery_setup.worker_cluster[1].logs()
         else:
             wait_for_callable(
                 f"waiting for {expected} in worker.logs()",
                 lambda: expected in worker.logs(),
-                timeout=60,
             )
             assert expected in worker.logs()
 
