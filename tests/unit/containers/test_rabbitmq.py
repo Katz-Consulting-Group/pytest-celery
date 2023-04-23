@@ -17,7 +17,7 @@ class test_rabbitmq_container:
         assert rabbitmq_test_container.version() == "latest"
 
     def test_env(self, rabbitmq_test_container: RabbitMQContainer):
-        assert rabbitmq_test_container.env() == {}
+        assert rabbitmq_test_container.env() == defaults.RABBITMQ_ENV
 
     def test_image(self, rabbitmq_test_container: RabbitMQContainer):
         assert rabbitmq_test_container.image() == defaults.RABBITMQ_IMAGE

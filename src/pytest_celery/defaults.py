@@ -57,8 +57,8 @@ READY_RETRYABLE_ERRORS = (
     )
 )
 RETRYABLE_ERRORS = NETWORK_RETRYABLE_ERRORS  # + (Exception,)
-READY_TIMEOUT = 10
-RESULT_TIMEOUT = 10
+READY_TIMEOUT = 30
+RESULT_TIMEOUT = 60
 
 
 def parallel_network():  # type: ignore
@@ -182,7 +182,9 @@ DEFAULT_WORKER_VOLUME = WORKER_VOLUME
 
 REDIS_IMAGE = "redis:latest"
 REDIS_PORTS = {"6379/tcp": None}
-REDIS_ENV: dict = {}
+REDIS_ENV: dict = {
+    "SYSCTL": "vm.overcommit_memory=1",
+}
 REDIS_CONTAINER_TIMEOUT = READY_TIMEOUT
 
 # Docker containers settings
