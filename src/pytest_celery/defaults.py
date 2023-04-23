@@ -56,7 +56,7 @@ READY_RETRYABLE_ERRORS = (
         kombu.exceptions.OperationalError,
     )
 )
-RETRYABLE_ERRORS = READY_RETRYABLE_ERRORS  # + (Exception,)
+RETRYABLE_ERRORS = NETWORK_RETRYABLE_ERRORS  # + (Exception,)
 READY_TIMEOUT = 10
 RESULT_TIMEOUT = 10
 
