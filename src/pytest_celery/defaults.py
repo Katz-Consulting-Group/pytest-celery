@@ -12,12 +12,7 @@ import kombu.exceptions
 import pytest_docker_tools.exceptions
 import redis
 import requests
-
-# from celery.exceptions import TimeoutError as CeleryTimeoutError
 from pytest_docker_tools import network
-
-# from retry import retry
-from retry.api import retry_call
 
 ##########
 # Docker
@@ -57,16 +52,8 @@ READY_RETRYABLE_ERRORS = (
     )
 )
 RETRYABLE_ERRORS = NETWORK_RETRYABLE_ERRORS  # + (Exception,)
-READY_TIMEOUT = 30
-RESULT_TIMEOUT = 60
-
-
-def parallel_network():  # type: ignore
-    n = retry_call(
-        f=network,
-        exceptions=NETWORK_RETRYABLE_ERRORS,
-    )
-    return n
+READY_TIMEOUT = 10
+RESULT_TIMEOUT = 10
 
 
 DEFAULT_NETWORK = network()
