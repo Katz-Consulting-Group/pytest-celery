@@ -211,7 +211,7 @@ DEFAULT_REDIS_BROKER_PORTS = REDIS_PORTS
 RABBITMQ_IMAGE = "rabbitmq:latest"
 RABBITMQ_PORTS = {"5672/tcp": None}
 RABBITMQ_ENV: dict = {}
-RABBITMQ_CONTAINER_TIMEOUT = READY_TIMEOUT
+RABBITMQ_CONTAINER_TIMEOUT = 42
 
 # Docker containers settings
 #################################################
