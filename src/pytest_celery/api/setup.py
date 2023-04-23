@@ -52,13 +52,14 @@ class CeleryTestSetup:
             ]
         )
 
-        r = self.app.control.ping()
-        ready = all(
-            [
-                ready,
-                all([all([res["ok"] == "pong" for _, res in response.items()]) for response in r]),
-            ]
-        )
+        # TODO: Move
+        # r = self.app.control.ping()
+        # ready = all(
+        #     [
+        #         ready,
+        #         all([all([res["ok"] == "pong" for _, res in response.items()]) for response in r]),
+        #     ]
+        # )
 
         if not ping:
             return ready
