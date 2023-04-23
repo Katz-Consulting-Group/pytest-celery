@@ -9,7 +9,7 @@ from pytest_celery import defaults
 
 
 class CeleryTestContainer(wrappers.Container):
-    __ready_prompt__ = "N/A"
+    __ready_prompt__ = ""
 
     def __init__(self, *args, **kwargs):  # type: ignore
         super().__init__(*args, **kwargs)
