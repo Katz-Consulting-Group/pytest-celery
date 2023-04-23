@@ -3,11 +3,14 @@ from typing import Any
 from pytest_docker_tools import wrappers
 from pytest_docker_tools.wrappers.container import wait_for_callable
 from retry import retry
+from retry.api import retry_call
 
 from pytest_celery import defaults
 
 
 class CeleryTestContainer(wrappers.Container):
+    __ready_prompt__ = "N/A"
+
     def __init__(self, *args, **kwargs):  # type: ignore
         super().__init__(*args, **kwargs)
         self._client: Any = None  # type: ignore
@@ -29,11 +32,18 @@ class CeleryTestContainer(wrappers.Container):
         _, p = self.get_addr(port)
         return p
 
+    def ready(self) -> bool:
+        return self._full_ready(self.__ready_prompt__)
+
     @retry(defaults.RETRYABLE_ERRORS)
     def _full_ready(self, match_log: str = "", check_client: bool = True) -> bool:
-        wait_for_callable(
-            f">>> Warming up: '{self.__class__.__name__}::{self.name}'",
-            super().ready,
+        retry_call(
+            wait_for_callable,
+            fargs=(
+                f">>> Warming up: '{self.__class__.__name__}::{self.name}'",
+                super().ready,
+            ),
+            exceptions=defaults.READY_RETRYABLE_ERRORS,
         )
         ready = super().ready()
 

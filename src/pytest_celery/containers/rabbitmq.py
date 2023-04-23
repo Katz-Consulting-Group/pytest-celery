@@ -1,6 +1,5 @@
 from kombu import Connection
 from kombu.utils import cached_property
-from retry import retry
 
 from pytest_celery import defaults
 from pytest_celery.api.container import CeleryTestContainer
@@ -8,20 +7,6 @@ from pytest_celery.api.container import CeleryTestContainer
 
 class RabbitMQContainer(CeleryTestContainer):
     __ready_prompt__ = "Server startup complete"
-
-    def ready(self) -> bool:
-        return self._full_ready(self.__ready_prompt__)
-
-    @retry(defaults.RETRYABLE_ERRORS)
-    def _full_ready(self, match_log: str = "", check_client: bool = True) -> bool:
-        ready = super()._full_ready(match_log, check_client)
-        if ready and check_client:
-            c: Connection = self.client  # type: ignore
-            try:
-                ready = bool(c.connect())
-            finally:
-                c.release()
-        return ready
 
     @cached_property
     def client(self) -> Connection:
