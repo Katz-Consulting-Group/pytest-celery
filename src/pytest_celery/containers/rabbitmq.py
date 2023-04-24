@@ -18,7 +18,7 @@ class RabbitMQContainer(CeleryTestContainer):
             Connection,
             fargs=(self.celeryconfig["local_url"],),
             fkwargs={"port": self.celeryconfig["port"]},
-            exceptions=defaults.READY_RETRYABLE_ERRORS,
+            exceptions=defaults.RETRYABLE_ERRORS,
         )
         return self._client
 

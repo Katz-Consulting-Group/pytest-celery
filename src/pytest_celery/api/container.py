@@ -44,7 +44,7 @@ class CeleryTestContainer(wrappers.Container):
                 f">>> Warming up: '{self.__class__.__name__}::{self.name}'",
                 super().ready,
             ),
-            exceptions=defaults.READY_RETRYABLE_ERRORS,
+            exceptions=defaults.RETRYABLE_ERRORS,
         )
         ready = super().ready()
 

@@ -25,7 +25,7 @@ class RedisContainer(CeleryTestContainer):
                 "timeout": self.app_transport_options()["timeout"],
                 "decode_responses": True,
             },
-            exceptions=defaults.READY_RETRYABLE_ERRORS,
+            exceptions=defaults.RETRYABLE_ERRORS,
         )
         self._client = Redis(connection_pool=pool)
         return self._client
@@ -80,6 +80,7 @@ class RedisContainer(CeleryTestContainer):
     def app_transport_options(cls) -> dict:
         return {
             "max_connections": int(cls.command()[-1]),
+            # "max_connections": None,
             "timeout": None,
             "pool_class": "redis.BlockingConnectionPool",
         }
