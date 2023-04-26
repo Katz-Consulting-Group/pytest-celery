@@ -1,6 +1,5 @@
 from kombu import Connection
 from kombu.utils import cached_property
-from retry.api import retry_call
 
 from pytest_celery import defaults
 from pytest_celery.api.container import CeleryTestContainer
@@ -11,18 +10,13 @@ class RabbitMQContainer(CeleryTestContainer):
 
     @cached_property
     def client(self) -> Connection:
-        if self._client:
-            return self._client
-
-        self._client = retry_call(
-            Connection,
-            fargs=(self.celeryconfig["local_url"],),
-            fkwargs={"port": self.celeryconfig["port"]},
-            exceptions=defaults.RETRYABLE_ERRORS,
+        client = Connection(
+            self.celeryconfig["local_url"],
+            port=self.celeryconfig["port"],
         )
-        return self._client
+        return client
 
-    @property
+    @cached_property
     def celeryconfig(self) -> dict:
         return {
             "url": self.url,

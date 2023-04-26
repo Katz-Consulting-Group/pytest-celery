@@ -11,7 +11,7 @@ from pytest_docker_tools import network
 # Docker
 ##########
 
-READY_TIMEOUT = 10
+READY_TIMEOUT = 30
 RESULT_TIMEOUT = 30
 
 
