@@ -3,7 +3,6 @@
 import pytest
 from pytest_docker_tools import container
 from pytest_docker_tools import fxtr
-from retry import retry
 
 from pytest_celery import CeleryTestSetup
 from pytest_celery import defaults
@@ -22,7 +21,6 @@ failover_broker = container(
 )
 
 
-@retry(defaults.RETRYABLE_ERRORS)
 @pytest.fixture
 def failover_rabbitmq_broker(failover_broker: RabbitMQContainer) -> RabbitMQTestBroker:
     broker = RabbitMQTestBroker(failover_broker)
@@ -31,7 +29,6 @@ def failover_rabbitmq_broker(failover_broker: RabbitMQContainer) -> RabbitMQTest
     broker.teardown()
 
 
-@retry(defaults.RETRYABLE_ERRORS)
 @pytest.fixture
 def celery_broker_cluster(
     celery_rabbitmq_broker: RabbitMQTestBroker,

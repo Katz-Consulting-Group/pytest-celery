@@ -25,7 +25,6 @@ class test_canvas:
             f"waiting for {expected} in worker.logs()",
             lambda: expected in worker.logs(),
         )
-        assert expected in worker.logs()
 
         if len(celery_setup.worker_cluster) > 1:
             queue = celery_setup.worker_cluster[1].worker_queue
@@ -40,13 +39,11 @@ class test_canvas:
                 f"waiting for {expected} in celery_setup.worker_cluster[1].logs()",
                 lambda: expected in celery_setup.worker_cluster[1].logs(),
             )
-            assert expected in celery_setup.worker_cluster[1].logs()
         else:
             wait_for_callable(
                 f"waiting for {expected} in worker.logs()",
                 lambda: expected in worker.logs(),
             )
-            assert expected in worker.logs()
 
     def test_signature(self, celery_setup: CeleryTestSetup):
         worker: CeleryTestWorker
@@ -65,7 +62,7 @@ class test_canvas:
                 group(s for s in [add.si(1, 1), add.si(2, 2)]),
             )
             res = sig.apply_async(queue=queue)
-            assert res.get(timeout=defaults.RESULT_TIMEOUT)  # == [2, 4, 2, 4, 2, 4]
+            assert res.get(timeout=defaults.RESULT_TIMEOUT) == [2, 4, 2, 4, 2, 4]
 
     def test_chain(self, celery_setup: CeleryTestSetup):
         worker: CeleryTestWorker

@@ -1,15 +1,12 @@
 from typing import Tuple
 
 import pytest
-from retry import retry
 
-from pytest_celery import defaults
 from pytest_celery.api.components.worker.cluster import CeleryWorkerCluster
 from pytest_celery.api.components.worker.node import CeleryTestWorker
 from tests.common.celery4.fixtures import *  # noqa
 
 
-@retry(defaults.RETRYABLE_ERRORS)
 @pytest.fixture(
     # Each param item is a list of workers to be used in the cluster
     params=[

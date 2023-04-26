@@ -50,17 +50,26 @@ class test_signals:
     def test_worker_init(self, celery_setup: CeleryTestSetup):
         worker: CeleryTestWorker
         for worker in celery_setup.worker_cluster:
-            assert "worker_init_handler" in worker.logs()
+            wait_for_callable(
+                "waiting for worker_init_handler in worker.logs()",
+                lambda: "worker_init_handler" in worker.logs(),
+            )
 
     def test_worker_process_init(self, celery_setup: CeleryTestSetup):
         worker: CeleryTestWorker
         for worker in celery_setup.worker_cluster:
-            assert "worker_process_init_handler" in worker.logs()
+            wait_for_callable(
+                "waiting for worker_process_init_handler in worker.logs()",
+                lambda: "worker_process_init_handler" in worker.logs(),
+            )
 
     def test_worker_ready(self, celery_setup: CeleryTestSetup):
         worker: CeleryTestWorker
         for worker in celery_setup.worker_cluster:
-            assert "worker_ready_handler" in worker.logs()
+            wait_for_callable(
+                "waiting for worker_ready_handler in worker.logs()",
+                lambda: "worker_ready_handler" in worker.logs(),
+            )
 
     def test_worker_process_shutdown(self, celery_setup: CeleryTestSetup):
         worker: CeleryTestWorker
@@ -70,7 +79,6 @@ class test_signals:
                 "waiting for worker_process_shutdown_handler in worker.logs()",
                 lambda: "worker_process_shutdown_handler" in worker.logs(),
             )
-            assert "worker_process_shutdown_handler" in worker.logs()
 
     def test_worker_shutdown(self, celery_setup: CeleryTestSetup):
         worker: CeleryTestWorker
@@ -80,4 +88,3 @@ class test_signals:
                 "waiting for worker_shutdown_handler in worker.logs()",
                 lambda: "worker_shutdown_handler" in worker.logs(),
             )
-            assert "worker_shutdown_handler" in worker.logs()
