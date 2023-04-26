@@ -5,55 +5,14 @@ components fixtures. You can override these values by hooking to the
 matchin fixture and returning your own value.
 """
 
-
-import amqp
-import docker.errors
-import kombu.exceptions
-import pytest_docker_tools.exceptions
-import redis
-import requests
 from pytest_docker_tools import network
 
 ##########
 # Docker
 ##########
 
-DOCKER_RETRYABLE_ERRORS = (
-    docker.errors.NotFound,
-    docker.errors.APIError,
-    requests.HTTPError,
-)
-
-REDIS_RETRYABLE_ERRORS = DOCKER_RETRYABLE_ERRORS + (
-    TimeoutError,
-    ConnectionError,
-    ConnectionRefusedError,
-    BrokenPipeError,
-    redis.exceptions.ConnectionError,
-    redis.exceptions.TimeoutError,
-)
-
-NETWORK_RETRYABLE_ERRORS = DOCKER_RETRYABLE_ERRORS + (
-    TimeoutError,
-    requests.exceptions.Timeout,
-    pytest_docker_tools.exceptions.ContainerNotReady,
-    pytest_docker_tools.exceptions.TimeoutError,
-)
-
-
-READY_RETRYABLE_ERRORS = (
-    NETWORK_RETRYABLE_ERRORS
-    + REDIS_RETRYABLE_ERRORS
-    + (
-        requests.exceptions.ConnectionError,
-        amqp.exceptions.NotFound,
-        amqp.exceptions.ConnectionError,
-        kombu.exceptions.OperationalError,
-    )
-)
-RETRYABLE_ERRORS = NETWORK_RETRYABLE_ERRORS  # + (Exception,)
 READY_TIMEOUT = 10
-RESULT_TIMEOUT = 10
+RESULT_TIMEOUT = 30
 
 
 DEFAULT_NETWORK = network()
