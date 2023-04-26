@@ -1,9 +1,8 @@
+import gc
 from typing import Optional
 
 from kombu.utils import cached_property
-from redis import BlockingConnectionPool
 from redis import StrictRedis as Redis
-from retry.api import retry_call
 
 from pytest_celery import defaults
 from pytest_celery.api.container import CeleryTestContainer
@@ -14,23 +13,13 @@ class RedisContainer(CeleryTestContainer):
 
     @cached_property
     def client(self) -> Optional[Redis]:
-        if self._client:
-            return self._client
-
-        pool = retry_call(
-            BlockingConnectionPool.from_url,
-            fargs=(self.celeryconfig["local_url"],),
-            fkwargs={
-                "max_connections": self.app_transport_options()["max_connections"],
-                "timeout": self.app_transport_options()["timeout"],
-                "decode_responses": True,
-            },
-            exceptions=defaults.RETRYABLE_ERRORS,
+        client = Redis.from_url(
+            self.celeryconfig["local_url"],
+            decode_responses=True,
         )
-        self._client = Redis(connection_pool=pool)
-        return self._client
+        return client
 
-    @property
+    @cached_property
     def celeryconfig(self) -> dict:
         return {
             "url": self.url,
@@ -76,15 +65,6 @@ class RedisContainer(CeleryTestContainer):
     def ports(cls) -> dict:
         return defaults.DEFAULT_REDIS_BACKEND_PORTS
 
-    @classmethod
-    def app_transport_options(cls) -> dict:
-        return {
-            "max_connections": int(cls.command()[-1]),
-            # "max_connections": None,
-            "timeout": None,
-            "pool_class": "redis.BlockingConnectionPool",
-        }
-
-    @classmethod
-    def command(cls) -> list:
-        return ["redis-server", "--maxclients", "10000"]
+    def teardown(self) -> None:
+        if self.client.info("clients")["connected_clients"]:
+            gc.collect()

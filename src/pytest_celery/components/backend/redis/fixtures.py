@@ -31,7 +31,6 @@ default_redis_backend = container(
     network="{DEFAULT_NETWORK.name}",
     wrapper_class=RedisContainer,
     timeout=defaults.REDIS_CONTAINER_TIMEOUT,
-    command=RedisContainer.command(),  # TODO: use fxtr
 )
 
 
