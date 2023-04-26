@@ -9,7 +9,6 @@ from pytest_docker_tools import fetch
 from pytest_docker_tools import fxtr
 from pytest_docker_tools import network
 from pytest_docker_tools import volume
-from retry import retry
 
 from pytest_celery import defaults
 from pytest_celery.api.components.worker.node import CeleryTestWorker
@@ -83,7 +82,6 @@ worker_test_container = container(
 )
 
 
-@retry(defaults.RETRYABLE_ERRORS)
 @pytest.fixture
 def celery_setup_worker(
     worker_test_container: UnitWorkerContainer,
@@ -98,11 +96,6 @@ def celery_setup_worker(
     worker.teardown()
 
 
-class RedisSessionContainer(RedisContainer):
-    def teardown(self) -> None:
-        pass
-
-
 redis_image = fetch(repository=defaults.REDIS_IMAGE)
 redis_test_container = container(
     image="{redis_image.id}",
@@ -110,9 +103,9 @@ redis_test_container = container(
     ports=defaults.REDIS_PORTS,
     environment=defaults.REDIS_ENV,
     network="{unit_tests_network.name}",
-    wrapper_class=RedisSessionContainer,
+    wrapper_class=RedisContainer,
     timeout=defaults.REDIS_CONTAINER_TIMEOUT,
-    command=RedisSessionContainer.command(),  # TODO: use fxtr
+    command=RedisContainer.command(),  # TODO: use fxtr
 )
 redis_backend_container = container(
     image="{redis_image.id}",
@@ -120,9 +113,9 @@ redis_backend_container = container(
     ports=defaults.REDIS_PORTS,
     environment=defaults.REDIS_ENV,
     network="{unit_tests_network.name}",
-    wrapper_class=RedisSessionContainer,
+    wrapper_class=RedisContainer,
     timeout=defaults.REDIS_CONTAINER_TIMEOUT,
-    command=RedisSessionContainer.command(),  # TODO: use fxtr
+    command=RedisContainer.command(),  # TODO: use fxtr
 )
 redis_broker_container = container(
     image="{redis_image.id}",
@@ -130,33 +123,26 @@ redis_broker_container = container(
     ports=defaults.REDIS_PORTS,
     environment=defaults.REDIS_ENV,
     network="{unit_tests_network.name}",
-    wrapper_class=RedisSessionContainer,
+    wrapper_class=RedisContainer,
     timeout=defaults.REDIS_CONTAINER_TIMEOUT,
-    command=RedisSessionContainer.command(),  # TODO: use fxtr
+    command=RedisContainer.command(),  # TODO: use fxtr
 )
 
 
-@retry(defaults.RETRYABLE_ERRORS)
 @pytest.fixture
-def celery_redis_backend(redis_backend_container: RedisSessionContainer) -> RedisTestBackend:
+def celery_redis_backend(redis_backend_container: RedisContainer) -> RedisTestBackend:
     backend = RedisTestBackend(redis_backend_container)
     backend.ready()
     yield backend
     backend.teardown()
 
 
-@retry(defaults.RETRYABLE_ERRORS)
 @pytest.fixture
-def celery_redis_broker(redis_broker_container: RedisSessionContainer) -> RedisTestBroker:
+def celery_redis_broker(redis_broker_container: RedisContainer) -> RedisTestBroker:
     broker = RedisTestBroker(redis_broker_container)
     broker.ready()
     yield broker
     broker.teardown()
-
-
-class RabbitMQSessionContainer(RabbitMQContainer):
-    def teardown(self) -> None:
-        pass
 
 
 rabbitmq_image = fetch(repository=defaults.RABBITMQ_IMAGE)
@@ -166,14 +152,13 @@ rabbitmq_test_container = container(
     ports=defaults.RABBITMQ_PORTS,
     environment=defaults.RABBITMQ_ENV,
     network="{unit_tests_network.name}",
-    wrapper_class=RabbitMQSessionContainer,
+    wrapper_class=RabbitMQContainer,
     timeout=defaults.RABBITMQ_CONTAINER_TIMEOUT,
 )
 
 
-@retry(defaults.RETRYABLE_ERRORS)
 @pytest.fixture
-def celery_rabbitmq_broker(rabbitmq_test_container: RabbitMQSessionContainer) -> RabbitMQTestBroker:
+def celery_rabbitmq_broker(rabbitmq_test_container: RabbitMQContainer) -> RabbitMQTestBroker:
     broker = RabbitMQTestBroker(rabbitmq_test_container)
     broker.ready()
     yield broker

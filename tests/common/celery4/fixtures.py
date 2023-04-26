@@ -3,7 +3,6 @@ from celery import Celery
 from pytest_docker_tools import build
 from pytest_docker_tools import container
 from pytest_docker_tools import fxtr
-from retry import retry
 
 from pytest_celery import defaults
 from pytest_celery.api.components.worker.node import CeleryTestWorker
@@ -17,7 +16,6 @@ celery4_worker_image = build(
 )
 
 
-@retry(defaults.RETRYABLE_ERRORS)
 @pytest.fixture
 def celery4_worker(
     celery4_worker_container: CeleryWorkerContainer,

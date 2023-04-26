@@ -5,14 +5,12 @@ from typing import Type
 import pytest
 from pytest_docker_tools import container
 from pytest_docker_tools import fxtr
-from retry import retry
 
 from pytest_celery import defaults
 from pytest_celery.components.backend.redis.api import RedisTestBackend
 from pytest_celery.containers.redis import RedisContainer
 
 
-@retry(defaults.RETRYABLE_ERRORS)
 @pytest.fixture
 def celery_redis_backend(default_redis_backend: RedisContainer) -> RedisTestBackend:
     backend = RedisTestBackend(default_redis_backend)

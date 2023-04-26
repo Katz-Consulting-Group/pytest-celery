@@ -5,14 +5,12 @@ from typing import Type
 import pytest
 from pytest_docker_tools import container
 from pytest_docker_tools import fxtr
-from retry import retry
 
 from pytest_celery import defaults
 from pytest_celery.components.broker.redis.api import RedisTestBroker
 from pytest_celery.containers.redis import RedisContainer
 
 
-@retry(defaults.RETRYABLE_ERRORS)
 @pytest.fixture
 def celery_redis_broker(default_redis_broker: RedisContainer) -> RedisTestBroker:
     broker = RedisTestBroker(default_redis_broker)

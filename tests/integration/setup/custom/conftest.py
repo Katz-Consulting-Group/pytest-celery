@@ -5,7 +5,6 @@ import pytest
 from pytest_docker_tools import build
 from pytest_docker_tools import container
 from pytest_docker_tools import fxtr
-from retry import retry
 
 from pytest_celery import defaults
 from pytest_celery.api.components.worker.cluster import CeleryWorkerCluster
@@ -66,7 +65,6 @@ default_worker_container = container(
 )
 
 
-@retry(defaults.RETRYABLE_ERRORS)
 @pytest.fixture
 def celery_worker_cluster(
     celery_worker: CeleryTestWorker,
