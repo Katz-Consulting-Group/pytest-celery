@@ -26,7 +26,7 @@ class CeleryTestContainer(wrappers.Container):
     def command(cls) -> list:
         raise NotImplementedError("CeleryTestContainer.command")
 
-    @retry(IndexError)
+    @retry(IndexError, max_delay=defaults.READY_TIMEOUT)
     def _wait_port(self, port: str) -> int:
         _, p = self.get_addr(port)
         return p
