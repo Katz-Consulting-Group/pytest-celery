@@ -4,6 +4,7 @@ from pytest_celery import defaults
 from pytest_celery.api.components.backend.cluster import CeleryBackendCluster
 from pytest_celery.api.components.broker.cluster import CeleryBrokerCluster
 from pytest_celery.api.components.worker.cluster import CeleryWorkerCluster
+from pytest_celery.api.components.worker.node import CeleryTestWorker
 from pytest_celery.containers.redis import RedisContainer
 
 
@@ -53,20 +54,24 @@ class CeleryTestSetup:
         )
 
         # TODO: Move
-        # r = self.app.control.ping()
-        # ready = all(
-        #     [
-        #         ready,
-        #         all([all([res["ok"] == "pong" for _, res in response.items()]) for response in r]),
-        #     ]
-        # )
+        r = self.app.control.ping()
+        ready = all(
+            [
+                ready,
+                all([all([res["ok"] == "pong" for _, res in response.items()]) for response in r]),
+            ]
+        )
 
-        if not ping:
+        if not ping or not ready:
             return ready
 
-        queue = self.worker_cluster[0].worker_queue  # type: ignore
-        res = self.ping.s().apply_async(queue=queue)
-        return ready and res.get(timeout=defaults.RESULT_TIMEOUT) == "pong"
+        # TODO: ignore mypy globally for type overriding
+        worker: CeleryTestWorker
+        for worker in self.worker_cluster:  # type: ignore
+            res = self.ping.s().apply_async(queue=worker.worker_queue)
+            ready = ready and res.get(timeout=defaults.RESULT_TIMEOUT) == "pong"
+        else:
+            return ready
 
     @classmethod
     def name(cls) -> str:
@@ -86,6 +91,10 @@ class CeleryTestSetup:
 
     @classmethod
     def update_app_config(cls, app: Celery) -> None:
+        # TODO: Refactor S.O.L.I.D-ly
+        if not RedisContainer.app_transport_options():
+            return
+
         # called before the worker starts
         if app.conf.broker_url.startswith("redis"):
             app.conf.update(broker_transport_options=RedisContainer.app_transport_options())

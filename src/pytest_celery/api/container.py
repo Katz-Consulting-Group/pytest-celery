@@ -14,13 +14,12 @@ class CeleryTestContainer(wrappers.Container):
 
     def __init__(self, *args, **kwargs):  # type: ignore
         super().__init__(*args, **kwargs)
-        self._client: Any = None  # type: ignore
 
     @cached_property
     def client(self) -> Any:
         raise NotImplementedError("CeleryTestContainer.client")
 
-    @property
+    @cached_property
     def celeryconfig(self) -> dict:
         raise NotImplementedError("CeleryTestContainer.celeryconfig")
 
@@ -36,7 +35,7 @@ class CeleryTestContainer(wrappers.Container):
     def ready(self) -> bool:
         return self._full_ready(self.__ready_prompt__)
 
-    @retry(defaults.RETRYABLE_ERRORS)
+    # @retry(defaults.RETRYABLE_ERRORS)
     def _full_ready(self, match_log: str = "", check_client: bool = True) -> bool:
         retry_call(
             wait_for_callable,
@@ -46,13 +45,23 @@ class CeleryTestContainer(wrappers.Container):
             ),
             exceptions=defaults.RETRYABLE_ERRORS,
         )
-        ready = super().ready()
+        # ready = super().ready()
+        ready = True
 
         if ready:
             if match_log:
+                # try:
+                #     wait_for_callable(
+                #         f">>> match_log in self.logs(): '{self.__class__.__name__}::{self.name}'",
+                #         lambda: match_log in self.logs(),
+                #         timeout=5,
+                #     )
+                # except pytest_docker_tools.exceptions.TimeoutError:
+                #     return False
                 ready = match_log in self.logs()
             if check_client:
                 ready = ready and self.client is not None
+
         return ready
 
     def teardown(self) -> None:

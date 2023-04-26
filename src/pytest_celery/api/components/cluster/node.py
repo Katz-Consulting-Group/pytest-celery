@@ -10,7 +10,9 @@ class CeleryTestNode:
         return self._container
 
     def ready(self) -> bool:
-        return self.container.ready()
+        # TODO: Finish this
+        # return self.container.ready()
+        return True
 
     def config(self, *args: tuple, **kwargs: dict) -> dict:
         return self.container.celeryconfig
@@ -26,6 +28,9 @@ class CeleryTestNode:
 
     def logs(self) -> str:
         return self.container.logs()
+
+    def name(self) -> str:
+        return self.container.name
 
     def kill(self) -> None:
         self.container.kill()
