@@ -63,7 +63,7 @@ class CeleryTestSetup:
             ]
         )
 
-        if not ping or not ready:
+        if not ping:
             return ready
 
         # TODO: ignore mypy globally for type overriding

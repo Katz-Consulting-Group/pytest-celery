@@ -11,7 +11,7 @@ from pytest_docker_tools import network
 # Docker
 ##########
 
-READY_TIMEOUT = 10
+READY_TIMEOUT = 30
 RESULT_TIMEOUT = 10
 
 
@@ -157,7 +157,7 @@ DEFAULT_REDIS_BROKER_PORTS = REDIS_PORTS
 RABBITMQ_IMAGE = "rabbitmq:latest"
 RABBITMQ_PORTS = {"5672/tcp": None}
 RABBITMQ_ENV: dict = {}
-RABBITMQ_CONTAINER_TIMEOUT = 120
+RABBITMQ_CONTAINER_TIMEOUT = READY_TIMEOUT
 
 # Docker containers settings
 #################################################
