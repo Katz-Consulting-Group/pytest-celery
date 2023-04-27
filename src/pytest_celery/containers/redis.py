@@ -9,8 +9,6 @@ from pytest_celery.api.container import CeleryTestContainer
 
 
 class RedisContainer(CeleryTestContainer):
-    __ready_prompt__ = "Ready to accept connections"
-
     @cached_property
     def client(self) -> Optional[Redis]:
         client = Redis.from_url(

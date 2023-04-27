@@ -3,9 +3,6 @@ from pytest_celery import defaults
 
 
 class test_rabbitmq_container:
-    def test_full_ready(self, rabbitmq_test_container: RabbitMQContainer):
-        assert rabbitmq_test_container._full_ready(RabbitMQContainer.__ready_prompt__)
-
     def test_client(self, rabbitmq_test_container: RabbitMQContainer):
         assert rabbitmq_test_container.client
 

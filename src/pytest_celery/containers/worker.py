@@ -6,8 +6,6 @@ from pytest_celery.api.container import CeleryTestContainer
 
 
 class CeleryWorkerContainer(CeleryTestContainer):
-    __ready_prompt__ = "ready."
-
     @classmethod
     def version(cls) -> str:
         return defaults.DEFAULT_WORKER_VERSION

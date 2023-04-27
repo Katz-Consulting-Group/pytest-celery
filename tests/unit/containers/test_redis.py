@@ -3,9 +3,6 @@ from pytest_celery import defaults
 
 
 class test_redis_container:
-    def test_full_ready(self, redis_test_container: RedisContainer):
-        assert redis_test_container._full_ready(RedisContainer.__ready_prompt__)
-
     def test_client(self, redis_test_container: RedisContainer):
         assert redis_test_container.client
 

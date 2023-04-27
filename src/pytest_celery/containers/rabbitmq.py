@@ -6,8 +6,6 @@ from pytest_celery.api.container import CeleryTestContainer
 
 
 class RabbitMQContainer(CeleryTestContainer):
-    __ready_prompt__ = "Server startup complete"
-
     @cached_property
     def client(self) -> Connection:
         client = Connection(
