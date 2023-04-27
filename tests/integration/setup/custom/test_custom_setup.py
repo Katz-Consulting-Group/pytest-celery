@@ -34,6 +34,7 @@ class test_custom_setup:
                 wait_for_callable(
                     "waiting for worker.log_level in worker.logs()",
                     lambda: worker.log_level in worker.logs(),
+                    timeout=defaults.RESULT_TIMEOUT,
                 )
 
     def test_celery_setup_override(self, celery_setup: CeleryTestSetup):

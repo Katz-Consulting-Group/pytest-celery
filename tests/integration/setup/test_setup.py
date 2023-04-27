@@ -36,11 +36,11 @@ class test_celery_test_setup_integration:
     def test_log_level(self, celery_setup: CeleryTestSetup):
         worker: CeleryTestWorker
         for worker in celery_setup.worker_cluster:
-            if worker.logs():
-                wait_for_callable(
-                    "waiting for worker.log_level in worker.logs()",
-                    lambda: worker.log_level in worker.logs(),
-                )
+            wait_for_callable(
+                "waiting for worker.log_level in worker.logs()",
+                lambda: worker.log_level in worker.logs(),
+                timeout=defaults.RESULT_TIMEOUT,
+            )
 
     def test_ready(self, celery_setup: CeleryTestSetup):
         for worker in celery_setup.worker_cluster:
