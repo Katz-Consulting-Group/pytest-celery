@@ -91,7 +91,7 @@ pytest-cov = "^4.0.0"
 pytest-xdist = "^3.1.0"
 pytest-subtests = "^0.10.0"
 pytest-rerunfailures = "^11.1.2"
-flaky = "^3.7.0"
+
 
 [tool.poetry.group.ci]
 optional = true
@@ -111,9 +111,6 @@ celery = "pytest_celery.plugin"
 
 [tool.pytest.ini_options]
 addopts = [
-    "--force-flaky",
-    "--no-flaky-report",
-    "--max-runs=1",
     "--verbose",
     "--capture=no",
     "--cov=src",
