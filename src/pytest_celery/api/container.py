@@ -33,7 +33,7 @@ class CeleryTestContainer(wrappers.Container):
     def ready_prompt(self) -> str:
         return ""
 
-    @retry(ContainerNotReady, delay=1)
+    @retry(ContainerNotReady)
     def ready(self) -> bool:
         if not super().ready():
             raise ContainerNotReady(self)
