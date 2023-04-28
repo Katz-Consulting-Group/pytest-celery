@@ -2,7 +2,6 @@ from pytest_docker_tools.exceptions import ContainerNotReady
 from pytest_docker_tools.wrappers.container import wait_for_callable
 from retry import retry
 
-from pytest_celery import defaults
 from pytest_celery.api.container import CeleryTestContainer
 
 
@@ -14,7 +13,7 @@ class CeleryTestNode:
     def container(self) -> CeleryTestContainer:
         return self._container
 
-    @retry(ContainerNotReady, max_delay=defaults.READY_TIMEOUT)
+    @retry(ContainerNotReady)
     def ready(self) -> bool:
         if self.container.ready():
             if self.container.ready_prompt:
@@ -23,7 +22,6 @@ class CeleryTestNode:
                     lambda: self.container.ready_prompt in self.logs(),
                 )
             return True
-        # return False
         raise ContainerNotReady(self.container)
 
     def config(self, *args: tuple, **kwargs: dict) -> dict:
