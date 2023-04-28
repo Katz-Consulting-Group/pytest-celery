@@ -1,6 +1,4 @@
 from celery import Celery
-from pytest_docker_tools.exceptions import ContainerNotReady
-from retry import retry
 
 from pytest_celery import defaults
 from pytest_celery.api.components.backend.cluster import CeleryBackendCluster
@@ -45,7 +43,6 @@ class CeleryTestSetup:
     def backend_cluster(self) -> CeleryBackendCluster:
         return self._backend_cluster
 
-    @retry(ContainerNotReady, max_delay=defaults.READY_TIMEOUT)
     def ready(self, ping: bool = False) -> bool:
         ready = all(
             [
@@ -71,9 +68,7 @@ class CeleryTestSetup:
                 res = self.ping.s().apply_async(queue=worker.worker_queue)
                 ready = ready and res.get(timeout=defaults.RESULT_TIMEOUT) == "pong"
 
-        if not ready:
-            raise ContainerNotReady("celery_setup is not ready")
-        return True
+        return ready
 
     @classmethod
     def name(cls) -> str:
