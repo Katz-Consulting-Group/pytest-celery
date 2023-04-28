@@ -75,7 +75,6 @@ class test_signals:
                 timeout=defaults.RESULT_TIMEOUT,
             )
 
-    @pytest.mark.skip(reason="Fix this test")
     def test_worker_process_shutdown(self, celery_setup: CeleryTestSetup):
         worker: CeleryTestWorker
         for worker in celery_setup.worker_cluster:
@@ -86,7 +85,6 @@ class test_signals:
                 timeout=defaults.RESULT_TIMEOUT,
             )
 
-    @pytest.mark.skip(reason="Fix this test")
     def test_worker_shutdown(self, celery_setup: CeleryTestSetup):
         worker: CeleryTestWorker
         for worker in celery_setup.worker_cluster:
