@@ -11,7 +11,7 @@ from pytest_celery.api.container import CeleryTestContainer
 class RedisContainer(CeleryTestContainer):
     @classmethod
     def command(cls) -> list:
-        return ["redis-server", "--maxclients", "1000"]
+        return ["redis-server", "--maxclients", "1000000"]
 
     @cached_property
     def client(self) -> Optional[Redis]:
@@ -21,8 +21,12 @@ class RedisContainer(CeleryTestContainer):
         )
         return client
 
-    def teardown(self) -> None:
-        gc.collect()
+    # def teardown(self) -> None:
+    #     self.client: Redis
+    #     if self.client.info("clients")["connected_clients"] > 0:
+    #         # self.client.flushall()
+    #         gc.collect()
+    #         # self.client.close()
 
     @cached_property
     def celeryconfig(self) -> dict:
@@ -69,3 +73,7 @@ class RedisContainer(CeleryTestContainer):
     @classmethod
     def ports(cls) -> dict:
         return defaults.DEFAULT_REDIS_BACKEND_PORTS
+
+    @property
+    def ready_prompt(self) -> str:
+        return "Ready to accept connections"

@@ -12,7 +12,7 @@ from pytest_docker_tools import network
 ##########
 
 READY_TIMEOUT = 30
-RESULT_TIMEOUT = 10
+RESULT_TIMEOUT = 15
 
 
 DEFAULT_NETWORK = network()
@@ -129,6 +129,8 @@ DEFAULT_WORKER_VOLUME = WORKER_VOLUME
 REDIS_IMAGE = "redis:latest"
 REDIS_PORTS = {"6379/tcp": None}
 REDIS_ENV: dict = {}
+#     "SYSCTL": "vm. overcommit memory=1",
+# }
 REDIS_CONTAINER_TIMEOUT = READY_TIMEOUT
 
 # Docker containers settings

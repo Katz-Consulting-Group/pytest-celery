@@ -116,3 +116,7 @@ class CeleryWorkerContainer(CeleryTestContainer):
 
     def _wait_port(self, port: str) -> int:
         raise NotImplementedError
+
+    @property
+    def ready_prompt(self) -> str:
+        return "ready."

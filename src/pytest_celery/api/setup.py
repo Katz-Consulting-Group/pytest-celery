@@ -1,12 +1,12 @@
 from celery import Celery
+from pytest_docker_tools.exceptions import ContainerNotReady
+from retry import retry
 
 from pytest_celery import defaults
 from pytest_celery.api.components.backend.cluster import CeleryBackendCluster
 from pytest_celery.api.components.broker.cluster import CeleryBrokerCluster
 from pytest_celery.api.components.worker.cluster import CeleryWorkerCluster
 from pytest_celery.api.components.worker.node import CeleryTestWorker
-
-# from pytest_celery.containers.redis import RedisContainer
 
 
 class CeleryTestSetup:
@@ -45,34 +45,35 @@ class CeleryTestSetup:
     def backend_cluster(self) -> CeleryBackendCluster:
         return self._backend_cluster
 
+    @retry(ContainerNotReady, max_delay=defaults.READY_TIMEOUT)
     def ready(self, ping: bool = False) -> bool:
         ready = all(
             [
-                self.worker_cluster.ready(),
                 self.broker_cluster.ready(),
                 self.backend_cluster.ready(),
             ]
         )
+        ready = ready and self.worker_cluster.ready()
 
-        # TODO: Move
-        r = self.app.control.ping()
-        ready = all(
-            [
-                ready,
-                all([all([res["ok"] == "pong" for _, res in response.items()]) for response in r]),
-            ]
-        )
+        # TODO: Move to worker cluster ready?
+        # r = self.app.control.ping()
+        # ready = all(
+        #     [
+        #         ready,
+        #         all([all([res["ok"] == "pong" for _, res in response.items()]) for response in r]),
+        #     ]
+        # )
 
-        if not ping:
-            return ready
+        if ping and ready:
+            # TODO: ignore mypy globally for type overriding
+            worker: CeleryTestWorker
+            for worker in self.worker_cluster:  # type: ignore
+                res = self.ping.s().apply_async(queue=worker.worker_queue)
+                ready = ready and res.get(timeout=defaults.RESULT_TIMEOUT) == "pong"
 
-        # TODO: ignore mypy globally for type overriding
-        worker: CeleryTestWorker
-        for worker in self.worker_cluster:  # type: ignore
-            res = self.ping.s().apply_async(queue=worker.worker_queue)
-            ready = ready and res.get(timeout=defaults.RESULT_TIMEOUT) == "pong"
-        else:
-            return ready
+        if not ready:
+            raise ContainerNotReady("celery_setup is not ready")
+        return True
 
     @classmethod
     def name(cls) -> str:

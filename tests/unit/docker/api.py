@@ -14,3 +14,7 @@ class UnitWorkerContainer(CeleryWorkerContainer):
     @property
     def client(self) -> Any:
         return self
+
+    @property
+    def ready_prompt(self) -> str:
+        return ""

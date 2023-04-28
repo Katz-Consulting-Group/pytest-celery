@@ -3,8 +3,6 @@ from typing import Any
 from kombu.utils import cached_property
 from pytest_docker_tools import wrappers
 from pytest_docker_tools.exceptions import ContainerNotReady
-
-# from pytest_docker_tools.wrappers.container import wait_for_callable
 from retry import retry
 
 from pytest_celery import defaults
@@ -31,11 +29,19 @@ class CeleryTestContainer(wrappers.Container):
         _, p = self.get_addr(port)
         return p
 
-    @retry(ContainerNotReady, delay=2, max_delay=defaults.READY_TIMEOUT)
-    def ready(self) -> bool:
-        if super().ready():
-            return self.client is not None
-        return False
+    @property
+    def ready_prompt(self) -> str:
+        return ""
+
+    # @retry(ContainerNotReady, delay=2, max_delay=defaults.READY_TIMEOUT)
+    # def ready(self) -> bool:
+    #     return super().ready()
+    #     if not super().ready():
+    #         raise ContainerNotReady(self)
+    #     return True
+    #     if super().ready():
+    #         return self.client is not None
+    #     return False
 
     def teardown(self) -> None:
         pass
