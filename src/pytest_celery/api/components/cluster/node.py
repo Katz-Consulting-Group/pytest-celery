@@ -1,3 +1,10 @@
+import gc
+
+from pytest_docker_tools.exceptions import ContainerNotReady
+from pytest_docker_tools.wrappers.container import wait_for_callable
+from retry import retry
+from retry.api import retry_call
+
 from pytest_celery.api.container import CeleryTestContainer
 
 
@@ -9,8 +16,21 @@ class CeleryTestNode:
     def container(self) -> CeleryTestContainer:
         return self._container
 
+    @retry(ContainerNotReady, delay=5, max_delay=60)
     def ready(self) -> bool:
-        return self.container.ready()
+        if self.container.ready():
+            if self.container.ready_prompt:
+                retry_call(
+                    wait_for_callable,
+                    fargs=(
+                        f"Waiting for ready prompt log in: {self.__class__.__name__}::{self.name()}",
+                        lambda: self.container.ready_prompt in self.logs(),
+                    ),
+                    exceptions=TimeoutError,
+                    tries=3,
+                )
+            return True
+        raise ContainerNotReady(self.container)
 
     def config(self, *args: tuple, **kwargs: dict) -> dict:
         return self.container.celeryconfig
@@ -34,4 +54,5 @@ class CeleryTestNode:
         self.container.kill()
 
     def teardown(self) -> None:
+        gc.collect()  # TODO: Explain why this is needed
         self.container.teardown()
