@@ -23,3 +23,17 @@ class CeleryWorkerCluster(CeleryTestCluster):
     @property
     def versions(self) -> Set[str]:
         return {worker.version for worker in self}  # type: ignore
+
+    def ready(self) -> bool:
+        ready = super().ready()
+
+        worker: CeleryTestWorker
+        for worker in self:
+            r = worker.app.control.ping()
+            ready = all(
+                [
+                    ready,
+                    all([all([res["ok"] == "pong" for _, res in response.items()]) for response in r]),
+                ]
+            )
+        return ready
