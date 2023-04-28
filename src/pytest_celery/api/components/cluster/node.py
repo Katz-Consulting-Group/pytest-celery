@@ -1,5 +1,3 @@
-import gc
-
 from pytest_celery.api.container import CeleryTestContainer
 
 
@@ -36,5 +34,4 @@ class CeleryTestNode:
         self.container.kill()
 
     def teardown(self) -> None:
-        gc.collect()  # TODO: Explain why this is needed
         self.container.teardown()
