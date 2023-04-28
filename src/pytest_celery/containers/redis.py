@@ -1,4 +1,3 @@
-import gc
 from typing import Optional
 
 from kombu.utils import cached_property
@@ -16,10 +15,6 @@ class RedisContainer(CeleryTestContainer):
             decode_responses=True,
         )
         return client
-
-    def teardown(self) -> None:
-        # TODO: Explain why this is needed
-        gc.collect()
 
     @cached_property
     def celeryconfig(self) -> dict:
