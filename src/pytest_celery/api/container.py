@@ -22,7 +22,7 @@ class CeleryTestContainer(wrappers.Container):
     def command(cls) -> list:
         raise NotImplementedError("CeleryTestContainer.command")
 
-    @retry(IndexError)
+    @retry(IndexError, delay=0.5)
     def _wait_port(self, port: str) -> int:
         _, p = self.get_addr(port)
         return p
@@ -31,7 +31,7 @@ class CeleryTestContainer(wrappers.Container):
     def ready_prompt(self) -> str:
         return ""
 
-    @retry(ContainerNotReady)
+    @retry(ContainerNotReady, delay=1)
     def ready(self) -> bool:
         if super().ready():
             if self.ready_prompt:
