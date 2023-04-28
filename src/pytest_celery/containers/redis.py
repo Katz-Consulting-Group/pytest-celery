@@ -9,10 +9,6 @@ from pytest_celery.api.container import CeleryTestContainer
 
 
 class RedisContainer(CeleryTestContainer):
-    @classmethod
-    def command(cls) -> list:
-        return ["redis-server", "--maxclients", "1000000"]
-
     @cached_property
     def client(self) -> Optional[Redis]:
         client = Redis.from_url(

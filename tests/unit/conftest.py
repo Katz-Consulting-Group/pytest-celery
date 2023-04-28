@@ -105,7 +105,6 @@ redis_test_container = container(
     network="{unit_tests_network.name}",
     wrapper_class=RedisContainer,
     timeout=defaults.REDIS_CONTAINER_TIMEOUT,
-    command=RedisContainer.command(),  # TODO: use fxtr
 )
 redis_backend_container = container(
     image="{redis_image.id}",
@@ -115,7 +114,6 @@ redis_backend_container = container(
     network="{unit_tests_network.name}",
     wrapper_class=RedisContainer,
     timeout=defaults.REDIS_CONTAINER_TIMEOUT,
-    command=RedisContainer.command(),  # TODO: use fxtr
 )
 redis_broker_container = container(
     image="{redis_image.id}",
@@ -125,7 +123,6 @@ redis_broker_container = container(
     network="{unit_tests_network.name}",
     wrapper_class=RedisContainer,
     timeout=defaults.REDIS_CONTAINER_TIMEOUT,
-    command=RedisContainer.command(),  # TODO: use fxtr
 )
 
 

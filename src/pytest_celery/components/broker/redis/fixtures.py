@@ -31,7 +31,6 @@ default_redis_broker = container(
     network="{DEFAULT_NETWORK.name}",
     wrapper_class=RedisContainer,
     timeout=defaults.REDIS_CONTAINER_TIMEOUT,
-    command=RedisContainer.command(),  # TODO: use fxtr
 )
 
 
