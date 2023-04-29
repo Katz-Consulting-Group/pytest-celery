@@ -54,7 +54,7 @@ smoke_tests_worker_image = build(
 
 
 default_worker_container = container(
-    image="{smoke_tests_worker_image.id}",
+    image="{smoke_tests_worker_image.id}",  # TODO: Use fixture to avoid defining default_worker_container again
     environment=fxtr("default_worker_env"),
     network="{DEFAULT_NETWORK.name}",
     volumes={"{default_worker_volume.name}": defaults.DEFAULT_WORKER_VOLUME},
