@@ -11,7 +11,7 @@ from pytest_docker_tools import network
 # Docker
 ##########
 
-CONTAINER_TIMEOUT = 60
+CONTAINER_TIMEOUT = 30
 RESULT_TIMEOUT = 30
 
 
