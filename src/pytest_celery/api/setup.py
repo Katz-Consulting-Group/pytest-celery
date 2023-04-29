@@ -52,15 +52,6 @@ class CeleryTestSetup:
         )
         ready = ready and self.worker_cluster.ready()
 
-        # TODO: Move to worker cluster ready?
-        # r = self.app.control.ping()
-        # ready = all(
-        #     [
-        #         ready,
-        #         all([all([res["ok"] == "pong" for _, res in response.items()]) for response in r]),
-        #     ]
-        # )
-
         if ping and ready:
             # TODO: ignore mypy globally for type overriding
             worker: CeleryTestWorker
