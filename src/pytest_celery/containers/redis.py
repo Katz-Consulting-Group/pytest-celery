@@ -1,3 +1,4 @@
+import gc
 from typing import Optional
 
 from kombu.utils import cached_property
@@ -65,3 +66,7 @@ class RedisContainer(CeleryTestContainer):
     @property
     def ready_prompt(self) -> str:
         return "Ready to accept connections"
+
+    def teardown(self) -> None:
+        gc.collect(0)  # TODO: Explain why this is needed
+        super().teardown()
