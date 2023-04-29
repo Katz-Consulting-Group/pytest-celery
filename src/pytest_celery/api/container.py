@@ -7,9 +7,6 @@ from retry import retry
 
 
 class CeleryTestContainer(wrappers.Container):
-    def __init__(self, *args, **kwargs):  # type: ignore
-        super().__init__(*args, **kwargs)
-
     @cached_property
     def client(self) -> Any:
         raise NotImplementedError("CeleryTestContainer.client")
