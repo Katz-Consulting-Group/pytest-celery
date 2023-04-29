@@ -62,7 +62,3 @@ class RedisContainer(CeleryTestContainer):
     @classmethod
     def ports(cls) -> dict:
         return defaults.DEFAULT_REDIS_BACKEND_PORTS
-
-    @property
-    def ready_prompt(self) -> str:
-        return "Ready to accept connections"
