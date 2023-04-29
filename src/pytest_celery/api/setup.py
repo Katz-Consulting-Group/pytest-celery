@@ -77,17 +77,10 @@ class CeleryTestSetup:
             "result_backend": ";".join(celery_backend_cluster_config["local_urls"]),
         }
 
-    # @classmethod
-    # def update_app_config(cls, app: Celery) -> None:
-    #     # TODO: Refactor S.O.L.I.D-ly
-    #     if not RedisContainer.app_transport_options():
-    #         return
-
-    #     # called before the worker starts
-    #     if app.conf.broker_url.startswith("redis"):
-    #         app.conf.update(broker_transport_options=RedisContainer.app_transport_options())
-    #     if app.conf.result_backend.startswith("redis"):
-    #         app.conf.update(result_backend_transport_options=RedisContainer.app_transport_options())
+    @classmethod
+    def update_app_config(cls, app: Celery) -> None:
+        # Use app.conf.update() to update the app config
+        pass
 
     @classmethod
     def create_setup_app(cls, celery_setup_config: dict, celery_setup_app_name: str) -> Celery:
@@ -99,7 +92,7 @@ class CeleryTestSetup:
 
         app = Celery(celery_setup_app_name)
         app.config_from_object(celery_setup_config)
-        # cls.update_app_config(app)
+        cls.update_app_config(app)
 
         return app
 
