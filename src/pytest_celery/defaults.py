@@ -128,9 +128,9 @@ DEFAULT_WORKER_VOLUME = WORKER_VOLUME
 
 REDIS_IMAGE = "redis:latest"
 REDIS_PORTS = {"6379/tcp": None}
-REDIS_ENV: dict = {}
-#     "SYSCTL": "vm. overcommit memory=1",
-# }
+REDIS_ENV: dict = {
+    "SYSCTL": "vm. overcommit memory=1",
+}
 REDIS_CONTAINER_TIMEOUT = CONTAINER_TIMEOUT
 
 # Docker containers settings
