@@ -62,4 +62,4 @@ class RabbitMQContainer(CeleryTestContainer):
 
     @property
     def ready_prompt(self) -> str:
-        return "Server startup complete"
+        return "Starting RabbitMQ"
