@@ -38,15 +38,16 @@ class CeleryTestContainer(wrappers.Container):
             if self.ready_prompt is not None:
                 try:
                     wait_for_callable(
-                        f"Waiting for logs in: {self.__class__.__name__}::{self.name}",
-                        self.logs,
-                        timeout=3,
+                        f"Waiting for {self.__class__.__name__}::{self.name} to get ready",
+                        lambda: self.ready_prompt in self.logs(),
+                        timeout=defaults.CONTAINER_TIMEOUT // 2,
                     )
-                    if self.ready_prompt in self.logs():
-                        return True
+                    return True
                 except TimeoutError:
-                    if not self.logs():
+                    if self.ready_prompt not in self.logs():
                         self.restart()
+                    else:
+                        return True
             else:
                 return True
         raise ContainerNotReady(self)
