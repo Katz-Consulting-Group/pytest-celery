@@ -74,9 +74,9 @@ jobs:
           verbose: true # optional (default = false)
 
   Integration:
-    # needs:
-    #   - Unit
-    # if: needs.Unit.result == 'success'
+    needs:
+      - Unit
+    if: needs.Unit.result == 'success'
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -122,9 +122,9 @@ jobs:
           tox --verbose --verbose -e "${{ matrix.python-version }}-integration" -- -n auto
 
   Smoke:
-    # needs:
-    #   - Integration
-    # if: needs.Integration.result == 'success'
+    needs:
+      - Integration
+    if: needs.Integration.result == 'success'
     runs-on: ${{ matrix.os }}
 
     strategy:
