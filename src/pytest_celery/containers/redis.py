@@ -12,7 +12,6 @@ class RedisContainer(CeleryTestContainer):
     def client(self) -> Optional[Redis]:
         client = Redis.from_url(
             self.celeryconfig["local_url"],
-            max_connections=10000,
             decode_responses=True,
         )
         return client
