@@ -3,6 +3,7 @@ from typing import Any
 from kombu.utils import cached_property
 from pytest_docker_tools import wrappers
 from pytest_docker_tools.exceptions import ContainerNotReady
+from pytest_docker_tools.wrappers.container import wait_for_callable
 from retry import retry
 
 from pytest_celery import defaults
@@ -34,6 +35,11 @@ class CeleryTestContainer(wrappers.Container):
     def ready(self) -> bool:
         if super().ready():
             if self.ready_prompt:
+                wait_for_callable(
+                    f"Waiting for logs in: {self.__class__.__name__}::{self.name}",
+                    self.logs,
+                    timeout=10,
+                )
                 if self.ready_prompt in self.logs():
                     return True
             else:
