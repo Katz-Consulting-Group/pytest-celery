@@ -23,7 +23,7 @@ class CeleryTestContainer(wrappers.Container):
     def command(cls) -> list:
         raise NotImplementedError("CeleryTestContainer.command")
 
-    @retry(IndexError, delay=5, max_delay=defaults.CONTAINER_TIMEOUT)
+    @retry(IndexError, max_delay=defaults.CONTAINER_TIMEOUT)
     def _wait_port(self, port: str) -> int:
         _, p = self.get_addr(port)
         return p
@@ -35,21 +35,22 @@ class CeleryTestContainer(wrappers.Container):
     @retry(ContainerNotReady, delay=5, max_delay=defaults.CONTAINER_TIMEOUT)
     def ready(self) -> bool:
         if super().ready():
-            if self.ready_prompt is not None:
-                try:
-                    wait_for_callable(
-                        f"Waiting for {self.__class__.__name__}::{self.name} to get ready",
-                        lambda: self.ready_prompt in self.logs(),
-                        timeout=defaults.CONTAINER_TIMEOUT // 2,
-                    )
-                    return True
-                except TimeoutError:
-                    if self.ready_prompt not in self.logs():
-                        self.restart()
-                    else:
-                        return True
-            else:
+            if self.ready_prompt is None:
                 return True
+
+            try:
+                wait_for_callable(
+                    f"Waiting for {self.__class__.__name__}::{self.name} to get ready",
+                    lambda: self.ready_prompt in self.logs(),
+                    timeout=defaults.CONTAINER_TIMEOUT // 2,
+                )
+                return True
+            except TimeoutError:
+                if self.ready_prompt not in self.logs():
+                    self.restart()
+                else:
+                    return True
+
         raise ContainerNotReady(self)
 
     def teardown(self) -> None:
