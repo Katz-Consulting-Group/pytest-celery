@@ -1,6 +1,7 @@
 from typing import Any
 from typing import Optional
 
+import pytest_docker_tools
 from kombu.utils import cached_property
 from pytest_docker_tools import wrappers
 from pytest_docker_tools.exceptions import ContainerNotReady
@@ -23,7 +24,7 @@ class CeleryTestContainer(wrappers.Container):
     def command(cls) -> list:
         raise NotImplementedError("CeleryTestContainer.command")
 
-    @retry(IndexError, delay=5, max_delay=defaults.CONTAINER_TIMEOUT)
+    @retry(IndexError, max_delay=defaults.CONTAINER_TIMEOUT)
     def _wait_port(self, port: str) -> int:
         _, p = self.get_addr(port)
         return p
@@ -45,7 +46,7 @@ class CeleryTestContainer(wrappers.Container):
                     timeout=defaults.CONTAINER_TIMEOUT // 2,
                 )
                 return True
-            except TimeoutError:
+            except pytest_docker_tools.exceptions.TimeoutError:
                 if any([not self.logs(), self.ready_prompt not in self.logs()]):
                     self.restart()
                 else:
