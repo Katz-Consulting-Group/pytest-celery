@@ -59,7 +59,3 @@ class RabbitMQContainer(CeleryTestContainer):
     @classmethod
     def ports(cls) -> dict:
         return defaults.DEFAULT_RABBITMQ_BROKER_PORTS
-
-    @property
-    def ready_prompt(self) -> str:
-        return "Server startup complete"
