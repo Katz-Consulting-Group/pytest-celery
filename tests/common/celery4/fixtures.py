@@ -25,7 +25,6 @@ def celery4_worker(
         celery4_worker_container,
         app=celery_setup_app,
     )
-    worker.ready()
     yield worker
 
 

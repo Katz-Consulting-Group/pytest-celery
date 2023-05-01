@@ -17,6 +17,5 @@ from tests.common.celery4.fixtures import *  # noqa
 def celery_worker_cluster(request: pytest.FixtureRequest) -> CeleryWorkerCluster:
     nodes: Tuple[CeleryTestWorker] = [request.getfixturevalue(worker) for worker in request.param]
     cluster = CeleryWorkerCluster(*nodes)
-    cluster.ready()
     yield cluster
     cluster.teardown()

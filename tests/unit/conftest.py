@@ -91,7 +91,6 @@ def celery_setup_worker(
         container=worker_test_container,
         app=celery_setup_app,
     )
-    worker.ready()
     yield worker
     worker.teardown()
 
@@ -129,7 +128,6 @@ redis_broker_container = container(
 @pytest.fixture
 def celery_redis_backend(redis_backend_container: RedisContainer) -> RedisTestBackend:
     backend = RedisTestBackend(redis_backend_container)
-    backend.ready()
     yield backend
     backend.teardown()
 
@@ -137,7 +135,6 @@ def celery_redis_backend(redis_backend_container: RedisContainer) -> RedisTestBa
 @pytest.fixture
 def celery_redis_broker(redis_broker_container: RedisContainer) -> RedisTestBroker:
     broker = RedisTestBroker(redis_broker_container)
-    broker.ready()
     yield broker
     broker.teardown()
 
@@ -157,6 +154,5 @@ rabbitmq_test_container = container(
 @pytest.fixture
 def celery_rabbitmq_broker(rabbitmq_test_container: RabbitMQContainer) -> RabbitMQTestBroker:
     broker = RabbitMQTestBroker(rabbitmq_test_container)
-    broker.ready()
     yield broker
     broker.teardown()

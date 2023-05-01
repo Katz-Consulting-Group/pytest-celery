@@ -24,7 +24,6 @@ failover_broker = container(
 @pytest.fixture
 def failover_rabbitmq_broker(failover_broker: RabbitMQContainer) -> RabbitMQTestBroker:
     broker = RabbitMQTestBroker(failover_broker)
-    broker.ready()
     yield broker
     broker.teardown()
 
@@ -35,7 +34,6 @@ def celery_broker_cluster(
     failover_rabbitmq_broker: RabbitMQTestBroker,
 ) -> CeleryBrokerCluster:
     cluster = CeleryBrokerCluster(celery_rabbitmq_broker, failover_rabbitmq_broker)
-    cluster.ready()
     yield cluster
     cluster.teardown()
 
