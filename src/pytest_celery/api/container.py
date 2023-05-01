@@ -46,7 +46,7 @@ class CeleryTestContainer(wrappers.Container):
                 )
                 return True
             except TimeoutError:
-                if self.ready_prompt not in self.logs():
+                if any([not self.logs(), self.ready_prompt not in self.logs()]):
                     self.restart()
                 else:
                     return True
