@@ -1,3 +1,5 @@
+from typing import Optional
+
 from kombu import Connection
 from kombu.utils import cached_property
 
@@ -59,3 +61,7 @@ class RabbitMQContainer(CeleryTestContainer):
     @classmethod
     def ports(cls) -> dict:
         return defaults.DEFAULT_RABBITMQ_BROKER_PORTS
+
+    @property
+    def ready_prompt(self) -> Optional[str]:
+        return "Server startup complete"
