@@ -46,4 +46,4 @@ class test_failover:
         for worker in celery_setup.worker_cluster:
             expected = "test_broker_failover"
             res = identity.s(expected).apply_async(queue=worker.worker_queue)
-            assert res.get() == expected
+            assert res.get(timeout=defaults.RESULT_TIMEOUT) == expected
