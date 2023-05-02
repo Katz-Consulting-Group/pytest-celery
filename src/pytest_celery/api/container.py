@@ -34,7 +34,7 @@ class CeleryTestContainer(wrappers.Container):
         _, p = self.get_addr(port)
         return p
 
-    @retry(pytest_docker_tools.exceptions.TimeoutError, delay=5, tries=10)
+    @retry(pytest_docker_tools.exceptions.TimeoutError, delay=10, tries=10)
     def _wait_ready(self, timeout: int = 30) -> bool:
         if self.ready_prompt is None:
             return True
