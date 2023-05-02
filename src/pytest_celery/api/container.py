@@ -1,9 +1,10 @@
 from typing import Any
 from typing import Optional
 
+import pytest_docker_tools
 from kombu.utils import cached_property
 from pytest_docker_tools import wrappers
-from pytest_docker_tools.exceptions import ContainerNotReady
+from pytest_docker_tools.wrappers.container import wait_for_callable
 from retry import retry
 
 
@@ -27,26 +28,27 @@ class CeleryTestContainer(wrappers.Container):
     def ready_prompt(self) -> Optional[str]:
         return None
 
-    @retry(IndexError, delay=10, tries=5)
     def _wait_port(self, port: str) -> int:
+        while not super().ready():
+            pass
         _, p = self.get_addr(port)
         return p
 
-    @retry(ContainerNotReady, delay=10, tries=5)
-    def _wait_ready(self) -> bool:
-        if self.ready_prompt in self.logs():
-            return True
-        raise ContainerNotReady(self)
-
-    def ready(self) -> bool:
-        if not super().ready():
-            return False
-
+    @retry(pytest_docker_tools.exceptions.TimeoutError, delay=5, tries=10)
+    def _wait_ready(self, timeout: int = 30) -> bool:
         if self.ready_prompt is None:
             return True
 
-        try:
-            self._wait_ready()
-            return True
-        except ContainerNotReady:
+        wait_for_callable(
+            f"Waiting for {self.__class__.__name__}::{self.name} to get ready",
+            lambda: self.ready_prompt in self.logs(),
+            timeout=timeout,
+        )
+
+        return True
+
+    def ready(self) -> bool:
+        if super().ready():
+            return self._wait_ready()
+        else:
             return False
